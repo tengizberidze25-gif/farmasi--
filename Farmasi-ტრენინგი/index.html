@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Farmasi Georgia Registration</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f3f3f3;
+      padding: 40px 20px;
+    }
+    .box {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      max-width: 460px;
+      margin: 40px auto;
+      box-shadow: 0 0 14px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+    h2 {
+      color: #7b1fa2;
+      margin-bottom: 10px;
+      font-size: 24px;
+    }
+    p {
+      margin-bottom: 20px;
+      color: #333;
+    }
+    input {
+      width: 100%;
+      padding: 12px;
+      margin: 8px 0;
+      border: 1px solid #ccc;
+      font-size: 15px;
+    }
+    button {
+      background: #7b1fa2;
+      color: white;
+      border: none;
+      padding: 13px;
+      width: 100%;
+      cursor: pointer;
+      margin-top: 8px;
+      font-size: 15px;
+    }
+    button:hover {
+      background: #9c27b0;
+    }
+    button:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+    .success, .error, .full, .closed {
+      display: none;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+    .success { color: green; }
+    .error, .full, .closed { color: red; }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h2>Farmasi Georgia</h2>
+    <p>ტრენინგზე რეგისტრაცია</p>
+
+    <form id="regForm">
+      <input type="text" id="first_name" name="first_name" placeholder="სახელი" required />
+      <input type="text" id="last_name" name="last_name" placeholder="გვარი" required />
+      <input type="tel" id="phone" name="phone" placeholder="ტელეფონის ნომერი" required />
+      <button type="submit" id="submitBtn">დარეგისტრირება</button>
+    </form>
+
+    <div id="successMsg" class="success">
+      რეგისტრაცია წარმატებით დასრულდა ✅
+    </div>
+
+    <div id="duplicateMsg" class="error">
+      ეს ნომერი უკვე დარეგისტრირებულია ❌
+    </div>
+
+    <div id="invalidMsg" class="error">
+      ტელეფონის ნომერი არასწორია ❌
+    </div>
+
+    <div id="errorMsg" class="error">
+      დაფიქსირდა შეცდომა ❌ სცადე თავიდან
+    </div>
+
+    <div id="fullMsg" class="full">
+      ადგილები სრულად შევსებულია ❌
+    </div>
+
+    <div id="closedMsg" class="closed">
+      რეგისტრაცია დახურულია ❌
+    </div>
+  </div>
+
+  <script>
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxlTfD6VUjqzkkUXl7__RZTGbu2UfiBvmiH1blu3z24WQ8Nx4KTBk-Rpe7TfDjNsdD-/exec";
+
+    document.getElementById("regForm").addEventListener("submit", async function (e) {
+      e.preventDefault();
+
+      const submitBtn = document.getElementById("submitBtn");
+      const successMsg = document.getElementById("successMsg");
+      const errorMsg = document.getElementById("errorMsg");
+      const duplicateMsg = document.getElementById("duplicateMsg");
+      const invalidMsg = document.getElementById("invalidMsg");
+      const fullMsg = document.getElementById("fullMsg");
+      const closedMsg = document.getElementById("closedMsg");
+      const form = document.getElementById("regForm");
+
+      successMsg.style.display = "none";
+      errorMsg.style.display = "none";
+      duplicateMsg.style.display = "none";
+      invalidMsg.style.display = "none";
+      fullMsg.style.display = "none";
+      closedMsg.style.display = "none";
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = "იგზავნება...";
+
+      const formData = new FormData();
+      formData.append("first_name", document.getElementById("first_name").value);
+      formData.append("last_name", document.getElementById("last_name").value);
+      formData.append("phone", document.getElementById("phone").value);
+
+      try {
+        const response = await fetch(SCRIPT_URL, {
+          method: "POST",
+          body: formData
+        });
+
+        const result = await response.text();
+
+        if (result === "success") {
+          form.reset();
+          successMsg.style.display = "block";
+        } else if (result === "duplicate") {
+          duplicateMsg.style.display = "block";
+        } else if (result === "invalid") {
+          invalidMsg.style.display = "block";
+        } else if (result === "full") {
+          fullMsg.style.display = "block";
+        } else if (result === "closed") {
+          closedMsg.style.display = "block";
+        } else {
+          errorMsg.style.display = "block";
+        }
+      } catch (error) {
+        errorMsg.style.display = "block";
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = "დარეგისტრირება";
+      }
+    });
+  </script>
+</body>
+</html>
