@@ -1,325 +1,486 @@
 <!DOCTYPE html>
 <html lang="ka">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Farmasi Registration</title>
 
 <style>
-* {
-box-sizing: border-box;
+* { box-sizing: border-box; }
+
+:root {
+  --bg1: #fff4f6;
+  --bg2: #ffe8ed;
+  --card: rgba(255,255,255,0.95);
+  --primary-dark: #ef4459;
+  --text: #2f2f38;
+  --muted: #70707a;
+  --border: rgba(255, 91, 110, 0.25);
+  --shadow: 0 20px 45px rgba(36, 19, 26, 0.14);
 }
 
 body {
-margin: 0;
-font-family: Arial, sans-serif;
-background: linear-gradient(180deg, #f6e4e8 0%, #f3dfe3 100%);
-padding: 30px 15px 120px;
+  margin: 0;
+  min-height: 100vh;
+  font-family: Arial, sans-serif;
+  background:
+    radial-gradient(circle at top left, rgba(255,255,255,0.75), transparent 30%),
+    linear-gradient(135deg, var(--bg1), var(--bg2));
+  overflow: hidden;
+  position: relative;
+  color: var(--text);
 }
 
-.wrapper {
-max-width: 420px;
-margin: 0 auto;
-background: #ffffff;
-border-radius: 26px;
-padding: 28px 22px;
-box-shadow: 0 10px 25px rgba(0,0,0,0.08);
-animation: fadeInCard 0.7s ease;
+.money-rain {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 1;
 }
 
-@keyframes fadeInCard {
-from {
-opacity: 0;
-transform: translateY(18px);
+.note {
+  position: absolute;
+  top: -220px;
+  width: 120px;
+  opacity: 0.36;
+  user-select: none;
+  filter: drop-shadow(0 8px 10px rgba(0,0,0,0.08));
 }
-to {
-opacity: 1;
-transform: translateY(0);
+
+.note.n1  { left: 2%;  animation: fall1 12s linear infinite 0s; }
+.note.n2  { left: 8%;  animation: fall2 10s linear infinite 1s; }
+.note.n3  { left: 14%; animation: fall3 14s linear infinite 2s; }
+.note.n4  { left: 20%; animation: fall4 11s linear infinite .5s; }
+.note.n5  { left: 26%; animation: fall5 13s linear infinite 1.5s; }
+.note.n6  { left: 32%; animation: fall6 9.5s linear infinite 2.5s; }
+.note.n7  { left: 38%; animation: fall7 12.5s linear infinite .8s; }
+.note.n8  { left: 44%; animation: fall2 9.5s linear infinite 0.4s; }
+.note.n9  { left: 50%; animation: fall5 13.5s linear infinite 1.8s; }
+.note.n10 { left: 56%; animation: fall1 11.5s linear infinite 0.9s; }
+.note.n11 { left: 62%; animation: fall6 14.5s linear infinite 2.1s; }
+.note.n12 { left: 68%; animation: fall3 10.8s linear infinite 0.6s; }
+.note.n13 { left: 74%; animation: fall4 12.8s linear infinite 1.3s; }
+.note.n14 { left: 80%; animation: fall7 9.8s linear infinite 2.4s; }
+.note.n15 { left: 86%; animation: fall1 15s linear infinite 3s; }
+.note.n16 { left: 92%; animation: fall2 12.2s linear infinite 2.7s; }
+.note.n17 { left: 12%; animation: fall5 11.3s linear infinite 3.2s; }
+.note.n18 { left: 64%; animation: fall6 13.8s linear infinite 1.7s; }
+.note.n19 { left: 24%; animation: fall3 11.8s linear infinite 2.2s; }
+.note.n20 { left: 72%; animation: fall4 10.6s linear infinite .9s; }
+
+@keyframes fall1 {
+  0% { transform: translate(-15px,-220px) rotate(0deg); opacity: 0; }
+  15% { opacity: .36; }
+  35% { transform: translate(30px,30vh) rotate(12deg); }
+  65% { transform: translate(-10px,65vh) rotate(-8deg); }
+  100% { transform: translate(18px,120vh) rotate(22deg); opacity: 0; }
 }
+@keyframes fall2 {
+  0% { transform: translate(10px,-220px) rotate(0deg); opacity: 0; }
+  20% { opacity: .36; }
+  55% { transform: translate(-24px,60vh) rotate(-10deg); }
+  100% { transform: translate(22px,120vh) rotate(16deg); opacity: 0; }
+}
+@keyframes fall3 {
+  0% { transform: translate(-8px,-220px) rotate(0deg); opacity: 0; }
+  18% { opacity: .36; }
+  40% { transform: translate(26px,38vh) rotate(14deg); }
+  75% { transform: translate(-22px,90vh) rotate(-12deg); }
+  100% { transform: translate(12px,120vh) rotate(18deg); opacity: 0; }
+}
+@keyframes fall4 {
+  0% { transform: translate(0,-220px) rotate(0deg); opacity: 0; }
+  12% { opacity: .36; }
+  50% { transform: translate(-30px,58vh) rotate(-14deg); }
+  100% { transform: translate(20px,120vh) rotate(20deg); opacity: 0; }
+}
+@keyframes fall5 {
+  0% { transform: translate(12px,-220px) rotate(0deg); opacity: 0; }
+  15% { opacity: .36; }
+  42% { transform: translate(-18px,44vh) rotate(-9deg); }
+  100% { transform: translate(26px,120vh) rotate(15deg); opacity: 0; }
+}
+@keyframes fall6 {
+  0% { transform: translate(-18px,-220px) rotate(0deg); opacity: 0; }
+  15% { opacity: .36; }
+  60% { transform: translate(24px,68vh) rotate(12deg); }
+  100% { transform: translate(-12px,120vh) rotate(-18deg); opacity: 0; }
+}
+@keyframes fall7 {
+  0% { transform: translate(8px,-220px) rotate(0deg); opacity: 0; }
+  12% { opacity: .36; }
+  48% { transform: translate(-20px,50vh) rotate(-10deg); }
+  100% { transform: translate(18px,120vh) rotate(18deg); opacity: 0; }
+}
+
+.page-wrap {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 24px;
+  position: relative;
+  z-index: 2;
+}
+
+.card {
+  width: 100%;
+  max-width: 430px;
+  background: var(--card);
+  border-radius: 28px;
+  padding: 28px 24px 24px;
+  text-align: center;
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(10px);
+}
+
+.logo-wrap {
+  position: relative;
+  width: 230px;
+  height: 100px;
+  margin: 0 auto 12px;
 }
 
 .logo {
-text-align: center;
-margin-bottom: 18px;
-perspective: 1200px;
+  width: 175px;
+  position: absolute;
+  left: 18px;
+  top: 2px;
+  animation: logoMove 4.8s ease-in-out infinite;
 }
 
-.logo-img {
-width: 200px;
-max-width: 100%;
-display: inline-block;
-animation: rotate3D 4s linear infinite;
-transform-style: preserve-3d;
-backface-visibility: hidden;
+@keyframes logoMove {
+  0%   { transform: translateX(0px) rotate(0deg) scale(1); }
+  25%  { transform: translateX(12px) rotate(4deg) scale(1.01); }
+  50%  { transform: translateX(24px) rotate(0deg) scale(1.03); }
+  75%  { transform: translateX(12px) rotate(-4deg) scale(1.01); }
+  100% { transform: translateX(0px) rotate(0deg) scale(1); }
 }
 
-@keyframes rotate3D {
-0% { transform: rotateY(-360deg); }
-100% { transform: rotateY(0deg); }
+h2 {
+  margin: 6px 0 12px;
+  font-size: 28px;
+  color: var(--text);
 }
 
-.title {
-text-align: center;
-font-weight: 700;
-font-size: 20px;
-margin-bottom: 18px;
-color: #212121;
+.subtitle {
+  color: var(--muted);
+  font-size: 14px;
+  margin-bottom: 18px;
 }
 
-.info-box {
-border: 1.5px solid #ff6b7a;
-border-radius: 18px;
-padding: 14px;
-margin-bottom: 18px;
-background: #fffafa;
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 14px;
 }
 
-.info-title {
-color: #ff5b6e;
-font-weight: 700;
-margin-bottom: 10px;
+.stat-box {
+  background: #fff8fa;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 10px 8px;
 }
 
-.info-row {
-margin-bottom: 6px;
-font-size: 15px;
-color: #222;
+.stat-num {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--primary-dark);
 }
+
+.stat-label {
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 4px;
+}
+
+.event {
+  background: linear-gradient(180deg, #fff8fa, #fff4f7);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 14px 16px;
+  text-align: left;
+  margin-bottom: 18px;
+  font-size: 14px;
+  line-height: 1.75;
+}
+
+.event b {
+  color: var(--primary-dark);
+  display: block;
+  margin-bottom: 8px;
+  font-size: 15px;
+}
+
+.event-line { color: #40404a; }
 
 input {
-width: 100%;
-padding: 14px;
-margin-bottom: 10px;
-border-radius: 14px;
-border: 1px solid #ddd;
-font-size: 15px;
-background: #fff;
-transition: 0.2s ease;
+  width: 100%;
+  padding: 14px;
+  margin: 8px 0;
+  border-radius: 14px;
+  border: 1px solid rgba(80, 80, 95, 0.14);
+  font-size: 15px;
+  background: rgba(255,255,255,0.96);
+  outline: none;
 }
 
-input:focus {
-border-color: #ff6b7a;
-outline: none;
-box-shadow: 0 0 0 4px rgba(255, 107, 122, 0.12);
+button {
+  width: 100%;
+  padding: 15px 16px;
+  border: none;
+  border-radius: 15px;
+  background: linear-gradient(135deg, var(--primary-dark), #ff7a88);
+  color: white;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 10px;
 }
 
-.main-btn {
-width: 100%;
-padding: 14px;
-border: none;
-border-radius: 16px;
-background: linear-gradient(180deg, #ff6b7a, #ff4d5f);
-color: white;
-font-size: 17px;
-font-weight: bold;
-cursor: pointer;
-transition: 0.2s ease;
-}
-
-.main-btn:hover {
-opacity: 0.95;
-transform: translateY(-1px);
-}
-
-.main-btn:disabled {
-opacity: 0.7;
-cursor: not-allowed;
+button:disabled {
+  opacity: 0.72;
+  cursor: not-allowed;
 }
 
 .msg {
-display: none;
-text-align: center;
-margin-top: 15px;
-font-weight: bold;
-line-height: 1.4;
+  margin-top: 14px;
+  display: none;
+  font-weight: 700;
+  font-size: 14px;
 }
 
-.success { color: green; }
-.error { color: red; }
+.success { color: #178c45; }
+.error { color: #d73d51; }
 
-.music-box {
-position: fixed;
-bottom: 15px;
-right: 15px;
-background: white;
-padding: 10px 12px;
-border-radius: 14px;
-display: flex;
-gap: 8px;
-align-items: center;
-box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-z-index: 999;
+#musicBtn {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  width: auto;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, var(--primary-dark), #ff7a88);
+  z-index: 3;
+  font-size: 14px;
+  color: white;
+  border: none;
+  cursor: pointer;
 }
 
-.music-btn {
-border: none;
-background: linear-gradient(180deg, #ff6b7a, #ff4d5f);
-color: white;
-border-radius: 10px;
-padding: 8px 12px;
-cursor: pointer;
-font-weight: bold;
-width: auto;
-}
+@media (max-width: 768px) {
+  .note {
+    width: 95px;
+    opacity: 0.42;
+  }
 
-#volume {
-width: 85px;
-cursor: pointer;
-accent-color: #ff5b6e;
+  .note.n1  { left: 1%; }
+  .note.n2  { left: 6%; }
+  .note.n3  { left: 12%; }
+  .note.n4  { left: 18%; }
+  .note.n5  { left: 24%; }
+  .note.n6  { left: 30%; }
+  .note.n7  { left: 36%; }
+  .note.n8  { left: 42%; }
+  .note.n9  { left: 48%; }
+  .note.n10 { left: 54%; }
+  .note.n11 { left: 60%; }
+  .note.n12 { left: 66%; }
+  .note.n13 { left: 72%; }
+  .note.n14 { left: 78%; }
+  .note.n15 { left: 84%; }
+  .note.n16 { left: 90%; }
+  .note.n17 { left: 14%; }
+  .note.n18 { left: 58%; }
+  .note.n19 { left: 26%; }
+  .note.n20 { left: 74%; }
 }
 
 @media (max-width: 480px) {
-.wrapper {
-padding: 24px 18px;
-}
-
-.logo-img {
-width: 180px;
-}
-
-.title {
-font-size: 18px;
-}
-
-.music-box {
-right: 12px;
-bottom: 12px;
-}
-
-#volume {
-width: 72px;
-}
+  .card { padding: 22px 18px 20px; max-width: 94vw; }
+  .logo-wrap { width: 210px; height: 94px; }
+  .logo { width: 160px; }
+  h2 { font-size: 24px; }
+  .stats { grid-template-columns: 1fr; }
+  .note {
+    width: 88px;
+    opacity: 0.44;
+  }
 }
 </style>
 </head>
 <body>
 
-<div class="wrapper">
-<div class="logo">
-<img src="farmasi.png" class="logo-img" alt="Farmasi Logo">
+<div class="money-rain">
+  <img src="gel100.png" class="note n1" alt="">
+  <img src="usd100.png" class="note n2" alt="">
+  <img src="gel200.png" class="note n3" alt="">
+  <img src="gel100.png" class="note n4" alt="">
+  <img src="usd100.png" class="note n5" alt="">
+  <img src="gel200.png" class="note n6" alt="">
+  <img src="gel100.png" class="note n7" alt="">
+  <img src="usd100.png" class="note n8" alt="">
+  <img src="gel200.png" class="note n9" alt="">
+  <img src="gel100.png" class="note n10" alt="">
+  <img src="usd100.png" class="note n11" alt="">
+  <img src="gel200.png" class="note n12" alt="">
+  <img src="gel100.png" class="note n13" alt="">
+  <img src="usd100.png" class="note n14" alt="">
+  <img src="gel200.png" class="note n15" alt="">
+  <img src="gel100.png" class="note n16" alt="">
+  <img src="usd100.png" class="note n17" alt="">
+  <img src="gel200.png" class="note n18" alt="">
+  <img src="gel100.png" class="note n19" alt="">
+  <img src="usd100.png" class="note n20" alt="">
 </div>
 
-<div class="title">ტრენინგზე რეგისტრაცია</div>
+<div class="page-wrap">
+  <div class="card">
+    <div class="logo-wrap">
+      <img src="farmasi.png" class="logo" alt="Farmasi Logo">
+    </div>
 
-<div class="info-box">
-<div class="info-title">📍 ტრენინგის დეტალები</div>
-<div class="info-row">📌 ქალაქი: თბილისი</div>
-<div class="info-row">📅 თარიღი: 28 მარტი</div>
-<div class="info-row">🕒 დრო: 12:00</div>
-<div class="info-row">🏢 ლოკაცია: Farmasi ოფისი</div>
+    <h2>ტრენინგზე რეგისტრაცია</h2>
+    <div class="subtitle">შეავსე ფორმა და დაადასტურე მონაწილეობა</div>
+
+    <div class="stats">
+      <div class="stat-box">
+        <div class="stat-num" id="totalCount">0</div>
+        <div class="stat-label">სულ</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num" id="todayCount">0</div>
+        <div class="stat-label">დღეს</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num" id="spotsLeft">-</div>
+        <div class="stat-label">დარჩა</div>
+      </div>
+    </div>
+
+    <div class="event">
+      <b>📍 ღონისძიების დეტალები</b>
+      <div id="eventCity" class="event-line">📍 ქალაქი: იტვირთება...</div>
+      <div id="eventDate" class="event-line">📅 თარიღი: ...</div>
+      <div id="eventTime" class="event-line">🕒 დრო: ...</div>
+      <div id="eventLocation" class="event-line">🏢 ლოკაცია: ...</div>
+    </div>
+
+    <form id="form">
+      <input name="first_name" placeholder="სახელი" required>
+      <input name="last_name" placeholder="გვარი" required>
+      <input name="phone" placeholder="ტელეფონი (599123456)" required>
+      <button id="btn" type="submit">დარეგისტრირება</button>
+    </form>
+
+    <div id="success" class="msg success"></div>
+    <div id="error" class="msg error"></div>
+  </div>
 </div>
 
-<form id="regForm">
-<input type="text" id="first_name" name="first_name" placeholder="სახელი" required>
-<input type="text" id="last_name" name="last_name" placeholder="გვარი" required>
-<input type="tel" id="phone" name="phone" placeholder="ტელეფონის ნომერი" required>
-<button id="submitBtn" class="main-btn" type="submit">დარეგისტრირება</button>
-</form>
-
-<div id="successMsg" class="msg success">რეგისტრაცია წარმატებით დასრულდა ✅</div>
-<div id="duplicateMsg" class="msg error">ეს ნომერი უკვე დარეგისტრირებულია ❌</div>
-<div id="invalidMsg" class="msg error">ტელეფონის ნომერი არასწორია ❌</div>
-<div id="errorMsg" class="msg error">დაფიქსირდა შეცდომა ❌ სცადე თავიდან</div>
-<div id="fullMsg" class="msg error">ადგილები სრულად შევსებულია ❌</div>
-<div id="closedMsg" class="msg error">რეგისტრაცია დახურულია ❌</div>
-</div>
-
-<audio id="music" loop preload="auto">
-<source src="music.mp3" type="audio/mpeg">
+<audio id="bgMusic" loop>
+  <source src="music.mp3" type="audio/mpeg">
 </audio>
 
-<div class="music-box">
-<button id="playBtn" class="music-btn" type="button">🎵</button>
-<input type="range" id="volume" min="0" max="1" step="0.01" value="0.3">
-</div>
+<button onclick="toggleMusic()" id="musicBtn">🔊 მუსიკა</button>
 
 <script>
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwTGSuyBoRMTn6-d5iN30JNwZ37srTThPxzGxubGAXz5RZrqlnjT-sgd_j6vi8cuJvN/exec";
-
-const form = document.getElementById("regForm");
-const submitBtn = document.getElementById("submitBtn");
-
-const successMsg = document.getElementById("successMsg");
-const errorMsg = document.getElementById("errorMsg");
-const duplicateMsg = document.getElementById("duplicateMsg");
-const invalidMsg = document.getElementById("invalidMsg");
-const fullMsg = document.getElementById("fullMsg");
-const closedMsg = document.getElementById("closedMsg");
-
-const music = document.getElementById("music");
-const playBtn = document.getElementById("playBtn");
-const volume = document.getElementById("volume");
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby-6G51SG_QFEHROFvm1PD8rsV5lWQIBDEAAtjXBBauUJ3UlYUU9AYUpx5CNSZk_hhe/exec";
 
 let playing = false;
-music.volume = 0.3;
+const form = document.getElementById("form");
+const btn = document.getElementById("btn");
+const successBox = document.getElementById("success");
+const errorBox = document.getElementById("error");
 
-playBtn.addEventListener("click", async () => {
-try {
-if (!playing) {
-await music.play();
-playing = true;
-playBtn.textContent = "🔇";
-} else {
-music.pause();
-playing = false;
-playBtn.textContent = "🎵";
+function toggleMusic() {
+  const music = document.getElementById("bgMusic");
+  const musicBtn = document.getElementById("musicBtn");
+
+  if (!playing) {
+    music.play();
+    musicBtn.innerText = "🔇 გამორთვა";
+    playing = true;
+  } else {
+    music.pause();
+    musicBtn.innerText = "🔊 მუსიკა";
+    playing = false;
+  }
 }
-} catch (e) {
-alert("მუსიკა ვერ ჩაირთო. გადაამოწმე music.mp3 ფაილი.");
+
+async function loadEvent() {
+  try {
+    const res = await fetch(SCRIPT_URL + "?t=" + Date.now());
+    const data = await res.json();
+
+    document.getElementById("eventCity").innerText = "📍 ქალაქი: " + data.city;
+    document.getElementById("eventDate").innerText = "📅 თარიღი: " + data.date;
+    document.getElementById("eventTime").innerText = "🕒 დრო: " + data.time;
+    document.getElementById("eventLocation").innerText = "🏢 ლოკაცია: " + data.location;
+
+    document.getElementById("totalCount").innerText = data.totalRegistrations ?? 0;
+    document.getElementById("todayCount").innerText = data.todayRegistrations ?? 0;
+    document.getElementById("spotsLeft").innerText =
+      data.spotsLeft === null ? "∞" : data.spotsLeft;
+  } catch (e) {
+    document.getElementById("eventCity").innerText = "❌ მონაცემები ვერ ჩაიტვირთა";
+  }
 }
+
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  successBox.style.display = "none";
+  errorBox.style.display = "none";
+
+  btn.disabled = true;
+  btn.innerText = "იგზავნება...";
+
+  try {
+    const res = await fetch(SCRIPT_URL, {
+      method: "POST",
+      body: new FormData(form)
+    });
+
+    const text = (await res.text()).trim();
+
+    if (text === "success") {
+      form.reset();
+      successBox.innerText = "რეგისტრაცია წარმატებულია ✅";
+      successBox.style.display = "block";
+      setTimeout(loadEvent, 800);
+    } else if (text === "duplicate") {
+      errorBox.innerText = "ეს ნომერი უკვე დარეგისტრირებულია ❌";
+      errorBox.style.display = "block";
+    } else if (text === "invalid") {
+      errorBox.innerText = "არასწორი ნომერი ❌";
+      errorBox.style.display = "block";
+    } else if (text === "closed") {
+      errorBox.innerText = "რეგისტრაცია დახურულია ❌";
+      errorBox.style.display = "block";
+    } else if (text === "full") {
+      errorBox.innerText = "ადგილები აღარ არის ❌";
+      errorBox.style.display = "block";
+    } else if (text === "sms error") {
+      errorBox.innerText = "SMS ვერ გაიგზავნა ❌";
+      errorBox.style.display = "block";
+    } else {
+      errorBox.innerText = "იგივე ნომრით მალე ხელახლა ცდა არ შეიძლება ⏳";
+      errorBox.style.display = "block";
+    }
+  } catch (err) {
+    errorBox.innerText = "სერვერთან კავშირი ვერ მოხერხდა ❌";
+    errorBox.style.display = "block";
+  }
+
+  btn.disabled = false;
+  btn.innerText = "დარეგისტრირება";
 });
 
-volume.addEventListener("input", () => {
-music.volume = parseFloat(volume.value);
-});
-
-form.addEventListener("submit", async function (e) {
-e.preventDefault();
-
-successMsg.style.display = "none";
-errorMsg.style.display = "none";
-duplicateMsg.style.display = "none";
-invalidMsg.style.display = "none";
-fullMsg.style.display = "none";
-closedMsg.style.display = "none";
-
-submitBtn.disabled = true;
-submitBtn.textContent = "იგზავნება...";
-
-const formData = new FormData();
-formData.append("first_name", document.getElementById("first_name").value);
-formData.append("last_name", document.getElementById("last_name").value);
-formData.append("phone", document.getElementById("phone").value);
-
-try {
-const response = await fetch(SCRIPT_URL, {
-method: "POST",
-body: formData
-});
-
-const result = (await response.text()).trim();
-
-if (result === "success") {
-form.reset();
-successMsg.style.display = "block";
-} else if (result === "duplicate") {
-duplicateMsg.style.display = "block";
-} else if (result === "invalid") {
-invalidMsg.style.display = "block";
-} else if (result === "full") {
-fullMsg.style.display = "block";
-} else if (result === "closed") {
-closedMsg.style.display = "block";
-} else {
-errorMsg.style.display = "block";
-}
-} catch (error) {
-errorMsg.style.display = "block";
-} finally {
-submitBtn.disabled = false;
-submitBtn.textContent = "დარეგისტრირება";
-}
-});
+loadEvent();
+setInterval(loadEvent, 5000);
 </script>
 
 </body>
