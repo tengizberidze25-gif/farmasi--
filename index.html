@@ -955,6 +955,88 @@
     }
 
     /* ============================================ */
+    /* MY TICKET CARD (after registration)           */
+    /* ============================================ */
+    .my-ticket-card {
+      margin-top: 10px;
+      padding: 12px 14px;
+      background: linear-gradient(135deg,
+        rgba(232, 196, 104, 0.18) 0%,
+        rgba(232, 196, 104, 0.08) 100%);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--gold);
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      box-shadow: 0 4px 18px rgba(232, 196, 104, 0.25);
+      animation: ticketPulse 2.4s ease-in-out infinite;
+    }
+
+    @keyframes ticketPulse {
+      0%, 100% { box-shadow: 0 4px 18px rgba(232, 196, 104, 0.25); }
+      50%      { box-shadow: 0 4px 28px rgba(232, 196, 104, 0.45); }
+    }
+
+    .my-ticket-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+      flex: 1;
+    }
+
+    .my-ticket-icon {
+      font-size: 24px;
+      flex-shrink: 0;
+    }
+
+    .my-ticket-text {
+      min-width: 0;
+    }
+
+    .my-ticket-label {
+      font-family: var(--sans-font);
+      font-size: 9.5px;
+      font-weight: 600;
+      letter-spacing: 1.6px;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 2px;
+    }
+
+    .my-ticket-id {
+      font-family: 'Courier New', monospace;
+      font-size: 13px;
+      letter-spacing: 1px;
+      color: var(--cream);
+      font-weight: 600;
+    }
+
+    .my-ticket-btn {
+      flex-shrink: 0;
+      padding: 8px 14px;
+      background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+      color: #1a1212;
+      border: none;
+      border-radius: 10px;
+      font-family: var(--sans-font);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 10px rgba(232, 196, 104, 0.3);
+    }
+
+    .my-ticket-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(232, 196, 104, 0.4);
+    }
+
+    /* ============================================ */
     /* MODAL X CLOSE BUTTON                          */
     /* ============================================ */
     .modal-close-x {
@@ -1650,7 +1732,7 @@
     /* Smart layouts based on speaker count */
     .speakers-grid.count-1 {
       grid-template-columns: 1fr;
-      max-width: 260px;
+      max-width: 320px;
       margin-left: auto;
       margin-right: auto;
     }
@@ -1726,6 +1808,42 @@
       object-fit: cover;
       display: block;
       border-radius: 50%;
+    }
+
+    /* === Hero treatment when there's only 1 speaker === */
+    .speakers-grid.count-1 .speaker {
+      padding: 22px 16px 18px;
+    }
+
+    .speakers-grid.count-1 .speaker-avatar {
+      width: 110px;
+      height: 110px;
+      margin-bottom: 14px;
+      border-width: 3px;
+      box-shadow:
+        0 12px 28px rgba(232, 196, 104, 0.35),
+        0 0 0 6px rgba(232, 196, 104, 0.08),
+        inset 0 1px 0 rgba(255, 255, 255, 0.4);
+      animation: heroAvatarFloat 5s ease-in-out infinite;
+    }
+
+    .speakers-grid.count-1 .speaker-avatar:not(.has-photo) {
+      font-size: 38px;
+    }
+
+    .speakers-grid.count-1 .speaker-name {
+      font-size: 19px;
+      margin-bottom: 4px;
+    }
+
+    .speakers-grid.count-1 .speaker-role {
+      font-size: 10.5px;
+      letter-spacing: 1.2px;
+    }
+
+    @keyframes heroAvatarFloat {
+      0%, 100% { transform: translateY(0); }
+      50%      { transform: translateY(-3px); }
     }
 
     .speaker-name {
@@ -2048,6 +2166,358 @@
     .modal-compact .modal-title {
       margin-bottom: 14px;
       font-size: 26px;
+    }
+
+    /* ============================================ */
+    /* TRANSPORT CARD                                */
+    /* ============================================ */
+    .transport-card {
+      background:
+        linear-gradient(135deg,
+          rgba(255, 96, 117, 0.08) 0%,
+          rgba(232, 196, 104, 0.05) 100%),
+        var(--bg-card);
+      border: 1px solid var(--border-strong);
+      position: relative;
+      overflow: hidden;
+      padding: 0 !important;
+    }
+
+    /* Inner padding wrapper (since we removed it for the photo to extend edge-to-edge) */
+    .transport-card > .transport-header,
+    .transport-card > .transport-body {
+      margin-left: 12px;
+      margin-right: 12px;
+    }
+
+    .transport-card > .transport-header {
+      margin-top: 12px;
+    }
+
+    .transport-card > .transport-body {
+      margin-bottom: 12px;
+    }
+
+    /* Photo banner / slideshow */
+    .transport-photo {
+      position: relative;
+      width: 100%;
+      height: 160px;
+      overflow: hidden;
+      background: #1a1212;
+      margin-bottom: 12px;
+    }
+
+    .transport-slides {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .transport-slide {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      background-size: cover;
+      background-position: center;
+      opacity: 0;
+      transition: opacity 1.4s cubic-bezier(0.4, 0, 0.2, 1);
+      transform: scale(1.05);
+      animation: photoZoom 14s ease-in-out infinite alternate;
+    }
+
+    .transport-slide.active {
+      opacity: 1;
+      z-index: 1;
+    }
+
+    @keyframes photoZoom {
+      0%   { transform: scale(1.05); }
+      100% { transform: scale(1.14); }
+    }
+
+    .transport-photo-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg,
+        transparent 0%,
+        transparent 50%,
+        rgba(20, 14, 16, 0.5) 85%,
+        rgba(20, 14, 16, 0.92) 100%);
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    /* Slide indicator dots (only shown if 2+ photos) */
+    .transport-dots {
+      position: absolute;
+      bottom: 8px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 6px;
+      z-index: 3;
+      pointer-events: none;
+    }
+
+    .transport-dots:empty {
+      display: none;
+    }
+
+    .transport-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.4);
+      transition: all 0.4s ease;
+    }
+
+    .transport-dot.active {
+      background: var(--gold-light);
+      box-shadow: 0 0 8px rgba(232, 196, 104, 0.7);
+      width: 18px;
+      border-radius: 999px;
+    }
+
+    .transport-card::before {
+      content: '';
+      position: absolute;
+      top: -1px;
+      left: 18%;
+      right: 18%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      filter: blur(1px);
+      z-index: 2;
+    }
+
+    .transport-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .transport-icon-wrap {
+      flex-shrink: 0;
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--pink), var(--pink-dark));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 6px 16px var(--pink-glow);
+      animation: busFloat 3s ease-in-out infinite;
+    }
+
+    @keyframes busFloat {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-3px); }
+    }
+
+    .transport-icon {
+      font-size: 22px;
+    }
+
+    .transport-title-block {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .transport-title {
+      font-family: var(--display-font);
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--cream);
+      line-height: 1.25;
+    }
+
+    .transport-body {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .transport-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 8px 10px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+    }
+
+    .transport-row[hidden] {
+      display: none;
+    }
+
+    .transport-row-icon {
+      flex-shrink: 0;
+      font-size: 14px;
+      line-height: 1.4;
+    }
+
+    .transport-row-content {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .transport-row-label {
+      font-family: var(--sans-font);
+      font-size: 8.5px;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 2px;
+    }
+
+    .transport-row-value {
+      font-family: var(--geo-font);
+      font-size: 12.5px;
+      color: var(--cream);
+      line-height: 1.4;
+      word-break: break-word;
+    }
+
+    .transport-map-btn {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-top: 4px;
+      padding: 11px 14px;
+      background: linear-gradient(135deg, var(--pink), var(--pink-dark));
+      color: white !important;
+      text-decoration: none;
+      border-radius: 11px;
+      font-family: var(--sans-font);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      box-shadow: 0 6px 18px var(--pink-glow);
+      transition: all 0.25s ease;
+    }
+
+    .transport-map-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 24px var(--pink-glow);
+    }
+
+    .transport-map-btn .transport-arrow {
+      font-size: 16px;
+      transition: transform 0.25s ease;
+    }
+
+    .transport-map-btn:hover .transport-arrow {
+      transform: translateX(4px);
+    }
+
+    /* ============================================ */
+    /* MODAL TRANSPORT BANNER (in register modal)   */
+    /* ============================================ */
+    .modal-transport-banner {
+      position: relative;
+      width: calc(100% + 32px);
+      margin: -20px -16px 14px;
+      height: 140px;
+      overflow: hidden;
+      border-radius: 22px 22px 0 0;
+      background: #1a1212;
+    }
+
+    .modal-transport-slides {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .modal-transport-slide {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      background-size: cover;
+      background-position: center;
+      opacity: 0;
+      transition: opacity 1.4s cubic-bezier(0.4, 0, 0.2, 1);
+      transform: scale(1.05);
+      animation: photoZoom 14s ease-in-out infinite alternate;
+    }
+
+    .modal-transport-slide.active {
+      opacity: 1;
+      z-index: 1;
+    }
+
+    .modal-transport-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg,
+        rgba(20, 14, 16, 0.15) 0%,
+        rgba(20, 14, 16, 0.35) 50%,
+        rgba(20, 14, 16, 0.92) 100%);
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    .modal-transport-label {
+      position: absolute;
+      bottom: 12px;
+      left: 14px;
+      right: 14px;
+      z-index: 3;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--sans-font);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      color: var(--cream);
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+    }
+
+    .modal-transport-icon {
+      flex-shrink: 0;
+      font-size: 18px;
+      filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.5));
+    }
+
+    .modal-transport-dots {
+      position: absolute;
+      top: 10px;
+      right: 12px;
+      z-index: 3;
+      display: flex;
+      gap: 5px;
+    }
+
+    .modal-transport-dots:empty {
+      display: none;
+    }
+
+    .modal-transport-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.45);
+      transition: all 0.4s ease;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+    }
+
+    .modal-transport-dot.active {
+      background: var(--gold-light);
+      width: 18px;
+      border-radius: 999px;
+      box-shadow: 0 0 8px rgba(232, 196, 104, 0.7);
     }
 
     /* Very small phones (≤360px) — iPhone SE 1st gen, older Android */
@@ -2377,6 +2847,55 @@
       <div class="info-row" id="infoHotel"></div>
     </div>
 
+    <!-- TRANSPORT -->
+    <div class="glass-card transport-card" id="transportCard" style="display:none;">
+      <div class="transport-photo" id="transportPhoto" style="display:none;">
+        <div class="transport-slides" id="transportSlides"></div>
+        <div class="transport-photo-overlay"></div>
+        <div class="transport-dots" id="transportDots"></div>
+      </div>
+
+      <div class="transport-header">
+        <div class="transport-icon-wrap">
+          <span class="transport-icon">🚌</span>
+        </div>
+        <div class="transport-title-block">
+          <div class="card-eyebrow" style="margin-bottom:2px;">ტრანსპორტი</div>
+          <div class="transport-title" id="transportTitle">ბრენდირებული ავტობუსით თბილისიდან</div>
+        </div>
+      </div>
+
+      <div class="transport-body">
+        <div class="transport-row" id="transportTimeRow">
+          <span class="transport-row-icon">⏰</span>
+          <div class="transport-row-content">
+            <div class="transport-row-label">გასვლის დრო</div>
+            <div class="transport-row-value" id="transportTime"></div>
+          </div>
+        </div>
+
+        <div class="transport-row" id="transportAddressRow">
+          <span class="transport-row-icon">📍</span>
+          <div class="transport-row-content">
+            <div class="transport-row-label">გასვლის ადგილი</div>
+            <div class="transport-row-value" id="transportAddress"></div>
+          </div>
+        </div>
+
+        <div class="transport-row" id="transportNoteRow">
+          <span class="transport-row-icon">ℹ️</span>
+          <div class="transport-row-content">
+            <div class="transport-row-value" id="transportNote" style="font-style:italic; color:var(--cream-dim);"></div>
+          </div>
+        </div>
+
+        <a class="transport-map-btn" id="transportMapBtn" href="#" target="_blank" rel="noopener" style="display:none;">
+          <span>📍 რუკაზე ნახვა</span>
+          <span class="transport-arrow">→</span>
+        </a>
+      </div>
+    </div>
+
     <button class="btn btn-ghost" id="scheduleBtn" type="button">✦ სრული პროგრამის ნახვა ✦</button>
 
     <!-- CTA SECTION: Opens register modal -->
@@ -2400,6 +2919,20 @@
           <span class="dot"></span>
           <span>რეგისტრაცია სულ რაღაც 30 წამში</span>
         </div>
+      </div>
+
+      <!-- MY TICKET CARD — shows after successful registration -->
+      <div class="my-ticket-card" id="myTicketCard" style="display:none;">
+        <div class="my-ticket-info">
+          <div class="my-ticket-icon">🎫</div>
+          <div class="my-ticket-text">
+            <div class="my-ticket-label">შენი ბილეთი მზადაა</div>
+            <div class="my-ticket-id" id="myTicketIdLabel">FM-2026-00000</div>
+          </div>
+        </div>
+        <button class="my-ticket-btn" id="showMyTicketBtn" type="button">
+          ნახვა →
+        </button>
       </div>
     </section>
 
@@ -2467,6 +3000,18 @@
   <div class="modal" id="registerModal">
     <div class="modal-content modal-compact">
       <button class="modal-close-x" id="closeRegisterX" type="button" aria-label="Close">×</button>
+
+      <!-- Transport photo banner inside modal (cinematic, slideshow if multiple photos) -->
+      <div class="modal-transport-banner" id="modalTransportBanner" style="display:none;">
+        <div class="modal-transport-slides" id="modalTransportSlides"></div>
+        <div class="modal-transport-overlay"></div>
+        <div class="modal-transport-label">
+          <span class="modal-transport-icon">🚌</span>
+          <span id="modalTransportLabel">ბრენდირებული ავტობუსი თბილისიდან</span>
+        </div>
+        <div class="modal-transport-dots" id="modalTransportDots"></div>
+      </div>
+
       <div class="modal-subtitle">RSVP</div>
       <div class="modal-title">დაიკავე <span class="accent">ადგილი</span></div>
 
@@ -2602,7 +3147,10 @@
       "speaker_3_name","speaker_3_role","speaker_3_photo",
       "speaker_4_name","speaker_4_role","speaker_4_photo",
       "speaker_5_name","speaker_5_role","speaker_5_photo",
-      "speaker_6_name","speaker_6_role","speaker_6_photo"
+      "speaker_6_name","speaker_6_role","speaker_6_photo",
+      // Transport (bus/sprinter from Tbilisi)
+      "transport_address","transport_map","transport_time","transport_note","transport_type",
+      "transport_photo","transport_photo_2","transport_photo_3","transport_photo_4","transport_photo_5"
     ]);
 
     const els = {
@@ -2682,10 +3230,37 @@
 
       // Speakers
       speakersCard: document.getElementById("speakersCard"),
-      speakersGrid: document.getElementById("speakersGrid")
+      speakersGrid: document.getElementById("speakersGrid"),
+
+      // Transport
+      transportCard: document.getElementById("transportCard"),
+      transportPhoto: document.getElementById("transportPhoto"),
+      transportSlides: document.getElementById("transportSlides"),
+      transportDots: document.getElementById("transportDots"),
+      transportTitle: document.getElementById("transportTitle"),
+      transportTimeRow: document.getElementById("transportTimeRow"),
+      transportTime: document.getElementById("transportTime"),
+      transportAddressRow: document.getElementById("transportAddressRow"),
+      transportAddress: document.getElementById("transportAddress"),
+      transportNoteRow: document.getElementById("transportNoteRow"),
+      transportNote: document.getElementById("transportNote"),
+      transportMapBtn: document.getElementById("transportMapBtn"),
+
+      // Modal transport banner (inside register modal)
+      modalTransportBanner: document.getElementById("modalTransportBanner"),
+      modalTransportSlides: document.getElementById("modalTransportSlides"),
+      modalTransportDots: document.getElementById("modalTransportDots"),
+      modalTransportLabel: document.getElementById("modalTransportLabel"),
+
+      // My ticket persistence
+      myTicketCard: document.getElementById("myTicketCard"),
+      myTicketIdLabel: document.getElementById("myTicketIdLabel"),
+      showMyTicketBtn: document.getElementById("showMyTicketBtn")
     };
 
     let lastConfig = {}; // store the latest config for ticket/calendar use
+    let transportSlideshowTimer = null;
+    let modalTransportSlideshowTimer = null;
 
     els.music.volume = 0.3;
     els.boom.volume = 0.55;
@@ -2801,6 +3376,187 @@
         els.urgencyBanner.classList.add("show");
       } else {
         els.urgencyBanner.classList.remove("show");
+      }
+    }
+
+    // ============= TRANSPORT =============
+    function collectTransportPhotos(config) {
+      // Collect up to 5 photos: transport_photo, transport_photo_2..5
+      const photos = [];
+      const candidates = [
+        config.transport_photo,
+        config.transport_photo_2,
+        config.transport_photo_3,
+        config.transport_photo_4,
+        config.transport_photo_5
+      ];
+      candidates.forEach(p => {
+        const url = safeText(p);
+        if (isUrl(url)) photos.push(url);
+      });
+      return photos;
+    }
+
+    function startTransportSlideshow(photos) {
+      // Clear any previous timer
+      if (transportSlideshowTimer) {
+        clearInterval(transportSlideshowTimer);
+        transportSlideshowTimer = null;
+      }
+
+      // Build slides
+      els.transportSlides.innerHTML = "";
+      els.transportDots.innerHTML = "";
+
+      if (!photos.length) {
+        els.transportPhoto.style.display = "none";
+        return;
+      }
+
+      els.transportPhoto.style.display = "block";
+
+      photos.forEach((url, i) => {
+        const slide = document.createElement("div");
+        slide.className = "transport-slide" + (i === 0 ? " active" : "");
+        slide.style.backgroundImage = `url('${url}')`;
+        els.transportSlides.appendChild(slide);
+
+        // Only show dots if multiple photos
+        if (photos.length > 1) {
+          const dot = document.createElement("div");
+          dot.className = "transport-dot" + (i === 0 ? " active" : "");
+          els.transportDots.appendChild(dot);
+        }
+      });
+
+      // If multiple photos — auto rotate every 5 seconds
+      if (photos.length > 1) {
+        let currentIndex = 0;
+        transportSlideshowTimer = setInterval(() => {
+          const slides = els.transportSlides.children;
+          const dots = els.transportDots.children;
+
+          slides[currentIndex].classList.remove("active");
+          dots[currentIndex] && dots[currentIndex].classList.remove("active");
+
+          currentIndex = (currentIndex + 1) % photos.length;
+
+          slides[currentIndex].classList.add("active");
+          dots[currentIndex] && dots[currentIndex].classList.add("active");
+        }, 5000);
+      }
+    }
+
+    function renderTransport(config) {
+      const address = safeText(config.transport_address);
+      const map = safeText(config.transport_map);
+      const time = safeText(config.transport_time);
+      const note = safeText(config.transport_note);
+      const type = safeText(config.transport_type);
+      const photos = collectTransportPhotos(config);
+
+      // Build modal banner regardless of card visibility
+      buildModalTransportBanner(photos, type);
+
+      // If nothing is set, hide entire card
+      if (!address && !map && !time && !note && !type && !photos.length) {
+        els.transportCard.style.display = "none";
+        return;
+      }
+
+      els.transportCard.style.display = "block";
+
+      // Photo slideshow (handles 0, 1, or 2+ photos)
+      startTransportSlideshow(photos);
+
+      // Title (transport_type or default)
+      els.transportTitle.textContent = type || "ბრენდირებული ავტობუსით თბილისიდან";
+
+      // Time row
+      if (time) {
+        els.transportTime.textContent = time;
+        els.transportTimeRow.removeAttribute("hidden");
+      } else {
+        els.transportTimeRow.setAttribute("hidden", "");
+      }
+
+      // Address row
+      if (address) {
+        els.transportAddress.textContent = address;
+        els.transportAddressRow.removeAttribute("hidden");
+      } else {
+        els.transportAddressRow.setAttribute("hidden", "");
+      }
+
+      // Note row
+      if (note) {
+        els.transportNote.textContent = note;
+        els.transportNoteRow.removeAttribute("hidden");
+      } else {
+        els.transportNoteRow.setAttribute("hidden", "");
+      }
+
+      // Map button
+      if (isUrl(map)) {
+        els.transportMapBtn.href = map;
+        els.transportMapBtn.style.display = "flex";
+      } else {
+        els.transportMapBtn.style.display = "none";
+      }
+    }
+
+    // ============= MODAL TRANSPORT BANNER =============
+    function buildModalTransportBanner(photos, type) {
+      // Clear any previous timer
+      if (modalTransportSlideshowTimer) {
+        clearInterval(modalTransportSlideshowTimer);
+        modalTransportSlideshowTimer = null;
+      }
+
+      // Clear slides and dots
+      els.modalTransportSlides.innerHTML = "";
+      els.modalTransportDots.innerHTML = "";
+
+      if (!photos.length) {
+        els.modalTransportBanner.style.display = "none";
+        return;
+      }
+
+      els.modalTransportBanner.style.display = "block";
+
+      // Set the label
+      els.modalTransportLabel.textContent = type || "ბრენდირებული ავტობუსი თბილისიდან";
+
+      // Build slides
+      photos.forEach((url, i) => {
+        const slide = document.createElement("div");
+        slide.className = "modal-transport-slide" + (i === 0 ? " active" : "");
+        slide.style.backgroundImage = `url('${url}')`;
+        els.modalTransportSlides.appendChild(slide);
+
+        // Only show dots if multiple photos
+        if (photos.length > 1) {
+          const dot = document.createElement("div");
+          dot.className = "modal-transport-dot" + (i === 0 ? " active" : "");
+          els.modalTransportDots.appendChild(dot);
+        }
+      });
+
+      // If multiple photos — auto rotate every 5 seconds
+      if (photos.length > 1) {
+        let currentIndex = 0;
+        modalTransportSlideshowTimer = setInterval(() => {
+          const slides = els.modalTransportSlides.children;
+          const dots = els.modalTransportDots.children;
+
+          slides[currentIndex].classList.remove("active");
+          dots[currentIndex] && dots[currentIndex].classList.remove("active");
+
+          currentIndex = (currentIndex + 1) % photos.length;
+
+          slides[currentIndex].classList.add("active");
+          dots[currentIndex] && dots[currentIndex].classList.add("active");
+        }, 5000);
       }
     }
 
@@ -3190,6 +3946,7 @@
         renderNextTier(data);
         renderInfo(data.config || {});
         renderExtraFields(data.config || {});
+        renderTransport(data.config || {});
         renderSpeakers(data.config || {});
         renderSchedule(data.config || {});
         renderFAQ(data.config || {});
@@ -3221,6 +3978,68 @@
         } catch (_) {}
         return null;
       }
+    }
+
+    // ============= MY TICKET PERSISTENCE =============
+    const TICKET_STORAGE_KEY = "farmasi_my_ticket_v1";
+
+    function saveMyTicket(registrationData, formData) {
+      try {
+        const data = {
+          ticket_id: (registrationData && registrationData.ticket_id) || null,
+          tier: (registrationData && registrationData.tier) || "Standard",
+          first_name: formData.first_name || "",
+          last_name: formData.last_name || "",
+          phone: formData.phone || "",
+          city: formData.city_area_village || "",
+          position: formData.position || "",
+          saved_at: new Date().toISOString()
+        };
+        localStorage.setItem(TICKET_STORAGE_KEY, JSON.stringify(data));
+      } catch (e) {
+        // localStorage might be disabled — silently ignore
+      }
+    }
+
+    function loadMyTicket() {
+      try {
+        const raw = localStorage.getItem(TICKET_STORAGE_KEY);
+        if (!raw) return null;
+        return JSON.parse(raw);
+      } catch (e) {
+        return null;
+      }
+    }
+
+    function clearMyTicket() {
+      try { localStorage.removeItem(TICKET_STORAGE_KEY); } catch (e) {}
+    }
+
+    function refreshMyTicketCard() {
+      const t = loadMyTicket();
+      if (!t || !t.ticket_id) {
+        els.myTicketCard.style.display = "none";
+        return;
+      }
+      els.myTicketIdLabel.textContent = t.ticket_id;
+      els.myTicketCard.style.display = "flex";
+    }
+
+    function reopenMyTicket() {
+      const t = loadMyTicket();
+      if (!t) return;
+      const formData = {
+        first_name: t.first_name,
+        last_name: t.last_name,
+        city_area_village: t.city,
+        position: t.position,
+        phone: t.phone
+      };
+      const registrationData = {
+        ticket_id: t.ticket_id,
+        tier: t.tier
+      };
+      showTicketModal(registrationData, formData);
     }
 
     // ============= TICKET MODAL =============
@@ -3399,6 +4218,9 @@
         triggerRewardEffects();
         fireConfetti();
 
+        // Save ticket to localStorage so user can re-open it later
+        saveMyTicket(response, formData);
+
         // Reload data first to get updated stats
         await loadData();
 
@@ -3410,6 +4232,7 @@
           // Show ticket modal after register modal closes
           setTimeout(() => {
             showTicketModal(response, formData);
+            refreshMyTicketCard();
           }, 350);
         }, 1400);
 
@@ -3433,6 +4256,15 @@
         });
         els.cancelForm.reset();
         showMessage("success", "გაუქმების მოთხოვნა გაიგზავნა ✓", els.cancelSuccess);
+
+        // Clear local ticket if the cancelled phone matches saved one
+        const t = loadMyTicket();
+        const cancelledPhone = String(document.getElementById("cancel_phone").value || "").replace(/\D/g, "");
+        if (t && String(t.phone || "").replace(/\D/g, "") === cancelledPhone) {
+          clearMyTicket();
+          refreshMyTicketCard();
+        }
+
         await loadData();
       } catch (err) {
         showMessage("error", "გაუქმება ვერ შესრულდა ⚠", els.cancelError);
@@ -3517,6 +4349,8 @@
       setupToggles();
       els.registerForm.addEventListener("submit", submitRegisterForm);
       els.cancelForm.addEventListener("submit", submitCancelForm);
+      els.showMyTicketBtn.addEventListener("click", reopenMyTicket);
+      refreshMyTicketCard();
       startSimulatedRegistrations();
       await loadData();
     }
