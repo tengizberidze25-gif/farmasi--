@@ -2180,105 +2180,6 @@
       border: 1px solid var(--border-strong);
       position: relative;
       overflow: hidden;
-      padding: 0 !important;
-    }
-
-    /* Inner padding wrapper (since we removed it for the photo to extend edge-to-edge) */
-    .transport-card > .transport-header,
-    .transport-card > .transport-body {
-      margin-left: 12px;
-      margin-right: 12px;
-    }
-
-    .transport-card > .transport-header {
-      margin-top: 12px;
-    }
-
-    .transport-card > .transport-body {
-      margin-bottom: 12px;
-    }
-
-    /* Photo banner / slideshow */
-    .transport-photo {
-      position: relative;
-      width: 100%;
-      height: 160px;
-      overflow: hidden;
-      background: #1a1212;
-      margin-bottom: 12px;
-    }
-
-    .transport-slides {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-    }
-
-    .transport-slide {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      background-size: cover;
-      background-position: center;
-      opacity: 0;
-      transition: opacity 1.4s cubic-bezier(0.4, 0, 0.2, 1);
-      transform: scale(1.05);
-      animation: photoZoom 14s ease-in-out infinite alternate;
-    }
-
-    .transport-slide.active {
-      opacity: 1;
-      z-index: 1;
-    }
-
-    @keyframes photoZoom {
-      0%   { transform: scale(1.05); }
-      100% { transform: scale(1.14); }
-    }
-
-    .transport-photo-overlay {
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(180deg,
-        transparent 0%,
-        transparent 50%,
-        rgba(20, 14, 16, 0.5) 85%,
-        rgba(20, 14, 16, 0.92) 100%);
-      pointer-events: none;
-      z-index: 2;
-    }
-
-    /* Slide indicator dots (only shown if 2+ photos) */
-    .transport-dots {
-      position: absolute;
-      bottom: 8px;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      gap: 6px;
-      z-index: 3;
-      pointer-events: none;
-    }
-
-    .transport-dots:empty {
-      display: none;
-    }
-
-    .transport-dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.4);
-      transition: all 0.4s ease;
-    }
-
-    .transport-dot.active {
-      background: var(--gold-light);
-      box-shadow: 0 0 8px rgba(232, 196, 104, 0.7);
-      width: 18px;
-      border-radius: 999px;
     }
 
     .transport-card::before {
@@ -2421,6 +2322,11 @@
     /* ============================================ */
     /* MODAL TRANSPORT BANNER (in register modal)   */
     /* ============================================ */
+    @keyframes photoZoom {
+      0%   { transform: scale(1.05); }
+      100% { transform: scale(1.14); }
+    }
+
     .modal-transport-banner {
       position: relative;
       width: calc(100% + 32px);
@@ -2849,12 +2755,6 @@
 
     <!-- TRANSPORT -->
     <div class="glass-card transport-card" id="transportCard" style="display:none;">
-      <div class="transport-photo" id="transportPhoto" style="display:none;">
-        <div class="transport-slides" id="transportSlides"></div>
-        <div class="transport-photo-overlay"></div>
-        <div class="transport-dots" id="transportDots"></div>
-      </div>
-
       <div class="transport-header">
         <div class="transport-icon-wrap">
           <span class="transport-icon">🚌</span>
@@ -3234,9 +3134,6 @@
 
       // Transport
       transportCard: document.getElementById("transportCard"),
-      transportPhoto: document.getElementById("transportPhoto"),
-      transportSlides: document.getElementById("transportSlides"),
-      transportDots: document.getElementById("transportDots"),
       transportTitle: document.getElementById("transportTitle"),
       transportTimeRow: document.getElementById("transportTimeRow"),
       transportTime: document.getElementById("transportTime"),
@@ -3398,53 +3295,9 @@
     }
 
     function startTransportSlideshow(photos) {
-      // Clear any previous timer
-      if (transportSlideshowTimer) {
-        clearInterval(transportSlideshowTimer);
-        transportSlideshowTimer = null;
-      }
-
-      // Build slides
-      els.transportSlides.innerHTML = "";
-      els.transportDots.innerHTML = "";
-
-      if (!photos.length) {
-        els.transportPhoto.style.display = "none";
-        return;
-      }
-
-      els.transportPhoto.style.display = "block";
-
-      photos.forEach((url, i) => {
-        const slide = document.createElement("div");
-        slide.className = "transport-slide" + (i === 0 ? " active" : "");
-        slide.style.backgroundImage = `url('${url}')`;
-        els.transportSlides.appendChild(slide);
-
-        // Only show dots if multiple photos
-        if (photos.length > 1) {
-          const dot = document.createElement("div");
-          dot.className = "transport-dot" + (i === 0 ? " active" : "");
-          els.transportDots.appendChild(dot);
-        }
-      });
-
-      // If multiple photos — auto rotate every 5 seconds
-      if (photos.length > 1) {
-        let currentIndex = 0;
-        transportSlideshowTimer = setInterval(() => {
-          const slides = els.transportSlides.children;
-          const dots = els.transportDots.children;
-
-          slides[currentIndex].classList.remove("active");
-          dots[currentIndex] && dots[currentIndex].classList.remove("active");
-
-          currentIndex = (currentIndex + 1) % photos.length;
-
-          slides[currentIndex].classList.add("active");
-          dots[currentIndex] && dots[currentIndex].classList.add("active");
-        }, 5000);
-      }
+      // No-op: main transport card no longer has photo banner.
+      // Photos now only appear in the registration modal banner.
+      return;
     }
 
     function renderTransport(config) {
@@ -3465,9 +3318,6 @@
       }
 
       els.transportCard.style.display = "block";
-
-      // Photo slideshow (handles 0, 1, or 2+ photos)
-      startTransportSlideshow(photos);
 
       // Title (transport_type or default)
       els.transportTitle.textContent = type || "ბრენდირებული ავტობუსით თბილისიდან";
