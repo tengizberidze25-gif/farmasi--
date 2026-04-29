@@ -42,6 +42,12 @@ function doGet(e) {
       return jsonResponse({ ok: false, error: 'Sheets not found' });
     }
 
+    // 🎫 Lookup ticket by ID (called from URL ?action=getTicket&id=FM-2026-00001)
+    const action = e && e.parameter && e.parameter.action;
+    if (action === 'getTicket') {
+      return handleGetTicket(regSheet, configSheet, e.parameter.id);
+    }
+
     const config = readConfig(configSheet);
     const data = regSheet.getDataRange().getValues();
     const rows = data.slice(1).filter(r => r[0]);
@@ -245,20 +251,48 @@ function handleCancel(params) {
 function readConfig(sheet) {
   const config = {};
   const data = sheet.getDataRange().getValues();
+
+  // Keys that should be formatted as time (HH:mm) when they are Date objects
+  const TIME_KEYS = [
+    'event_time',
+    'meeting_end_time',
+    'transport_time',
+    'reminder_2h'
+  ];
+
+  // Keys that should be formatted as date (yyyy-MM-dd) when they are Date objects
+  const DATE_KEYS = [
+    'event_date',
+    'reminder_day'
+  ];
+
   for (let i = 0; i < data.length; i++) {
     const key = String(data[i][0] || '').trim();
-    if (key) {
-      let val = data[i][1];
-      if (val instanceof Date) {
-        if (key === 'event_date') {
-          val = Utilities.formatDate(val, 'Asia/Tbilisi', 'yyyy-MM-dd');
-        } else if (key === 'event_time') {
+    if (!key) continue;
+
+    let val = data[i][1];
+
+    // Handle Date objects intelligently based on the key
+    if (val instanceof Date) {
+      if (DATE_KEYS.indexOf(key) !== -1) {
+        val = Utilities.formatDate(val, 'Asia/Tbilisi', 'yyyy-MM-dd');
+      } else if (TIME_KEYS.indexOf(key) !== -1) {
+        val = Utilities.formatDate(val, 'Asia/Tbilisi', 'HH:mm');
+      } else {
+        // For any other Date-typed field — try to be smart:
+        // If the year is 1899 (Sheet's "time-only" sentinel year), format as time
+        // Otherwise, format as datetime
+        if (val.getFullYear() === 1899) {
           val = Utilities.formatDate(val, 'Asia/Tbilisi', 'HH:mm');
+        } else {
+          val = Utilities.formatDate(val, 'Asia/Tbilisi', 'yyyy-MM-dd HH:mm');
         }
       }
-      config[key] = String(val || '');
     }
+
+    config[key] = String(val || '');
   }
+
   return config;
 }
 
@@ -325,6 +359,40 @@ function notifyTelegram(config, data) {
       );
     } catch (e) {}
   });
+}
+
+// =================== GET TICKET BY ID ===================
+function handleGetTicket(regSheet, configSheet, ticketId) {
+  ticketId = String(ticketId || '').trim();
+  if (!ticketId) {
+    return jsonResponse({ ok: false, error: 'Ticket ID required' });
+  }
+
+  const data = regSheet.getDataRange().getValues();
+  const config = readConfig(configSheet);
+
+  // Search rows for matching ticket_id (column G, index 6)
+  for (let i = 1; i < data.length; i++) {
+    if (String(data[i][6]).trim() === ticketId) {
+      return jsonResponse({
+        ok: true,
+        ticket: {
+          ticket_id: ticketId,
+          first_name: String(data[i][1] || '').trim(),
+          last_name: String(data[i][2] || '').trim(),
+          city: String(data[i][3] || '').trim(),
+          // phone is sensitive — return masked
+          phone: maskPhone(String(data[i][4] || '')),
+          position: String(data[i][5] || '').trim(),
+          tier: String(data[i][7] || 'Standard').trim(),
+          seat_number: parseInt(data[i][8]) || null
+        },
+        config: config
+      });
+    }
+  }
+
+  return jsonResponse({ ok: false, error: 'Ticket not found' });
 }
 
 // =================== SMS via bulksms.ge (POSTA GUVERCINI) ===================
@@ -415,7 +483,8 @@ function composeTicketSMS(data) {
     text += '📍 ' + addr + '\n';
   }
 
-  text += '\n🔗 ' + SITE_BASE_URL;
+  // Personalized ticket link — opens ticket directly with QR code
+  text += '\n🎫 ბილეთი: ' + SITE_BASE_URL + '/?t=' + encodeURIComponent(data.ticket_id || '');
 
   return text;
 }
