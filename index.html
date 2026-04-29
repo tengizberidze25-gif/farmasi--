@@ -1015,6 +1015,13 @@
       font-weight: 600;
     }
 
+    .my-ticket-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
     .my-ticket-btn {
       flex-shrink: 0;
       padding: 8px 14px;
@@ -1034,6 +1041,29 @@
     .my-ticket-btn:hover {
       transform: translateY(-1px);
       box-shadow: 0 6px 16px rgba(232, 196, 104, 0.4);
+    }
+
+    .my-ticket-clear {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--cream-dim);
+      font-size: 16px;
+      line-height: 1;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      transition: all 0.2s ease;
+    }
+
+    .my-ticket-clear:hover {
+      background: rgba(255, 96, 117, 0.15);
+      border-color: var(--pink);
+      color: var(--pink);
     }
 
     /* ============================================ */
@@ -2014,6 +2044,42 @@
       letter-spacing: 0.4px;
     }
 
+    /* Seat info on ticket */
+    .ticket-seat {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 12px;
+      padding: 7px 14px;
+      background: linear-gradient(135deg,
+        rgba(232, 196, 104, 0.18),
+        rgba(232, 196, 104, 0.08));
+      border: 1px solid var(--gold);
+      border-radius: 999px;
+      box-shadow: 0 4px 12px rgba(232, 196, 104, 0.2);
+    }
+
+    .ticket-seat-icon {
+      font-size: 14px;
+    }
+
+    .ticket-seat-label {
+      font-family: var(--sans-font);
+      font-size: 9.5px;
+      font-weight: 600;
+      letter-spacing: 1.3px;
+      text-transform: uppercase;
+      color: var(--gold);
+    }
+
+    .ticket-seat-num {
+      font-family: var(--display-font);
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--cream);
+      letter-spacing: 0.5px;
+    }
+
     .action-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -2317,6 +2383,245 @@
 
     .transport-map-btn:hover .transport-arrow {
       transform: translateX(4px);
+    }
+
+    /* ============================================ */
+    /* SEAT PICKER (bus interior visualization)     */
+    /* ============================================ */
+    .seat-picker-section {
+      margin: 12px 0 8px;
+      padding: 14px 12px;
+      background: linear-gradient(180deg,
+        rgba(232, 196, 104, 0.06) 0%,
+        rgba(255, 96, 117, 0.03) 100%);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+    }
+
+    .seat-picker-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+    }
+
+    .seat-picker-eyebrow {
+      font-family: var(--sans-font);
+      font-size: 9.5px;
+      font-weight: 700;
+      letter-spacing: 1.8px;
+      text-transform: uppercase;
+      color: var(--gold);
+    }
+
+    .seat-selected-display {
+      font-family: var(--sans-font);
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--cream);
+    }
+
+    .seat-no-pick {
+      color: var(--cream-dim);
+      font-style: italic;
+      font-weight: 400;
+    }
+
+    .seat-selected-display .seat-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 9px;
+      background: linear-gradient(135deg, var(--gold-light), var(--gold));
+      color: #1a1212;
+      border-radius: 999px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      box-shadow: 0 2px 8px rgba(232, 196, 104, 0.3);
+    }
+
+    /* Legend */
+    .seat-legend {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+      padding: 8px;
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 10px;
+    }
+
+    .seat-legend-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-family: var(--sans-font);
+      font-size: 9.5px;
+      color: var(--cream-dim);
+    }
+
+    .seat-legend-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 4px;
+      flex-shrink: 0;
+    }
+
+    .seat-legend-free {
+      background: linear-gradient(135deg, rgba(255, 96, 117, 0.5), rgba(255, 96, 117, 0.3));
+      border: 1px solid rgba(255, 96, 117, 0.5);
+    }
+
+    .seat-legend-taken {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .seat-legend-selected {
+      background: linear-gradient(135deg, var(--gold-light), var(--gold));
+      border: 1px solid var(--gold);
+      box-shadow: 0 0 4px rgba(232, 196, 104, 0.5);
+    }
+
+    /* Bus wrapper */
+    .seat-bus-wrap {
+      background: linear-gradient(180deg, rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.25));
+      border: 1px solid var(--border);
+      border-radius: 22px 22px 12px 12px;
+      padding: 10px 12px 14px;
+      max-width: 320px;
+      margin: 0 auto;
+      position: relative;
+    }
+
+    .seat-driver {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 6px 10px;
+      margin-bottom: 10px;
+      border-bottom: 1px dashed rgba(232, 196, 104, 0.2);
+      font-family: var(--sans-font);
+      font-size: 9px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--gold);
+    }
+
+    .seat-driver-icon { font-size: 14px; }
+
+    /* Seats grid — 4 columns with aisle gap */
+    .seat-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 14px 1fr 1fr;
+      gap: 6px 4px;
+    }
+
+    .seat-aisle {
+      grid-column: 3;
+      width: 14px;
+    }
+
+    /* Individual seat */
+    .seat {
+      position: relative;
+      aspect-ratio: 1;
+      min-height: 32px;
+      border-radius: 7px 7px 4px 4px;
+      border: 1.5px solid rgba(255, 96, 117, 0.5);
+      background: linear-gradient(135deg,
+        rgba(255, 96, 117, 0.32),
+        rgba(255, 96, 117, 0.18));
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--sans-font);
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--cream);
+      transition: all 0.2s ease;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .seat::before {
+      /* Subtle "back" of the seat */
+      content: '';
+      position: absolute;
+      top: -2px;
+      left: 4px;
+      right: 4px;
+      height: 3px;
+      background: rgba(255, 96, 117, 0.4);
+      border-radius: 3px 3px 0 0;
+    }
+
+    .seat:hover {
+      transform: translateY(-1px) scale(1.05);
+      border-color: var(--pink);
+      box-shadow: 0 4px 12px rgba(255, 96, 117, 0.35);
+      z-index: 2;
+    }
+
+    .seat.taken {
+      background: rgba(255, 255, 255, 0.04);
+      border-color: rgba(255, 255, 255, 0.08);
+      color: rgba(255, 255, 255, 0.2);
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+
+    .seat.taken::before { background: rgba(255, 255, 255, 0.06); }
+
+    .seat.selected {
+      background: linear-gradient(135deg, var(--gold-light), var(--gold));
+      border-color: var(--gold);
+      color: #1a1212;
+      transform: translateY(-1px) scale(1.08);
+      box-shadow:
+        0 6px 18px rgba(232, 196, 104, 0.5),
+        0 0 0 3px rgba(232, 196, 104, 0.2);
+      animation: seatPulse 1.5s ease-in-out infinite;
+      z-index: 3;
+    }
+
+    .seat.selected::before { background: var(--gold); }
+
+    @keyframes seatPulse {
+      0%, 100% { box-shadow: 0 6px 18px rgba(232, 196, 104, 0.5), 0 0 0 3px rgba(232, 196, 104, 0.2); }
+      50%      { box-shadow: 0 6px 22px rgba(232, 196, 104, 0.7), 0 0 0 5px rgba(232, 196, 104, 0.3); }
+    }
+
+    /* "Last row" full-width 5 seats */
+    .seat.last-row { grid-column: span 5; }
+    .seat-row-divider {
+      grid-column: 1 / -1;
+      height: 1px;
+      background: rgba(232, 196, 104, 0.12);
+      margin: 4px 0;
+    }
+
+    .seat-rear-row {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 4px;
+      grid-column: 1 / -1;
+      margin-top: 6px;
+      padding-top: 8px;
+      border-top: 1px dashed rgba(232, 196, 104, 0.2);
+    }
+
+    /* Very small phones */
+    @media (max-width: 380px) {
+      .seat { min-height: 28px; font-size: 9px; }
+      .seat-bus-wrap { padding: 8px 8px 12px; }
+      .seat-grid { gap: 5px 3px; }
+      .seat-grid { grid-template-columns: 1fr 1fr 10px 1fr 1fr; }
     }
 
     /* ============================================ */
@@ -2830,9 +3135,14 @@
             <div class="my-ticket-id" id="myTicketIdLabel">FM-2026-00000</div>
           </div>
         </div>
-        <button class="my-ticket-btn" id="showMyTicketBtn" type="button">
-          ნახვა →
-        </button>
+        <div class="my-ticket-actions">
+          <button class="my-ticket-btn" id="showMyTicketBtn" type="button">
+            ნახვა →
+          </button>
+          <button class="my-ticket-clear" id="clearMyTicketBtn" type="button" aria-label="წაშლა" title="ბილეთის ლოკალური წაშლა">
+            ×
+          </button>
+        </div>
       </div>
     </section>
 
@@ -2950,6 +3260,44 @@
           <input class="input-field" type="tel" id="phone" name="phone" placeholder="ტელეფონის ნომერი" required />
         </div>
 
+        <!-- SEAT PICKER -->
+        <div class="seat-picker-section">
+          <div class="seat-picker-header">
+            <div class="seat-picker-eyebrow">ადგილის არჩევა</div>
+            <div class="seat-selected-display" id="seatSelectedDisplay">
+              <span class="seat-no-pick">აირჩიე ადგილი ⬇</span>
+            </div>
+          </div>
+
+          <div class="seat-legend">
+            <div class="seat-legend-item">
+              <div class="seat-legend-dot seat-legend-free"></div>
+              <span>თავისუფალი</span>
+            </div>
+            <div class="seat-legend-item">
+              <div class="seat-legend-dot seat-legend-taken"></div>
+              <span>დაკავებული</span>
+            </div>
+            <div class="seat-legend-item">
+              <div class="seat-legend-dot seat-legend-selected"></div>
+              <span>არჩეული</span>
+            </div>
+          </div>
+
+          <div class="seat-bus-wrap">
+            <!-- Driver indicator -->
+            <div class="seat-driver">
+              <span class="seat-driver-icon">🚌</span>
+              <span class="seat-driver-label">წინა / მძღოლი</span>
+            </div>
+
+            <!-- Seats grid will be injected here -->
+            <div class="seat-grid" id="seatGrid"></div>
+          </div>
+
+          <input type="hidden" id="seat_number" name="seat_number" required />
+        </div>
+
         <button class="btn btn-primary submit-btn" id="registerBtn" type="submit">დარეგისტრირება</button>
       </form>
 
@@ -2977,6 +3325,11 @@
         <div class="ticket-id" id="ticketId">FM-2026-00000</div>
         <div class="ticket-name" id="ticketName">სტუმარი</div>
         <div class="ticket-meta" id="ticketMeta"></div>
+        <div class="ticket-seat" id="ticketSeat" style="display:none;">
+          <span class="ticket-seat-icon">🪑</span>
+          <span class="ticket-seat-label">ავტობუსში ადგილი</span>
+          <span class="ticket-seat-num" id="ticketSeatNum">#1</span>
+        </div>
       </div>
 
       <div class="card-eyebrow" style="justify-content:center; margin-top:6px;">დაამატე კალენდარში</div>
@@ -3120,6 +3473,8 @@
       ticketId: document.getElementById("ticketId"),
       ticketName: document.getElementById("ticketName"),
       ticketMeta: document.getElementById("ticketMeta"),
+      ticketSeat: document.getElementById("ticketSeat"),
+      ticketSeatNum: document.getElementById("ticketSeatNum"),
       googleCalBtn: document.getElementById("googleCalBtn"),
       appleCalBtn: document.getElementById("appleCalBtn"),
       shareWhatsapp: document.getElementById("shareWhatsapp"),
@@ -3149,15 +3504,23 @@
       modalTransportDots: document.getElementById("modalTransportDots"),
       modalTransportLabel: document.getElementById("modalTransportLabel"),
 
+      // Seat picker
+      seatGrid: document.getElementById("seatGrid"),
+      seatNumberInput: document.getElementById("seat_number"),
+      seatSelectedDisplay: document.getElementById("seatSelectedDisplay"),
+
       // My ticket persistence
       myTicketCard: document.getElementById("myTicketCard"),
       myTicketIdLabel: document.getElementById("myTicketIdLabel"),
-      showMyTicketBtn: document.getElementById("showMyTicketBtn")
+      showMyTicketBtn: document.getElementById("showMyTicketBtn"),
+      clearMyTicketBtn: document.getElementById("clearMyTicketBtn")
     };
 
     let lastConfig = {}; // store the latest config for ticket/calendar use
     let transportSlideshowTimer = null;
     let modalTransportSlideshowTimer = null;
+    let occupiedSeats = []; // updated from server on every loadData()
+    let selectedSeat = null; // currently picked seat number
 
     els.music.volume = 0.3;
     els.boom.volume = 0.55;
@@ -3274,6 +3637,109 @@
       } else {
         els.urgencyBanner.classList.remove("show");
       }
+    }
+
+    // ============= SEAT PICKER =============
+    /**
+     * Layout strategy for 54 seats:
+     * - 4 columns + center aisle
+     * - 12 normal rows × 4 seats = 48 seats
+     * - Last row spans full width with 5 seats + 1 single seat = 6 seats
+     * Wait: 12*4 = 48, plus a 5-seat rear row + 1 = 54. Done.
+     *
+     * Actually cleaner: 12 rows × 4 seats = 48, then rear row of 6 = 54
+     */
+    function buildSeatGrid() {
+      const grid = els.seatGrid;
+      grid.innerHTML = "";
+
+      let seatNum = 1;
+
+      // 12 rows of 4 seats (with center aisle)
+      for (let row = 0; row < 12; row++) {
+        // Left side: 2 seats
+        grid.appendChild(createSeat(seatNum++));
+        grid.appendChild(createSeat(seatNum++));
+
+        // Aisle gap
+        const aisle = document.createElement("div");
+        aisle.className = "seat-aisle";
+        grid.appendChild(aisle);
+
+        // Right side: 2 seats
+        grid.appendChild(createSeat(seatNum++));
+        grid.appendChild(createSeat(seatNum++));
+      }
+
+      // Rear row (6 seats wide — typical bus bench)
+      const rearRow = document.createElement("div");
+      rearRow.className = "seat-rear-row";
+      for (let i = 0; i < 6; i++) {
+        rearRow.appendChild(createSeat(seatNum++));
+      }
+      grid.appendChild(rearRow);
+    }
+
+    function createSeat(num) {
+      const seat = document.createElement("button");
+      seat.type = "button";
+      seat.className = "seat";
+      seat.dataset.seat = num;
+      seat.textContent = num;
+      seat.setAttribute("aria-label", "ადგილი " + num);
+      seat.addEventListener("click", () => onSeatClick(num));
+      return seat;
+    }
+
+    function onSeatClick(num) {
+      // Check if taken (defensive — shouldn't be clickable, but just in case)
+      if (occupiedSeats.includes(num)) return;
+
+      // Toggle: if already selected, deselect
+      if (selectedSeat === num) {
+        selectedSeat = null;
+      } else {
+        selectedSeat = num;
+      }
+
+      updateSeatVisuals();
+    }
+
+    function updateSeatVisuals() {
+      // Update all seat elements
+      const seats = els.seatGrid.querySelectorAll(".seat");
+      seats.forEach(seat => {
+        const num = parseInt(seat.dataset.seat);
+        seat.classList.remove("taken", "selected");
+
+        if (occupiedSeats.includes(num)) {
+          seat.classList.add("taken");
+        } else if (selectedSeat === num) {
+          seat.classList.add("selected");
+        }
+      });
+
+      // Update hidden input + display
+      if (selectedSeat) {
+        els.seatNumberInput.value = selectedSeat;
+        els.seatSelectedDisplay.innerHTML =
+          `<span class="seat-pill">🪑 ადგილი #${selectedSeat}</span>`;
+      } else {
+        els.seatNumberInput.value = "";
+        els.seatSelectedDisplay.innerHTML =
+          `<span class="seat-no-pick">აირჩიე ადგილი ⬇</span>`;
+      }
+    }
+
+    function refreshOccupiedSeats(seatList) {
+      occupiedSeats = Array.isArray(seatList) ? seatList : [];
+
+      // If user had selected a seat that is now taken (race condition), unselect it
+      if (selectedSeat && occupiedSeats.includes(selectedSeat)) {
+        selectedSeat = null;
+      }
+
+      updateSeatVisuals();
     }
 
     // ============= TRANSPORT =============
@@ -3803,6 +4269,7 @@
         renderLastRegistrations(data.lastRegistrations || []);
         startCountdown(data.config || {});
         maybeShowLivePopup(data.lastRegistrations || []);
+        refreshOccupiedSeats(data.occupiedSeats || []);
       } catch (e) {
         els.pageSubtitle.textContent = "მონაცემების ჩატვირთვა ვერ მოხერხდა";
       }
@@ -3838,6 +4305,7 @@
         const data = {
           ticket_id: (registrationData && registrationData.ticket_id) || null,
           tier: (registrationData && registrationData.tier) || "Standard",
+          seat_number: (registrationData && registrationData.seat_number) || null,
           first_name: formData.first_name || "",
           last_name: formData.last_name || "",
           phone: formData.phone || "",
@@ -3887,7 +4355,8 @@
       };
       const registrationData = {
         ticket_id: t.ticket_id,
-        tier: t.tier
+        tier: t.tier,
+        seat_number: t.seat_number
       };
       showTicketModal(registrationData, formData);
     }
@@ -3914,6 +4383,15 @@
       const date = lastConfig.event_date || "";
       const time = lastConfig.event_time || "";
       els.ticketMeta.textContent = [city, date, time].filter(Boolean).join(" · ");
+
+      // Seat number display
+      const seat = registrationData && registrationData.seat_number;
+      if (seat) {
+        els.ticketSeatNum.textContent = "#" + seat;
+        els.ticketSeat.style.display = "inline-flex";
+      } else {
+        els.ticketSeat.style.display = "none";
+      }
 
       // Generate QR code
       els.qrWrap.innerHTML = "";
@@ -4047,8 +4525,17 @@
         last_name: document.getElementById("last_name").value,
         city_area_village: document.getElementById("city_area_village").value,
         position: document.getElementById("position").value,
-        phone: document.getElementById("phone").value
+        phone: document.getElementById("phone").value,
+        seat_number: document.getElementById("seat_number").value
       };
+
+      // Validate seat selection
+      if (!formData.seat_number) {
+        showMessage("error", "გთხოვთ, აირჩიოთ ადგილი ⚠", els.registerError);
+        els.registerBtn.disabled = false;
+        els.registerBtn.textContent = "დარეგისტრირება";
+        return;
+      }
 
       try {
         const response = await postActionWithResponse(formData);
@@ -4059,20 +4546,39 @@
           if (response.error === "Already registered") errMsg = "ეს ნომერი უკვე დარეგისტრირებულია";
           else if (response.error === "No spots left") errMsg = "ადგილები ამოიწურა";
           else if (response.error === "Registration is closed") errMsg = "რეგისტრაცია დახურულია";
+          else if (response.error === "Seat taken") errMsg = "ეს ადგილი უკვე დაკავებულია — აირჩიე სხვა";
+          else if (response.error === "Invalid seat") errMsg = "ადგილის ნომერი არასწორია";
           showMessage("error", errMsg, els.registerError);
           return;
         }
 
         els.registerForm.reset();
+        // Also reset seat picker
+        selectedSeat = null;
+        updateSeatVisuals();
         showMessage("success", "რეგისტრაცია წარმატებით დასრულდა ✦", els.registerSuccess);
         triggerRewardEffects();
         fireConfetti();
 
-        // Save ticket to localStorage so user can re-open it later
-        saveMyTicket(response, formData);
-
         // Reload data first to get updated stats
         await loadData();
+
+        // Build ticket data — fall back to local generation if response is blocked by CORS
+        let ticketData = response;
+        if (!ticketData || !ticketData.ticket_id) {
+          const currentTotal = parseInt(els.statTotal.textContent) || 1;
+          ticketData = {
+            ticket_id: "FM-" + new Date().getFullYear() + "-" + String(currentTotal).padStart(5, '0'),
+            tier: getNextTierLocal(currentTotal - 1),
+            seat_number: parseInt(formData.seat_number)
+          };
+        } else {
+          // Make sure seat_number is in there
+          ticketData.seat_number = ticketData.seat_number || parseInt(formData.seat_number);
+        }
+
+        // Save ticket to localStorage so user can re-open it later
+        saveMyTicket(ticketData, formData);
 
         // Then close form modal and show ticket modal
         setTimeout(() => {
@@ -4081,7 +4587,7 @@
 
           // Show ticket modal after register modal closes
           setTimeout(() => {
-            showTicketModal(response, formData);
+            showTicketModal(ticketData, formData);
             refreshMyTicketCard();
           }, 350);
         }, 1400);
@@ -4092,6 +4598,13 @@
         els.registerBtn.disabled = false;
         els.registerBtn.textContent = "დარეგისტრირება";
       }
+    }
+
+    function getNextTierLocal(currentCount) {
+      // Mirror server logic: 0-9 = Early Bird, 10-29 = VIP, 30+ = Standard
+      if (currentCount < 10) return "Early Bird";
+      if (currentCount < 30) return "VIP";
+      return "Standard";
     }
 
     async function submitCancelForm(e) {
@@ -4197,9 +4710,18 @@
       setupMusic();
       setupModal();
       setupToggles();
+      buildSeatGrid();
       els.registerForm.addEventListener("submit", submitRegisterForm);
       els.cancelForm.addEventListener("submit", submitCancelForm);
       els.showMyTicketBtn.addEventListener("click", reopenMyTicket);
+      if (els.clearMyTicketBtn) {
+        els.clearMyTicketBtn.addEventListener("click", () => {
+          if (confirm("გნებავს ბილეთის ლოკალური წაშლა?\n(ეს მხოლოდ ამ ბრაუზერიდან წაშლის ნახვის შესაძლებლობას — Sheet-ში მონაცემი დარჩება)")) {
+            clearMyTicket();
+            refreshMyTicketCard();
+          }
+        });
+      }
       refreshMyTicketCard();
       startSimulatedRegistrations();
       await loadData();
