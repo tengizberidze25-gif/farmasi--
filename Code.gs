@@ -20,6 +20,12 @@ const CONFIG_SHEET_NAME = 'Config';
 // 🤖 Telegram Bot (არჩევითი)
 const TELEGRAM_BOT_TOKEN = '';
 
+// 📲 SMS settings (bulksms.ge / POSTA GUVERCINI)
+// PRIVATE_KEY and PUBLIC_KEY must be set in Apps Script → Project Settings → Script Properties
+const SMS_API_URL = 'https://api.bulksms.ge/gateway/api/sms/v1/message/send';
+const SMS_DEFAULT_SENDER = 'FARMASI'; // Sender name (must be pre-registered with bulksms.ge)
+const SITE_BASE_URL = 'https://farmasi-masterclass.vercel.app'; // for ticket link in SMS
+
 // Tier thresholds
 const EARLY_BIRD_LIMIT = 10;  // First 10 = Early Bird
 const VIP_LIMIT = 30;          // 11–30 = VIP
@@ -56,6 +62,11 @@ function doGet(e) {
       ? Math.max(0, maxReg - totalRegistrations)
       : null;
 
+    // Occupied seats — column I (index 8) is seat_number
+    const occupiedSeats = rows
+      .map(r => parseInt(r[8]))
+      .filter(n => !isNaN(n) && n > 0);
+
     // Last registrations
     const lastRegistrations = rows
       .slice(-5)
@@ -66,7 +77,8 @@ function doGet(e) {
           name: String(r[1] || '').trim() + ' ' + String(r[2] || '').trim(),
           phone: maskPhone(String(r[4] || '')),
           time: Utilities.formatDate(ts, 'Asia/Tbilisi', 'HH:mm'),
-          tier: r[7] || ''
+          tier: r[7] || '',
+          seat: r[8] || ''
         };
       });
 
@@ -90,6 +102,7 @@ function doGet(e) {
       maxRegistrations: !isNaN(maxReg) ? maxReg : null,
       progressPercent: progressPercent,
       nextTier: nextTier,
+      occupiedSeats: occupiedSeats,
       config: config,
       lastRegistrations: lastRegistrations
     });
@@ -129,10 +142,15 @@ function handleRegister(params) {
   const phone = normalizePhone(params.phone);
   const firstName = String(params.first_name || '').trim();
   const lastName = String(params.last_name || '').trim();
+  const seatRaw = String(params.seat_number || '').trim();
+  const seatNumber = seatRaw ? parseInt(seatRaw) : null;
 
   if (!phone) return jsonResponse({ ok: false, error: 'Phone required' });
   if (!firstName) return jsonResponse({ ok: false, error: 'First name required' });
   if (!lastName) return jsonResponse({ ok: false, error: 'Last name required' });
+  if (!seatNumber || isNaN(seatNumber) || seatNumber < 1 || seatNumber > 54) {
+    return jsonResponse({ ok: false, error: 'Invalid seat' });
+  }
 
   const data = regSheet.getDataRange().getValues();
   const rowCount = data.slice(1).filter(r => r[0]).length;
@@ -142,10 +160,14 @@ function handleRegister(params) {
     return jsonResponse({ ok: false, error: 'No spots left' });
   }
 
-  // Duplicate phone check
+  // Duplicate phone check + seat availability check
   for (let i = 1; i < data.length; i++) {
     if (normalizePhone(data[i][4]) === phone) {
       return jsonResponse({ ok: false, error: 'Already registered' });
+    }
+    const existingSeat = parseInt(data[i][8]);
+    if (!isNaN(existingSeat) && existingSeat === seatNumber) {
+      return jsonResponse({ ok: false, error: 'Seat taken' });
     }
   }
 
@@ -161,7 +183,8 @@ function handleRegister(params) {
     phone,
     String(params.position || '').trim(),
     ticketId,
-    tier
+    tier,
+    seatNumber
   ]);
 
   // Telegram notification
@@ -172,13 +195,28 @@ function handleRegister(params) {
     phone: phone,
     position: params.position,
     ticket_id: ticketId,
-    tier: tier
+    tier: tier,
+    seat: seatNumber
+  });
+
+  // 📲 SMS notification with ticket info
+  sendTicketSMS(phone, {
+    first_name: firstName,
+    last_name: lastName,
+    ticket_id: ticketId,
+    tier: tier,
+    seat: seatNumber,
+    event_time: config.event_time || '14:00',
+    event_date: config.event_date || '',
+    transport_time: config.transport_time || '',
+    transport_address: config.transport_address || ''
   });
 
   return jsonResponse({
     ok: true,
     ticket_id: ticketId,
     tier: tier,
+    seat_number: seatNumber,
     registration_number: rowCount + 1
   });
 }
@@ -268,7 +306,8 @@ function notifyTelegram(config, data) {
   const text =
     '🆕 ახალი რეგისტრაცია (მასტერკლასი)\n\n' +
     tierEmoji + ' ' + data.tier + '\n' +
-    '🎫 ' + data.ticket_id + '\n\n' +
+    '🎫 ' + data.ticket_id + '\n' +
+    '🪑 ადგილი #' + (data.seat || '-') + '\n\n' +
     '👤 ' + (data.first_name || '') + ' ' + (data.last_name || '') + '\n' +
     '📍 ' + (data.city || '-') + '\n' +
     '💼 ' + (data.position || '-') + '\n' +
@@ -287,3 +326,150 @@ function notifyTelegram(config, data) {
     } catch (e) {}
   });
 }
+
+// =================== SMS via bulksms.ge (POSTA GUVERCINI) ===================
+/**
+ * Send a ticket confirmation SMS to the registered phone.
+ * Uses Apps Script Properties: PRIVATE_KEY (Bearer JWT) and PUBLIC_KEY (URL param).
+ */
+function sendTicketSMS(phone, data) {
+  try {
+    const props = PropertiesService.getScriptProperties();
+    const privateKey = props.getProperty('PRIVATE_KEY');
+    const publicKey = props.getProperty('PUBLIC_KEY');
+
+    if (!privateKey || !publicKey) {
+      Logger.log('SMS keys missing in Script Properties — SMS skipped');
+      return;
+    }
+
+    const intlPhone = toInternationalPhone(phone);
+    if (!intlPhone) {
+      Logger.log('Invalid phone for SMS: ' + phone);
+      return;
+    }
+
+    // Compose SMS text (UNICODE for Georgian characters)
+    const text = composeTicketSMS(data);
+
+    const payload = {
+      Text: text,
+      Purpose: 'INF', // Information message
+      Options: {
+        Originator: SMS_DEFAULT_SENDER,
+        Encoding: 'UNICODE', // For Georgian
+        SmsType: 'SMS',
+        ReportLabel: 'Farmasi Masterclass Ticket'
+      },
+      Receivers: [
+        { Receiver: intlPhone }
+      ]
+    };
+
+    const url = SMS_API_URL + '?publicKey=' + encodeURIComponent(publicKey);
+
+    const response = UrlFetchApp.fetch(url, {
+      method: 'post',
+      contentType: 'application/json',
+      headers: {
+        'Authorization': 'Bearer ' + privateKey
+      },
+      payload: JSON.stringify(payload),
+      muteHttpExceptions: true
+    });
+
+    const code = response.getResponseCode();
+    const body = response.getContentText();
+    Logger.log('SMS API response (' + code + '): ' + body);
+
+    if (code !== 200) {
+      Logger.log('SMS sending failed for ' + intlPhone);
+    }
+  } catch (err) {
+    Logger.log('SMS error: ' + err);
+  }
+}
+
+/**
+ * Compose the SMS body. Keep it short — every ~70 UNICODE chars = 1 SMS segment.
+ */
+function composeTicketSMS(data) {
+  const tierEmoji = data.tier === 'Early Bird' ? '🌟'
+                  : data.tier === 'VIP' ? '💎'
+                  : '✦';
+
+  let text = 'Farmasi Masterclass 2026\n';
+  text += tierEmoji + ' ' + (data.first_name || '') + '\n';
+  text += '🎫 ' + (data.ticket_id || '') + '\n';
+  text += '🪑 ადგილი #' + (data.seat || '-') + '\n';
+
+  if (data.transport_time) {
+    text += '🚌 გასვლა: ' + data.transport_time + '\n';
+  }
+
+  if (data.transport_address) {
+    // Truncate long addresses
+    const addr = data.transport_address.length > 50
+      ? data.transport_address.substring(0, 47) + '...'
+      : data.transport_address;
+    text += '📍 ' + addr + '\n';
+  }
+
+  text += '\n🔗 ' + SITE_BASE_URL;
+
+  return text;
+}
+
+/**
+ * Normalize phone to international format for bulksms.ge.
+ * Georgian numbers: 5XX XX XX XX (9 digits) → 9955XXXXXXXX (12 digits)
+ * Already-international stays as-is.
+ */
+function toInternationalPhone(phone) {
+  let clean = String(phone || '').replace(/\D/g, '');
+
+  if (!clean) return null;
+
+  // If starts with country code 995 — keep as is
+  if (clean.startsWith('995') && clean.length === 12) {
+    return clean;
+  }
+
+  // Georgian local format (9 digits, starts with 5)
+  if (clean.length === 9 && clean.startsWith('5')) {
+    return '995' + clean;
+  }
+
+  // If 12 digits already (international without +), keep
+  if (clean.length >= 11 && clean.length <= 14) {
+    return clean;
+  }
+
+  return null;
+}
+
+/**
+ * MANUAL TEST FUNCTION — run this from Apps Script editor to verify SMS works.
+ * 1. Open Apps Script editor
+ * 2. Select function "testSMS" from the dropdown at the top
+ * 3. Click ▶ Run
+ * 4. Check the Logs (View → Logs) and your phone
+ */
+function testSMS() {
+  const testPhone = '599772266'; // ⚠️ Replace with YOUR real phone number for testing!
+
+  sendTicketSMS(testPhone, {
+    first_name: 'ტესტი',
+    last_name: 'ბერიძე',
+    ticket_id: 'FM-2026-00001',
+    tier: 'Early Bird',
+    seat: 14,
+    event_time: '14:00',
+    event_date: '2026-06-15',
+    transport_time: '12:00',
+    transport_address: 'მეტრო ვაგზლის მოედანი'
+  });
+
+  Logger.log('Test SMS sent (check logs above for response)');
+}
+
