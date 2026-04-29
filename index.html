@@ -2386,16 +2386,21 @@
     }
 
     /* ============================================ */
-    /* SEAT PICKER (bus interior visualization)     */
+    /* SEAT PICKER (MAYBACH STYLE — luxury VIP)     */
     /* ============================================ */
     .seat-picker-section {
       margin: 12px 0 8px;
       padding: 14px 12px;
-      background: linear-gradient(180deg,
-        rgba(232, 196, 104, 0.06) 0%,
-        rgba(255, 96, 117, 0.03) 100%);
-      border: 1px solid var(--border);
-      border-radius: 14px;
+      background:
+        radial-gradient(ellipse at top,
+          rgba(232, 196, 104, 0.08) 0%,
+          rgba(0, 0, 0, 0.3) 70%),
+        linear-gradient(180deg, #0d0707 0%, #1a1010 100%);
+      border: 1px solid rgba(232, 196, 104, 0.25);
+      border-radius: 16px;
+      box-shadow:
+        inset 0 1px 0 rgba(232, 196, 104, 0.15),
+        0 4px 18px rgba(0, 0, 0, 0.4);
     }
 
     .seat-picker-header {
@@ -2413,7 +2418,10 @@
       font-weight: 700;
       letter-spacing: 1.8px;
       text-transform: uppercase;
-      color: var(--gold);
+      background: linear-gradient(135deg, var(--gold-light), var(--gold));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
 
     .seat-selected-display {
@@ -2439,189 +2447,446 @@
       border-radius: 999px;
       font-weight: 700;
       letter-spacing: 0.5px;
-      box-shadow: 0 2px 8px rgba(232, 196, 104, 0.3);
+      box-shadow: 0 2px 8px rgba(232, 196, 104, 0.4);
     }
 
     /* Legend */
     .seat-legend {
       display: flex;
       justify-content: center;
-      gap: 10px;
+      gap: 12px;
       flex-wrap: wrap;
-      margin-bottom: 12px;
-      padding: 8px;
-      background: rgba(0, 0, 0, 0.2);
+      margin-bottom: 14px;
+      padding: 8px 10px;
+      background: rgba(0, 0, 0, 0.45);
+      border: 1px solid rgba(232, 196, 104, 0.15);
       border-radius: 10px;
     }
 
     .seat-legend-item {
       display: flex;
       align-items: center;
-      gap: 5px;
+      gap: 6px;
       font-family: var(--sans-font);
       font-size: 9.5px;
+      letter-spacing: 0.4px;
       color: var(--cream-dim);
     }
 
     .seat-legend-dot {
-      width: 12px;
-      height: 12px;
-      border-radius: 4px;
+      width: 14px;
+      height: 14px;
+      border-radius: 5px;
       flex-shrink: 0;
     }
 
     .seat-legend-free {
-      background: linear-gradient(135deg, rgba(255, 96, 117, 0.5), rgba(255, 96, 117, 0.3));
-      border: 1px solid rgba(255, 96, 117, 0.5);
+      background: linear-gradient(135deg, #2a1f1c 0%, #1a1414 100%);
+      border: 1px solid rgba(232, 196, 104, 0.4);
     }
 
     .seat-legend-taken {
-      background: rgba(255, 255, 255, 0.06);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.06);
     }
 
     .seat-legend-selected {
       background: linear-gradient(135deg, var(--gold-light), var(--gold));
       border: 1px solid var(--gold);
-      box-shadow: 0 0 4px rgba(232, 196, 104, 0.5);
+      box-shadow: 0 0 6px rgba(232, 196, 104, 0.6);
     }
 
-    /* Bus wrapper */
+    /* Bus/Maybach interior */
     .seat-bus-wrap {
-      background: linear-gradient(180deg, rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.25));
-      border: 1px solid var(--border);
-      border-radius: 22px 22px 12px 12px;
-      padding: 10px 12px 14px;
+      background:
+        linear-gradient(180deg,
+          rgba(0, 0, 0, 0.65) 0%,
+          rgba(15, 10, 10, 0.55) 100%);
+      border: 1px solid rgba(232, 196, 104, 0.2);
+      border-radius: 28px 28px 16px 16px;
+      padding: 12px 14px 16px;
       max-width: 320px;
       margin: 0 auto;
       position: relative;
+      box-shadow:
+        inset 0 0 30px rgba(0, 0, 0, 0.6),
+        0 8px 24px rgba(0, 0, 0, 0.5);
     }
 
+    /* Driver area */
     .seat-driver {
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 8px;
-      padding: 6px 10px;
-      margin-bottom: 10px;
-      border-bottom: 1px dashed rgba(232, 196, 104, 0.2);
+      padding: 8px 12px;
+      margin-bottom: 12px;
+      background: linear-gradient(180deg, rgba(232, 196, 104, 0.05), transparent);
+      border-bottom: 1px solid rgba(232, 196, 104, 0.18);
       font-family: var(--sans-font);
       font-size: 9px;
-      letter-spacing: 1.5px;
+      letter-spacing: 1.8px;
       text-transform: uppercase;
       color: var(--gold);
     }
 
-    .seat-driver-icon { font-size: 14px; }
+    .seat-driver-icon { font-size: 16px; }
 
-    /* Seats grid — 4 columns with aisle gap */
+    /* Seats grid — 4 columns with center aisle */
     .seat-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr 14px 1fr 1fr;
-      gap: 6px 4px;
+      grid-template-columns: 1fr 1fr 16px 1fr 1fr;
+      gap: 8px 6px;
     }
 
     .seat-aisle {
       grid-column: 3;
-      width: 14px;
+      width: 16px;
+      position: relative;
     }
 
-    /* Individual seat */
+    /* Aisle line decoration */
+    .seat-grid::before {
+      content: '';
+      grid-column: 3;
+      grid-row: 1 / -1;
+      width: 1px;
+      background: linear-gradient(180deg,
+        transparent,
+        rgba(232, 196, 104, 0.15) 20%,
+        rgba(232, 196, 104, 0.15) 80%,
+        transparent);
+      justify-self: center;
+      pointer-events: none;
+    }
+
+    /* === MAYBACH SEAT (luxury chair) === */
     .seat {
       position: relative;
-      aspect-ratio: 1;
-      min-height: 32px;
-      border-radius: 7px 7px 4px 4px;
-      border: 1.5px solid rgba(255, 96, 117, 0.5);
-      background: linear-gradient(135deg,
-        rgba(255, 96, 117, 0.32),
-        rgba(255, 96, 117, 0.18));
+      aspect-ratio: 1 / 1.1;
+      min-height: 36px;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-family: var(--sans-font);
+      font-family: var(--display-font);
       font-size: 10px;
-      font-weight: 700;
+      font-weight: 600;
       color: var(--cream);
-      transition: all 0.2s ease;
+      transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
       user-select: none;
       -webkit-tap-highlight-color: transparent;
+      background: linear-gradient(180deg,
+        #2a1f1c 0%,
+        #1f1614 50%,
+        #15100e 100%);
+      border: 1.5px solid rgba(232, 196, 104, 0.5);
+      border-radius: 8px 8px 6px 6px;
+      box-shadow:
+        inset 0 1px 0 rgba(232, 196, 104, 0.2),
+        inset 0 -2px 4px rgba(0, 0, 0, 0.5),
+        0 2px 4px rgba(0, 0, 0, 0.4);
     }
 
+    /* Seat back (top "bump") */
     .seat::before {
-      /* Subtle "back" of the seat */
       content: '';
       position: absolute;
-      top: -2px;
-      left: 4px;
-      right: 4px;
-      height: 3px;
-      background: rgba(255, 96, 117, 0.4);
-      border-radius: 3px 3px 0 0;
+      top: -3px;
+      left: 5px;
+      right: 5px;
+      height: 5px;
+      background: linear-gradient(180deg,
+        #3a2c28 0%,
+        #2a1f1c 100%);
+      border: 1px solid rgba(232, 196, 104, 0.4);
+      border-bottom: none;
+      border-radius: 4px 4px 0 0;
+      box-shadow: inset 0 1px 0 rgba(232, 196, 104, 0.15);
+    }
+
+    /* Seat headrest accent (Maybach's signature top stripe) */
+    .seat::after {
+      content: '';
+      position: absolute;
+      top: -1px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 30%;
+      height: 1.5px;
+      background: linear-gradient(90deg,
+        transparent,
+        var(--gold) 40%,
+        var(--gold) 60%,
+        transparent);
+      border-radius: 1px;
+      pointer-events: none;
+      opacity: 0.6;
     }
 
     .seat:hover {
-      transform: translateY(-1px) scale(1.05);
-      border-color: var(--pink);
-      box-shadow: 0 4px 12px rgba(255, 96, 117, 0.35);
+      transform: translateY(-2px) scale(1.06);
+      border-color: var(--gold);
+      box-shadow:
+        inset 0 1px 0 rgba(232, 196, 104, 0.3),
+        inset 0 -2px 4px rgba(0, 0, 0, 0.5),
+        0 6px 16px rgba(232, 196, 104, 0.4);
       z-index: 2;
     }
 
+    /* TAKEN — gray, disabled */
     .seat.taken {
-      background: rgba(255, 255, 255, 0.04);
-      border-color: rgba(255, 255, 255, 0.08);
-      color: rgba(255, 255, 255, 0.2);
+      background: linear-gradient(180deg, #1a1515 0%, #100c0c 100%);
+      border-color: rgba(255, 255, 255, 0.06);
+      color: rgba(255, 255, 255, 0.15);
       cursor: not-allowed;
       pointer-events: none;
+      box-shadow: inset 0 -2px 4px rgba(0, 0, 0, 0.3);
     }
 
-    .seat.taken::before { background: rgba(255, 255, 255, 0.06); }
+    .seat.taken::before {
+      background: #1a1515;
+      border-color: rgba(255, 255, 255, 0.06);
+    }
 
+    .seat.taken::after {
+      opacity: 0.05;
+    }
+
+    /* SELECTED — Maybach VIP gold */
     .seat.selected {
-      background: linear-gradient(135deg, var(--gold-light), var(--gold));
+      background: linear-gradient(180deg,
+        #f5d98a 0%,
+        var(--gold) 50%,
+        #c9a956 100%);
       border-color: var(--gold);
       color: #1a1212;
-      transform: translateY(-1px) scale(1.08);
+      transform: translateY(-3px) scale(1.1);
       box-shadow:
-        0 6px 18px rgba(232, 196, 104, 0.5),
-        0 0 0 3px rgba(232, 196, 104, 0.2);
+        inset 0 1px 0 rgba(255, 255, 255, 0.4),
+        inset 0 -2px 4px rgba(0, 0, 0, 0.2),
+        0 8px 22px rgba(232, 196, 104, 0.6),
+        0 0 0 3px rgba(232, 196, 104, 0.25);
       animation: seatPulse 1.5s ease-in-out infinite;
       z-index: 3;
+      font-weight: 700;
     }
 
-    .seat.selected::before { background: var(--gold); }
+    .seat.selected::before {
+      background: linear-gradient(180deg, #f5d98a, var(--gold));
+      border-color: var(--gold);
+    }
+
+    .seat.selected::after {
+      background: linear-gradient(90deg,
+        transparent,
+        rgba(255, 255, 255, 0.6) 40%,
+        rgba(255, 255, 255, 0.6) 60%,
+        transparent);
+      opacity: 1;
+    }
 
     @keyframes seatPulse {
-      0%, 100% { box-shadow: 0 6px 18px rgba(232, 196, 104, 0.5), 0 0 0 3px rgba(232, 196, 104, 0.2); }
-      50%      { box-shadow: 0 6px 22px rgba(232, 196, 104, 0.7), 0 0 0 5px rgba(232, 196, 104, 0.3); }
+      0%, 100% {
+        box-shadow:
+          inset 0 1px 0 rgba(255, 255, 255, 0.4),
+          inset 0 -2px 4px rgba(0, 0, 0, 0.2),
+          0 8px 22px rgba(232, 196, 104, 0.6),
+          0 0 0 3px rgba(232, 196, 104, 0.25);
+      }
+      50% {
+        box-shadow:
+          inset 0 1px 0 rgba(255, 255, 255, 0.5),
+          inset 0 -2px 4px rgba(0, 0, 0, 0.2),
+          0 10px 26px rgba(232, 196, 104, 0.75),
+          0 0 0 5px rgba(232, 196, 104, 0.35);
+      }
     }
 
-    /* "Last row" full-width 5 seats */
-    .seat.last-row { grid-column: span 5; }
-    .seat-row-divider {
-      grid-column: 1 / -1;
-      height: 1px;
-      background: rgba(232, 196, 104, 0.12);
-      margin: 4px 0;
-    }
-
+    /* Rear row (6-seat bench) */
     .seat-rear-row {
       display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      gap: 4px;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 5px;
       grid-column: 1 / -1;
-      margin-top: 6px;
-      padding-top: 8px;
-      border-top: 1px dashed rgba(232, 196, 104, 0.2);
+      margin-top: 8px;
+      padding-top: 10px;
+      border-top: 1px dashed rgba(232, 196, 104, 0.25);
     }
 
     /* Very small phones */
     @media (max-width: 380px) {
-      .seat { min-height: 28px; font-size: 9px; }
-      .seat-bus-wrap { padding: 8px 8px 12px; }
-      .seat-grid { gap: 5px 3px; }
-      .seat-grid { grid-template-columns: 1fr 1fr 10px 1fr 1fr; }
+      .seat { min-height: 30px; font-size: 9px; }
+      .seat-bus-wrap { padding: 10px 10px 14px; }
+      .seat-grid { gap: 6px 4px; grid-template-columns: 1fr 1fr 12px 1fr 1fr; }
+      .seat-rear-row { gap: 4px; }
+    }
+
+    /* ============================================ */
+    /* MODAL TRANSPORT INFO (above seat picker)     */
+    /* ============================================ */
+    .modal-transport-info {
+      margin: 8px 0 12px;
+      padding: 10px 12px;
+      background: linear-gradient(135deg,
+        rgba(255, 96, 117, 0.1) 0%,
+        rgba(232, 196, 104, 0.06) 100%);
+      border: 1px solid rgba(232, 196, 104, 0.2);
+      border-radius: 12px;
+    }
+
+    .modal-transport-info-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid rgba(232, 196, 104, 0.15);
+    }
+
+    .modal-transport-info-icon { font-size: 16px; }
+
+    .modal-transport-info-title {
+      font-family: var(--display-font);
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--cream);
+    }
+
+    .modal-transport-info-body {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .modal-transport-info-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      font-size: 11.5px;
+    }
+
+    .modal-transport-info-row[hidden] { display: none; }
+
+    .mti-label {
+      font-family: var(--sans-font);
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      color: var(--gold);
+      flex-shrink: 0;
+    }
+
+    .mti-value {
+      font-family: var(--geo-font);
+      color: var(--cream);
+      text-align: right;
+      line-height: 1.35;
+    }
+
+    .modal-transport-map-btn {
+      display: block;
+      margin-top: 4px;
+      padding: 7px 10px;
+      background: linear-gradient(135deg, var(--pink), var(--pink-dark));
+      color: white !important;
+      text-decoration: none;
+      text-align: center;
+      border-radius: 8px;
+      font-family: var(--sans-font);
+      font-size: 10.5px;
+      font-weight: 700;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      box-shadow: 0 3px 10px var(--pink-glow);
+      transition: all 0.2s ease;
+    }
+
+    .modal-transport-map-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 5px 14px var(--pink-glow);
+    }
+
+    /* ============================================ */
+    /* TICKET TRANSPORT INFO (in ticket modal)      */
+    /* ============================================ */
+    .ticket-transport {
+      margin: 12px 0 10px;
+      padding: 11px 13px;
+      background:
+        linear-gradient(135deg,
+          rgba(255, 96, 117, 0.08) 0%,
+          rgba(232, 196, 104, 0.04) 100%);
+      border: 1px solid rgba(232, 196, 104, 0.18);
+      border-radius: 14px;
+    }
+
+    .ticket-transport-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+      padding-bottom: 7px;
+      border-bottom: 1px solid rgba(232, 196, 104, 0.12);
+    }
+
+    .ticket-transport-icon { font-size: 16px; }
+
+    .ticket-transport-title {
+      font-family: var(--display-font);
+      font-size: 12.5px;
+      font-weight: 500;
+      color: var(--cream);
+    }
+
+    .ticket-transport-body {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .ticket-transport-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      font-size: 11px;
+    }
+
+    .ticket-transport-row[hidden] { display: none; }
+
+    .ttr-label {
+      font-family: var(--sans-font);
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      color: var(--gold);
+      flex-shrink: 0;
+    }
+
+    .ttr-value {
+      font-family: var(--geo-font);
+      color: var(--cream);
+      text-align: right;
+      line-height: 1.35;
+    }
+
+    .ticket-transport-map {
+      display: block;
+      margin-top: 4px;
+      padding: 7px 10px;
+      background: linear-gradient(135deg, var(--pink), var(--pink-dark));
+      color: white !important;
+      text-decoration: none;
+      text-align: center;
+      border-radius: 8px;
+      font-family: var(--sans-font);
+      font-size: 10.5px;
+      font-weight: 700;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      box-shadow: 0 3px 10px var(--pink-glow);
     }
 
     /* ============================================ */
@@ -3058,49 +3323,6 @@
       <div class="info-row" id="infoHotel"></div>
     </div>
 
-    <!-- TRANSPORT -->
-    <div class="glass-card transport-card" id="transportCard" style="display:none;">
-      <div class="transport-header">
-        <div class="transport-icon-wrap">
-          <span class="transport-icon">🚌</span>
-        </div>
-        <div class="transport-title-block">
-          <div class="card-eyebrow" style="margin-bottom:2px;">ტრანსპორტი</div>
-          <div class="transport-title" id="transportTitle">ბრენდირებული ავტობუსით თბილისიდან</div>
-        </div>
-      </div>
-
-      <div class="transport-body">
-        <div class="transport-row" id="transportTimeRow">
-          <span class="transport-row-icon">⏰</span>
-          <div class="transport-row-content">
-            <div class="transport-row-label">გასვლის დრო</div>
-            <div class="transport-row-value" id="transportTime"></div>
-          </div>
-        </div>
-
-        <div class="transport-row" id="transportAddressRow">
-          <span class="transport-row-icon">📍</span>
-          <div class="transport-row-content">
-            <div class="transport-row-label">გასვლის ადგილი</div>
-            <div class="transport-row-value" id="transportAddress"></div>
-          </div>
-        </div>
-
-        <div class="transport-row" id="transportNoteRow">
-          <span class="transport-row-icon">ℹ️</span>
-          <div class="transport-row-content">
-            <div class="transport-row-value" id="transportNote" style="font-style:italic; color:var(--cream-dim);"></div>
-          </div>
-        </div>
-
-        <a class="transport-map-btn" id="transportMapBtn" href="#" target="_blank" rel="noopener" style="display:none;">
-          <span>📍 რუკაზე ნახვა</span>
-          <span class="transport-arrow">→</span>
-        </a>
-      </div>
-    </div>
-
     <button class="btn btn-ghost" id="scheduleBtn" type="button">✦ სრული პროგრამის ნახვა ✦</button>
 
     <!-- CTA SECTION: Opens register modal -->
@@ -3260,6 +3482,27 @@
           <input class="input-field" type="tel" id="phone" name="phone" placeholder="ტელეფონის ნომერი" required />
         </div>
 
+        <!-- TRANSPORT INFO (inside register modal) -->
+        <div class="modal-transport-info" id="modalTransportInfo" style="display:none;">
+          <div class="modal-transport-info-header">
+            <span class="modal-transport-info-icon">🚌</span>
+            <span class="modal-transport-info-title" id="modalTransportInfoTitle">ბრენდირებული ავტობუსით</span>
+          </div>
+          <div class="modal-transport-info-body">
+            <div class="modal-transport-info-row" id="modalTransportTimeRow">
+              <span class="mti-label">გასვლის დრო</span>
+              <span class="mti-value" id="modalTransportTimeVal"></span>
+            </div>
+            <div class="modal-transport-info-row" id="modalTransportAddressRow">
+              <span class="mti-label">გასვლის ადგილი</span>
+              <span class="mti-value" id="modalTransportAddressVal"></span>
+            </div>
+            <a class="modal-transport-map-btn" id="modalTransportMapBtn" href="#" target="_blank" rel="noopener" style="display:none;">
+              📍 რუკაზე ნახვა →
+            </a>
+          </div>
+        </div>
+
         <!-- SEAT PICKER -->
         <div class="seat-picker-section">
           <div class="seat-picker-header">
@@ -3329,6 +3572,27 @@
           <span class="ticket-seat-icon">🪑</span>
           <span class="ticket-seat-label">ავტობუსში ადგილი</span>
           <span class="ticket-seat-num" id="ticketSeatNum">#1</span>
+        </div>
+      </div>
+
+      <!-- TRANSPORT INFO (inside ticket modal) -->
+      <div class="ticket-transport" id="ticketTransport" style="display:none;">
+        <div class="ticket-transport-header">
+          <span class="ticket-transport-icon">🚌</span>
+          <span class="ticket-transport-title" id="ticketTransportTitle">ტრანსპორტი თბილისიდან</span>
+        </div>
+        <div class="ticket-transport-body">
+          <div class="ticket-transport-row" id="ticketTransportTimeRow">
+            <span class="ttr-label">გასვლის დრო</span>
+            <span class="ttr-value" id="ticketTransportTime"></span>
+          </div>
+          <div class="ticket-transport-row" id="ticketTransportAddrRow">
+            <span class="ttr-label">გასვლის ადგილი</span>
+            <span class="ttr-value" id="ticketTransportAddr"></span>
+          </div>
+          <a class="ticket-transport-map" id="ticketTransportMap" href="#" target="_blank" rel="noopener" style="display:none;">
+            📍 რუკაზე ნახვა →
+          </a>
         </div>
       </div>
 
@@ -3487,16 +3751,24 @@
       speakersCard: document.getElementById("speakersCard"),
       speakersGrid: document.getElementById("speakersGrid"),
 
-      // Transport
-      transportCard: document.getElementById("transportCard"),
-      transportTitle: document.getElementById("transportTitle"),
-      transportTimeRow: document.getElementById("transportTimeRow"),
-      transportTime: document.getElementById("transportTime"),
-      transportAddressRow: document.getElementById("transportAddressRow"),
-      transportAddress: document.getElementById("transportAddress"),
-      transportNoteRow: document.getElementById("transportNoteRow"),
-      transportNote: document.getElementById("transportNote"),
-      transportMapBtn: document.getElementById("transportMapBtn"),
+      // Transport (info only — main card was removed; data shown in register modal + ticket)
+      // Modal transport info (above seat picker)
+      modalTransportInfo: document.getElementById("modalTransportInfo"),
+      modalTransportInfoTitle: document.getElementById("modalTransportInfoTitle"),
+      modalTransportTimeRow: document.getElementById("modalTransportTimeRow"),
+      modalTransportTimeVal: document.getElementById("modalTransportTimeVal"),
+      modalTransportAddressRow: document.getElementById("modalTransportAddressRow"),
+      modalTransportAddressVal: document.getElementById("modalTransportAddressVal"),
+      modalTransportMapBtn: document.getElementById("modalTransportMapBtn"),
+
+      // Ticket transport info (in ticket modal)
+      ticketTransport: document.getElementById("ticketTransport"),
+      ticketTransportTitle: document.getElementById("ticketTransportTitle"),
+      ticketTransportTimeRow: document.getElementById("ticketTransportTimeRow"),
+      ticketTransportTime: document.getElementById("ticketTransportTime"),
+      ticketTransportAddrRow: document.getElementById("ticketTransportAddrRow"),
+      ticketTransportAddr: document.getElementById("ticketTransportAddr"),
+      ticketTransportMap: document.getElementById("ticketTransportMap"),
 
       // Modal transport banner (inside register modal)
       modalTransportBanner: document.getElementById("modalTransportBanner"),
@@ -3774,50 +4046,67 @@
       const type = safeText(config.transport_type);
       const photos = collectTransportPhotos(config);
 
-      // Build modal banner regardless of card visibility
+      // Build modal banner (photo slideshow at top of register modal)
       buildModalTransportBanner(photos, type);
 
-      // If nothing is set, hide entire card
-      if (!address && !map && !time && !note && !type && !photos.length) {
-        els.transportCard.style.display = "none";
-        return;
+      // === TRANSPORT INFO inside register modal (above seat picker) ===
+      const hasAnyInfo = address || map || time || note || type;
+
+      if (hasAnyInfo && els.modalTransportInfo) {
+        els.modalTransportInfo.style.display = "block";
+        els.modalTransportInfoTitle.textContent = type || "ბრენდირებული ავტობუსით";
+
+        if (time) {
+          els.modalTransportTimeVal.textContent = time;
+          els.modalTransportTimeRow.removeAttribute("hidden");
+        } else {
+          els.modalTransportTimeRow.setAttribute("hidden", "");
+        }
+
+        if (address) {
+          els.modalTransportAddressVal.textContent = address;
+          els.modalTransportAddressRow.removeAttribute("hidden");
+        } else {
+          els.modalTransportAddressRow.setAttribute("hidden", "");
+        }
+
+        if (isUrl(map)) {
+          els.modalTransportMapBtn.href = map;
+          els.modalTransportMapBtn.style.display = "block";
+        } else {
+          els.modalTransportMapBtn.style.display = "none";
+        }
+      } else if (els.modalTransportInfo) {
+        els.modalTransportInfo.style.display = "none";
       }
 
-      els.transportCard.style.display = "block";
+      // === TRANSPORT INFO inside ticket modal ===
+      if (hasAnyInfo && els.ticketTransport) {
+        els.ticketTransport.style.display = "block";
+        els.ticketTransportTitle.textContent = type || "ტრანსპორტი თბილისიდან";
 
-      // Title (transport_type or default)
-      els.transportTitle.textContent = type || "ბრენდირებული ავტობუსით თბილისიდან";
+        if (time) {
+          els.ticketTransportTime.textContent = time;
+          els.ticketTransportTimeRow.removeAttribute("hidden");
+        } else {
+          els.ticketTransportTimeRow.setAttribute("hidden", "");
+        }
 
-      // Time row
-      if (time) {
-        els.transportTime.textContent = time;
-        els.transportTimeRow.removeAttribute("hidden");
-      } else {
-        els.transportTimeRow.setAttribute("hidden", "");
-      }
+        if (address) {
+          els.ticketTransportAddr.textContent = address;
+          els.ticketTransportAddrRow.removeAttribute("hidden");
+        } else {
+          els.ticketTransportAddrRow.setAttribute("hidden", "");
+        }
 
-      // Address row
-      if (address) {
-        els.transportAddress.textContent = address;
-        els.transportAddressRow.removeAttribute("hidden");
-      } else {
-        els.transportAddressRow.setAttribute("hidden", "");
-      }
-
-      // Note row
-      if (note) {
-        els.transportNote.textContent = note;
-        els.transportNoteRow.removeAttribute("hidden");
-      } else {
-        els.transportNoteRow.setAttribute("hidden", "");
-      }
-
-      // Map button
-      if (isUrl(map)) {
-        els.transportMapBtn.href = map;
-        els.transportMapBtn.style.display = "flex";
-      } else {
-        els.transportMapBtn.style.display = "none";
+        if (isUrl(map)) {
+          els.ticketTransportMap.href = map;
+          els.ticketTransportMap.style.display = "block";
+        } else {
+          els.ticketTransportMap.style.display = "none";
+        }
+      } else if (els.ticketTransport) {
+        els.ticketTransport.style.display = "none";
       }
     }
 
