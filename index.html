@@ -1,487 +1,3527 @@
 <!DOCTYPE html>
 <html lang="ka">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Farmasi Registration</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0a0808" />
+  <title>Farmasi მარკეტინგის მასტერკლასი 2026</title>
 
-<style>
-* { box-sizing: border-box; }
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Noto+Serif+Georgian:wght@300;400;500;600;700&family=Noto+Sans+Georgian:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-:root {
-  --bg1: #fff4f6;
-  --bg2: #ffe8ed;
-  --card: rgba(255,255,255,0.95);
-  --primary-dark: #ef4459;
-  --text: #2f2f38;
-  --muted: #70707a;
-  --border: rgba(255, 91, 110, 0.25);
-  --shadow: 0 20px 45px rgba(36, 19, 26, 0.14);
-}
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="farmasi.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Farmasi Masterclass">
 
-body {
-  margin: 0;
-  min-height: 100vh;
-  font-family: Arial, sans-serif;
-  background:
-    radial-gradient(circle at top left, rgba(255,255,255,0.75), transparent 30%),
-    linear-gradient(135deg, var(--bg1), var(--bg2));
-  overflow: hidden;
-  position: relative;
-  color: var(--text);
-}
+  <!-- QR Code + Confetti libraries -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
 
-.money-rain {
-  position: fixed;
-  inset: 0;
-  overflow: hidden;
-  pointer-events: none;
-  z-index: 1;
-}
+  <style>
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
 
-.note {
-  position: absolute;
-  top: -220px;
-  width: 120px;
-  opacity: 0.36;
-  user-select: none;
-  filter: drop-shadow(0 8px 10px rgba(0,0,0,0.08));
-}
+    :root {
+      --pink: #ff6075;
+      --pink-dark: #ef445d;
+      --pink-glow: rgba(255, 96, 117, 0.4);
 
-.note.n1  { left: 2%;  animation: fall1 12s linear infinite 0s; }
-.note.n2  { left: 8%;  animation: fall2 10s linear infinite 1s; }
-.note.n3  { left: 14%; animation: fall3 14s linear infinite 2s; }
-.note.n4  { left: 20%; animation: fall4 11s linear infinite .5s; }
-.note.n5  { left: 26%; animation: fall5 13s linear infinite 1.5s; }
-.note.n6  { left: 32%; animation: fall6 9.5s linear infinite 2.5s; }
-.note.n7  { left: 38%; animation: fall7 12.5s linear infinite .8s; }
-.note.n8  { left: 44%; animation: fall2 9.5s linear infinite 0.4s; }
-.note.n9  { left: 50%; animation: fall5 13.5s linear infinite 1.8s; }
-.note.n10 { left: 56%; animation: fall1 11.5s linear infinite 0.9s; }
-.note.n11 { left: 62%; animation: fall6 14.5s linear infinite 2.1s; }
-.note.n12 { left: 68%; animation: fall3 10.8s linear infinite 0.6s; }
-.note.n13 { left: 74%; animation: fall4 12.8s linear infinite 1.3s; }
-.note.n14 { left: 80%; animation: fall7 9.8s linear infinite 2.4s; }
-.note.n15 { left: 86%; animation: fall1 15s linear infinite 3s; }
-.note.n16 { left: 92%; animation: fall2 12.2s linear infinite 2.7s; }
-.note.n17 { left: 12%; animation: fall5 11.3s linear infinite 3.2s; }
-.note.n18 { left: 64%; animation: fall6 13.8s linear infinite 1.7s; }
-.note.n19 { left: 24%; animation: fall3 11.8s linear infinite 2.2s; }
-.note.n20 { left: 72%; animation: fall4 10.6s linear infinite .9s; }
+      --gold: #e8c468;
+      --gold-light: #f5d98a;
+      --gold-dark: #c9a44a;
+      --gold-glow: rgba(232, 196, 104, 0.35);
 
-@keyframes fall1 {
-  0% { transform: translate(-15px,-220px) rotate(0deg); opacity: 0; }
-  15% { opacity: .36; }
-  35% { transform: translate(30px,30vh) rotate(12deg); }
-  65% { transform: translate(-10px,65vh) rotate(-8deg); }
-  100% { transform: translate(18px,120vh) rotate(22deg); opacity: 0; }
-}
-@keyframes fall2 {
-  0% { transform: translate(10px,-220px) rotate(0deg); opacity: 0; }
-  20% { opacity: .36; }
-  55% { transform: translate(-24px,60vh) rotate(-10deg); }
-  100% { transform: translate(22px,120vh) rotate(16deg); opacity: 0; }
-}
-@keyframes fall3 {
-  0% { transform: translate(-8px,-220px) rotate(0deg); opacity: 0; }
-  18% { opacity: .36; }
-  40% { transform: translate(26px,38vh) rotate(14deg); }
-  75% { transform: translate(-22px,90vh) rotate(-12deg); }
-  100% { transform: translate(12px,120vh) rotate(18deg); opacity: 0; }
-}
-@keyframes fall4 {
-  0% { transform: translate(0,-220px) rotate(0deg); opacity: 0; }
-  12% { opacity: .36; }
-  50% { transform: translate(-30px,58vh) rotate(-14deg); }
-  100% { transform: translate(20px,120vh) rotate(20deg); opacity: 0; }
-}
-@keyframes fall5 {
-  0% { transform: translate(12px,-220px) rotate(0deg); opacity: 0; }
-  15% { opacity: .36; }
-  42% { transform: translate(-18px,44vh) rotate(-9deg); }
-  100% { transform: translate(26px,120vh) rotate(15deg); opacity: 0; }
-}
-@keyframes fall6 {
-  0% { transform: translate(-18px,-220px) rotate(0deg); opacity: 0; }
-  15% { opacity: .36; }
-  60% { transform: translate(24px,68vh) rotate(12deg); }
-  100% { transform: translate(-12px,120vh) rotate(-18deg); opacity: 0; }
-}
-@keyframes fall7 {
-  0% { transform: translate(8px,-220px) rotate(0deg); opacity: 0; }
-  12% { opacity: .36; }
-  48% { transform: translate(-20px,50vh) rotate(-10deg); }
-  100% { transform: translate(18px,120vh) rotate(18deg); opacity: 0; }
-}
+      --cream: #f5f0e6;
+      --cream-dim: #d8d2c4;
 
-.page-wrap {
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 24px;
-  position: relative;
-  z-index: 2;
-}
+      --bg-dark: #0a0808;
+      --bg-card: rgba(20, 14, 16, 0.55);
+      --bg-card-hover: rgba(30, 22, 24, 0.7);
 
-.card {
-  width: 100%;
-  max-width: 430px;
-  background: var(--card);
-  border-radius: 28px;
-  padding: 28px 24px 24px;
-  text-align: center;
-  box-shadow: var(--shadow);
-  backdrop-filter: blur(10px);
-}
+      --border: rgba(232, 196, 104, 0.25);
+      --border-strong: rgba(232, 196, 104, 0.5);
+      --border-pink: rgba(255, 96, 117, 0.4);
 
-.logo-wrap {
-  position: relative;
-  width: 230px;
-  height: 100px;
-  margin: 0 auto 12px;
-}
+      --success: #4ade80;
+      --error: #ff6b7a;
 
-.logo {
-  width: 175px;
-  position: absolute;
-  left: 18px;
-  top: 2px;
-  animation: logoMove 4.8s ease-in-out infinite;
-}
+      --display-font: 'Cormorant Garamond', 'Noto Serif Georgian', serif;
+      --geo-font: 'Noto Serif Georgian', 'Cormorant Garamond', serif;
+      --sans-font: 'Noto Sans Georgian', sans-serif;
 
-@keyframes logoMove {
-  0%   { transform: translateX(0px) rotate(0deg) scale(1); }
-  25%  { transform: translateX(12px) rotate(4deg) scale(1.01); }
-  50%  { transform: translateX(24px) rotate(0deg) scale(1.03); }
-  75%  { transform: translateX(12px) rotate(-4deg) scale(1.01); }
-  100% { transform: translateX(0px) rotate(0deg) scale(1); }
-}
+      --shadow-soft: 0 20px 60px rgba(0, 0, 0, 0.5);
+      --shadow-glow-pink: 0 0 40px rgba(255, 96, 117, 0.3);
+      --shadow-glow-gold: 0 0 30px rgba(232, 196, 104, 0.25);
+    }
 
-h2 {
-  margin: 6px 0 12px;
-  font-size: 28px;
-  color: var(--text);
-}
+    html, body {
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+      background: var(--bg-dark);
+      color: var(--cream);
+      font-family: var(--geo-font);
+      font-weight: 400;
+      min-height: 100vh;
+      min-height: 100dvh;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
 
-.subtitle {
-  color: var(--muted);
-  font-size: 14px;
-  margin-bottom: 18px;
-}
+    body {
+      padding-top: env(safe-area-inset-top, 0);
+      padding-right: env(safe-area-inset-right, 0);
+      padding-bottom: env(safe-area-inset-bottom, 0);
+      padding-left: env(safe-area-inset-left, 0);
+      position: relative;
+    }
 
-.stats {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
-  margin-bottom: 14px;
-}
+    /* ============================================ */
+    /* CINEMATIC BACKGROUND                          */
+    /* ============================================ */
+    .bg-photo {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      background-image: url('farmasi-office.jpg');
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      filter: brightness(0.55) saturate(1.2) contrast(1.08);
+      transform: scale(1.08);
+      animation: slowZoom 30s ease-in-out infinite alternate;
+    }
 
-.stat-box {
-  background: #fff8fa;
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 10px 8px;
-}
+    @keyframes slowZoom {
+      0%   { transform: scale(1.08) translate(0, 0); }
+      100% { transform: scale(1.15) translate(-1%, -1%); }
+    }
 
-.stat-num {
-  font-size: 18px;
-  font-weight: 700;
-  color: var(--primary-dark);
-}
+    .bg-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      background:
+        radial-gradient(ellipse at 50% 22%, rgba(255, 96, 117, 0.22) 0%, transparent 45%),
+        radial-gradient(ellipse at 50% 90%, rgba(232, 196, 104, 0.18) 0%, transparent 55%),
+        linear-gradient(180deg,
+          rgba(10, 8, 8, 0.25) 0%,
+          rgba(10, 8, 8, 0.5) 45%,
+          rgba(10, 8, 8, 0.88) 100%);
+      pointer-events: none;
+    }
 
-.stat-label {
-  font-size: 11px;
-  color: var(--muted);
-  margin-top: 4px;
-}
+    /* Spotlight on hero area */
+    .bg-spotlight {
+      position: fixed;
+      top: -10%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 140%;
+      height: 60%;
+      z-index: 2;
+      pointer-events: none;
+      background: radial-gradient(ellipse at center top,
+        rgba(232, 196, 104, 0.15) 0%,
+        rgba(255, 96, 117, 0.08) 25%,
+        transparent 60%);
+      filter: blur(40px);
+    }
 
-.event {
-  background: linear-gradient(180deg, #fff8fa, #fff4f7);
-  border: 1px solid var(--border);
-  border-radius: 18px;
-  padding: 14px 16px;
-  text-align: left;
-  margin-bottom: 18px;
-  font-size: 14px;
-  line-height: 1.75;
-}
+    .bg-grain {
+      position: fixed;
+      inset: 0;
+      z-index: 2;
+      pointer-events: none;
+      opacity: 0.06;
+      mix-blend-mode: overlay;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    }
 
-.event b {
-  color: var(--primary-dark);
-  display: block;
-  margin-bottom: 8px;
-  font-size: 15px;
-}
+    /* Floating golden particles */
+    .particles {
+      position: fixed;
+      inset: 0;
+      z-index: 3;
+      pointer-events: none;
+      overflow: hidden;
+    }
 
-.event-line { color: #40404a; }
+    .particle {
+      position: absolute;
+      width: 3px;
+      height: 3px;
+      background: radial-gradient(circle, var(--gold-light), transparent);
+      border-radius: 50%;
+      opacity: 0;
+      animation: float linear infinite;
+    }
 
-input {
-  width: 100%;
-  padding: 14px;
-  margin: 8px 0;
-  border-radius: 14px;
-  border: 1px solid rgba(80, 80, 95, 0.14);
-  font-size: 15px;
-  background: rgba(255,255,255,0.96);
-  outline: none;
-}
+    @keyframes float {
+      0% {
+        opacity: 0;
+        transform: translateY(110vh) translateX(0) scale(0.5);
+      }
+      10% { opacity: 0.8; }
+      90% { opacity: 0.6; }
+      100% {
+        opacity: 0;
+        transform: translateY(-10vh) translateX(40px) scale(1.2);
+      }
+    }
 
-button {
-  width: 100%;
-  padding: 15px 16px;
-  border: none;
-  border-radius: 15px;
-  background: linear-gradient(135deg, var(--primary-dark), #ff7a88);
-  color: white;
-  font-size: 15px;
-  font-weight: 700;
-  cursor: pointer;
-  margin-top: 10px;
-}
+    /* ============================================ */
+    /* MAIN CONTAINER                                */
+    /* ============================================ */
+    .container {
+      position: relative;
+      z-index: 10;
+      width: 100%;
+      max-width: 440px;
+      margin: 0 auto;
+      padding: 14px 12px 90px;
+      min-height: 100vh;
+    }
 
-button:disabled {
-  opacity: 0.72;
-  cursor: not-allowed;
-}
+    /* ============================================ */
+    /* HERO SECTION                                  */
+    /* ============================================ */
+    .hero {
+      text-align: center;
+      padding: 18px 8px 4px;
+      animation: fadeUp 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
 
-.msg {
-  margin-top: 14px;
-  display: none;
-  font-weight: 700;
-  font-size: 14px;
-}
+    .logo-wrap {
+      perspective: 1500px;
+      margin-bottom: 12px;
+    }
 
-.success { color: #178c45; }
-.error { color: #d73d51; }
+    .logo-frame {
+      display: inline-block;
+      padding: 0;
+      background: transparent;
+      border: none;
+      box-shadow: none;
+      position: relative;
+    }
 
-#musicBtn {
-  position: fixed;
-  right: 18px;
-  bottom: 18px;
-  width: auto;
-  padding: 12px 14px;
-  border-radius: 14px;
-  background: linear-gradient(135deg, var(--primary-dark), #ff7a88);
-  z-index: 3;
-  font-size: 14px;
-  color: white;
-  border: none;
-  cursor: pointer;
-}
+    /* Subtle glow halo behind logo */
+    .logo-frame::before {
+      content: '';
+      position: absolute;
+      inset: -20px;
+      background: radial-gradient(ellipse at center,
+        rgba(232, 196, 104, 0.18) 0%,
+        rgba(255, 96, 117, 0.08) 30%,
+        transparent 65%);
+      filter: blur(20px);
+      z-index: 0;
+      pointer-events: none;
+    }
 
-@media (max-width: 768px) {
-  .note {
-    width: 95px;
-    opacity: 0.42;
-  }
+    .logo {
+      width: 150px;
+      max-width: 100%;
+      display: block;
+      position: relative;
+      z-index: 1;
+      /*
+        This filter recipe converts dark Farmasi logo to luxe cream/white
+        on cinematic dark backgrounds — the "Apple Event" treatment.
+        - brightness(0): collapses the dark text to pure black
+        - invert(1): black → white
+        - sepia(0.25): adds warm cream undertone (luxury, not sterile)
+        - saturate(2.2) + hue-rotate(-10deg): nudges toward gold
+        - drop-shadow: refined ambient glow
+      */
+      filter:
+        brightness(0)
+        invert(1)
+        sepia(0.35)
+        saturate(2.4)
+        hue-rotate(-12deg)
+        drop-shadow(0 4px 20px rgba(232, 196, 104, 0.4))
+        drop-shadow(0 0 32px rgba(255, 245, 214, 0.15));
+      transform-style: preserve-3d;
+      animation: logoFloat 6s ease-in-out infinite;
+    }
 
-  .note.n1  { left: 1%; }
-  .note.n2  { left: 6%; }
-  .note.n3  { left: 12%; }
-  .note.n4  { left: 18%; }
-  .note.n5  { left: 24%; }
-  .note.n6  { left: 30%; }
-  .note.n7  { left: 36%; }
-  .note.n8  { left: 42%; }
-  .note.n9  { left: 48%; }
-  .note.n10 { left: 54%; }
-  .note.n11 { left: 60%; }
-  .note.n12 { left: 66%; }
-  .note.n13 { left: 72%; }
-  .note.n14 { left: 78%; }
-  .note.n15 { left: 84%; }
-  .note.n16 { left: 90%; }
-  .note.n17 { left: 14%; }
-  .note.n18 { left: 58%; }
-  .note.n19 { left: 26%; }
-  .note.n20 { left: 74%; }
-}
+    @keyframes logoFloat {
+      0%, 100% { transform: translateY(0) rotateY(0deg); }
+      25%      { transform: translateY(-3px) rotateY(8deg); }
+      75%      { transform: translateY(-3px) rotateY(-8deg); }
+    }
 
-@media (max-width: 480px) {
-  .card { padding: 22px 18px 20px; max-width: 94vw; }
-  .logo-wrap { width: 210px; height: 94px; }
-  .logo { width: 160px; }
-  h2 { font-size: 24px; }
-  .stats { grid-template-columns: 1fr; }
-  .note {
-    width: 88px;
-    opacity: 0.44;
-  }
-}
-</style>
+    .conference-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin: 14px 0 18px;
+      padding: 8px 18px;
+      background: linear-gradient(135deg, var(--pink) 0%, var(--pink-dark) 100%);
+      color: white;
+      font-family: var(--sans-font);
+      font-size: 10.5px;
+      font-weight: 600;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      border-radius: 999px;
+      box-shadow:
+        0 8px 24px var(--pink-glow),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+      animation: pulseTag 3s ease-in-out infinite;
+    }
+
+    @keyframes pulseTag {
+      0%, 100% { box-shadow: 0 8px 24px var(--pink-glow), inset 0 1px 0 rgba(255,255,255,0.3); }
+      50%      { box-shadow: 0 8px 38px rgba(255, 96, 117, 0.6), inset 0 1px 0 rgba(255,255,255,0.3); }
+    }
+
+    .conference-tag::before {
+      content: '✦';
+      color: var(--gold-light);
+      font-size: 13px;
+      animation: spin 8s linear infinite;
+    }
+
+    .conference-tag::after {
+      content: '✦';
+      color: var(--gold-light);
+      font-size: 13px;
+      animation: spin 8s linear infinite reverse;
+    }
+
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to   { transform: rotate(360deg); }
+    }
+
+    .hero-title {
+      font-family: var(--display-font);
+      font-weight: 400;
+      font-size: 28px;
+      line-height: 0.98;
+      letter-spacing: 1px;
+      color: var(--cream);
+      margin: 14px 0 4px;
+      text-shadow: 0 4px 40px rgba(0, 0, 0, 0.7);
+      text-transform: uppercase;
+    }
+
+    .hero-title .accent {
+      display: block;
+      font-style: italic;
+      font-weight: 500;
+      font-size: 44px;
+      letter-spacing: -0.3px;
+      text-transform: none;
+      line-height: 1.1;
+      margin-top: 2px;
+      background: linear-gradient(
+        110deg,
+        var(--gold-dark) 0%,
+        var(--gold) 25%,
+        #fff5d6 45%,
+        var(--gold-light) 55%,
+        var(--gold) 75%,
+        var(--gold-dark) 100%);
+      background-size: 200% 100%;
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: goldShimmer 4.5s ease-in-out infinite;
+      filter: drop-shadow(0 4px 24px rgba(232, 196, 104, 0.35));
+    }
+
+    @keyframes goldShimmer {
+      0%   { background-position: 200% 50%; }
+      100% { background-position: -100% 50%; }
+    }
+
+    .hero-subtitle {
+      font-family: var(--sans-font);
+      font-size: 12.5px;
+      font-weight: 300;
+      color: var(--cream-dim);
+      letter-spacing: 0.5px;
+      margin: 10px 0 14px;
+      line-height: 1.5;
+    }
+
+    /* Event meta chip — city · date */
+    .hero-meta {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 6px;
+      padding: 8px 16px;
+      background: rgba(0, 0, 0, 0.35);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      font-family: var(--sans-font);
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 1.2px;
+      color: var(--cream);
+      text-transform: uppercase;
+    }
+
+    .hero-meta .dot-sep {
+      color: var(--gold);
+      font-size: 10px;
+    }
+
+    .hero-meta:empty {
+      display: none;
+    }
+
+    .ornament {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin: 16px auto 14px;
+      max-width: 240px;
+    }
+
+    .ornament-line {
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    }
+
+    .ornament-diamond {
+      color: var(--gold);
+      font-size: 10px;
+      transform: rotate(45deg);
+    }
+
+    /* ============================================ */
+    /* STATUS BADGE                                  */
+    /* ============================================ */
+    .status-wrap {
+      text-align: center;
+      margin-bottom: 12px;
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-family: var(--sans-font);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+
+    .status-badge::before {
+      content: '';
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: currentColor;
+      box-shadow: 0 0 10px currentColor;
+      animation: blink 2s ease-in-out infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    .status-open {
+      background: rgba(74, 222, 128, 0.12);
+      border: 1px solid rgba(74, 222, 128, 0.4);
+      color: #6ee695;
+    }
+
+    .status-closed {
+      background: rgba(255, 107, 122, 0.12);
+      border: 1px solid rgba(255, 107, 122, 0.4);
+      color: var(--error);
+    }
+
+    /* ============================================ */
+    /* GLASS CARDS - GENERAL                         */
+    /* ============================================ */
+    .glass-card {
+      background: var(--bg-card);
+      backdrop-filter: blur(22px) saturate(1.4);
+      -webkit-backdrop-filter: blur(22px) saturate(1.4);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 11px 12px;
+      margin-bottom: 8px;
+      box-shadow: var(--shadow-soft);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .glass-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    }
+
+    .card-eyebrow {
+      font-family: var(--sans-font);
+      font-size: 8.5px;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .card-eyebrow::before {
+      content: '';
+      width: 14px;
+      height: 1px;
+      background: var(--gold);
+    }
+
+    /* ============================================ */
+    /* STATS                                         */
+    /* ============================================ */
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 5px;
+      margin-bottom: 8px;
+      animation: fadeUp 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
+    }
+
+    .stat {
+      background: var(--bg-card);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--border);
+      border-radius: 11px;
+      padding: 7px 4px;
+      text-align: center;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stat:hover {
+      border-color: var(--border-strong);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-glow-gold);
+    }
+
+    .stat-value {
+      font-size: 19px;
+      font-weight: 600;
+      line-height: 1;
+      background: linear-gradient(135deg, var(--gold-light), var(--gold));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 1px;
+      font-family: var(--display-font);
+    }
+
+    .stat-label {
+      font-family: var(--sans-font);
+      font-size: 8px;
+      font-weight: 500;
+      color: var(--cream-dim);
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    /* ============================================ */
+    /* COUNTDOWN                                     */
+    /* ============================================ */
+    .countdown-card {
+      animation: fadeUp 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both;
+    }
+
+    .countdown-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 5px;
+    }
+
+    .cd-item {
+      text-align: center;
+      padding: 7px 3px;
+      background: linear-gradient(180deg,
+        rgba(255, 255, 255, 0.06) 0%,
+        rgba(255, 255, 255, 0.02) 100%);
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cd-item::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: rgba(232, 196, 104, 0.15);
+    }
+
+    .cd-num {
+      font-family: var(--display-font);
+      font-size: 19px;
+      font-weight: 500;
+      line-height: 1;
+      color: var(--cream);
+      letter-spacing: -1px;
+      display: block;
+      margin-bottom: 2px;
+    }
+
+    .cd-label {
+      font-family: var(--sans-font);
+      font-size: 8px;
+      font-weight: 500;
+      color: var(--gold);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    /* ============================================ */
+    /* INFO ROWS                                     */
+    /* ============================================ */
+    .info-card {
+      animation: fadeUp 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both;
+    }
+
+    .info-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      padding: 6px 0;
+      font-size: 12.5px;
+      line-height: 1.35;
+      color: var(--cream);
+      border-bottom: 1px solid rgba(232, 196, 104, 0.1);
+      word-break: break-word;
+    }
+
+    .info-row:last-child { border-bottom: none; }
+    .info-row:empty     { display: none; }
+
+    .info-icon {
+      flex-shrink: 0;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, rgba(232, 196, 104, 0.15), rgba(232, 196, 104, 0.05));
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+    }
+
+    .info-text {
+      flex: 1;
+      color: var(--cream-dim);
+    }
+
+    .info-text strong {
+      color: var(--cream);
+      font-weight: 500;
+    }
+
+    .map-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 6px;
+      padding: 6px 12px;
+      background: linear-gradient(135deg, var(--pink), var(--pink-dark));
+      color: white !important;
+      text-decoration: none;
+      border-radius: 8px;
+      font-family: var(--sans-font);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+      box-shadow: 0 4px 14px var(--pink-glow);
+      transition: all 0.2s ease;
+    }
+
+    .map-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 18px var(--pink-glow);
+    }
+
+    /* ============================================ */
+    /* BUTTONS                                       */
+    /* ============================================ */
+    .btn {
+      width: 100%;
+      border: none;
+      cursor: pointer;
+      padding: 11px 16px;
+      border-radius: 11px;
+      font-family: var(--sans-font);
+      font-size: 12.5px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--pink) 0%, var(--pink-dark) 100%);
+      color: white;
+      box-shadow:
+        0 8px 24px var(--pink-glow),
+        inset 0 1px 0 rgba(255, 255, 255, 0.25);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      font-size: 12px;
+    }
+
+    .btn-primary::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.2), transparent);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .btn-primary:hover::before { opacity: 1; }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow:
+        0 12px 36px var(--pink-glow),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    }
+
+    .btn-ghost {
+      background: rgba(255, 255, 255, 0.04);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--border);
+      color: var(--gold-light);
+    }
+
+    .btn-ghost:hover {
+      background: rgba(232, 196, 104, 0.08);
+      border-color: var(--border-strong);
+      color: var(--gold);
+    }
+
+    .btn:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+      transform: none !important;
+    }
+
+    /* ============================================ */
+    /* CTA SECTION - new premium reserve button     */
+    /* ============================================ */
+    .cta-section {
+      margin-top: 14px;
+      animation: fadeUp 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.4s both;
+    }
+
+    .cta-card {
+      position: relative;
+      padding: 20px 16px 18px;
+      background:
+        radial-gradient(ellipse at top,
+          rgba(255, 96, 117, 0.12) 0%,
+          rgba(232, 196, 104, 0.06) 40%,
+          transparent 70%),
+        var(--bg-card);
+      backdrop-filter: blur(24px) saturate(1.4);
+      -webkit-backdrop-filter: blur(24px) saturate(1.4);
+      border: 1px solid var(--border-strong);
+      border-radius: 18px;
+      box-shadow:
+        var(--shadow-soft),
+        0 0 60px rgba(232, 196, 104, 0.08),
+        inset 0 1px 0 rgba(255, 255, 255, 0.08);
+      text-align: center;
+      overflow: hidden;
+    }
+
+    .cta-card::before {
+      content: '';
+      position: absolute;
+      top: -1px;
+      left: 18%;
+      right: 18%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      filter: blur(1px);
+    }
+
+    .cta-card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 20% 30%, rgba(232, 196, 104, 0.06), transparent 35%),
+        radial-gradient(circle at 80% 70%, rgba(255, 96, 117, 0.06), transparent 35%);
+      pointer-events: none;
+    }
+
+    .cta-eyebrow {
+      font-family: var(--sans-font);
+      font-size: 9.5px;
+      font-weight: 600;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 10px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .cta-title {
+      font-family: var(--display-font);
+      font-size: 28px;
+      font-weight: 500;
+      color: var(--cream);
+      letter-spacing: -0.5px;
+      line-height: 1.05;
+      margin: 4px 0 6px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .cta-title .accent {
+      font-style: italic;
+      background: linear-gradient(135deg, var(--gold-light), var(--gold), var(--gold-dark));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .cta-sub {
+      font-family: var(--sans-font);
+      font-size: 11.5px;
+      font-weight: 300;
+      color: var(--cream-dim);
+      letter-spacing: 0.3px;
+      line-height: 1.45;
+      margin: 0 0 14px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .cta-mega-btn {
+      position: relative;
+      z-index: 1;
+      display: block;
+      width: 100%;
+      padding: 0;
+      border: none;
+      cursor: pointer;
+      background: transparent;
+      border-radius: 14px;
+      overflow: hidden;
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow:
+        0 10px 30px rgba(255, 96, 117, 0.4),
+        0 0 0 1px rgba(255, 255, 255, 0.08) inset;
+      animation: ctaGlow 2.6s ease-in-out infinite;
+    }
+
+    .cta-mega-btn:hover {
+      transform: translateY(-3px);
+    }
+
+    .cta-mega-btn:active {
+      transform: translateY(-1px);
+    }
+
+    @keyframes ctaGlow {
+      0%, 100% {
+        box-shadow:
+          0 10px 30px rgba(255, 96, 117, 0.35),
+          0 0 0 1px rgba(255, 255, 255, 0.08) inset;
+      }
+      50% {
+        box-shadow:
+          0 14px 44px rgba(255, 96, 117, 0.6),
+          0 0 28px rgba(232, 196, 104, 0.3),
+          0 0 0 1px rgba(255, 255, 255, 0.15) inset;
+      }
+    }
+
+    .cta-mega-bg {
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(135deg, var(--pink) 0%, var(--pink-dark) 100%);
+      z-index: 0;
+    }
+
+    .cta-mega-bg::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg,
+        transparent,
+        rgba(255, 255, 255, 0.4),
+        transparent);
+      animation: shine 3.2s ease-in-out infinite;
+    }
+
+    @keyframes shine {
+      0%   { left: -100%; }
+      50%  { left: 200%; }
+      100% { left: 200%; }
+    }
+
+    .cta-mega-content {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      padding: 15px 20px;
+      color: white;
+      font-family: var(--sans-font);
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    }
+
+    .cta-mega-arrow {
+      font-size: 18px;
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .cta-mega-btn:hover .cta-mega-arrow {
+      transform: translateX(6px);
+    }
+
+    .cta-foot {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 14px;
+      font-family: var(--sans-font);
+      font-size: 10.5px;
+      font-weight: 400;
+      color: var(--cream-dim);
+      letter-spacing: 0.4px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .cta-foot .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--success);
+      box-shadow: 0 0 8px var(--success);
+      animation: blink 2s ease-in-out infinite;
+    }
+
+    /* ============================================ */
+    /* MODAL X CLOSE BUTTON                          */
+    /* ============================================ */
+    .modal-close-x {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      width: 32px;
+      height: 32px;
+      padding: 0;
+      border: 1px solid var(--border);
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--cream-dim);
+      font-size: 20px;
+      line-height: 1;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      z-index: 2;
+    }
+
+    .modal-close-x:hover {
+      background: rgba(255, 96, 117, 0.15);
+      color: var(--cream);
+      border-color: var(--border-pink);
+      transform: rotate(90deg);
+    }
+
+    .modal-content {
+      position: relative;
+    }
+
+    /* ============================================ */
+    /* REGISTER MODAL specific                       */
+    /* ============================================ */
+    /* Reuse modal-content base styles, but the form inside needs no extra card */
+
+    .section-heading {
+      text-align: center;
+      margin-bottom: 16px;
+    }
+
+    .section-heading-title {
+      font-family: var(--display-font);
+      font-size: 28px;
+      font-weight: 500;
+      color: var(--cream);
+      letter-spacing: -0.5px;
+      line-height: 1.1;
+      margin: 4px 0;
+    }
+
+    .section-heading-title .accent {
+      font-style: italic;
+      background: linear-gradient(135deg, var(--gold-light), var(--gold-dark));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .form-card {
+      background: var(--bg-card);
+      backdrop-filter: blur(22px) saturate(1.4);
+      -webkit-backdrop-filter: blur(22px) saturate(1.4);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 18px 14px;
+      box-shadow: var(--shadow-soft);
+      position: relative;
+    }
+
+    .form-card::before {
+      content: '';
+      position: absolute;
+      top: -1px;
+      left: 20%;
+      right: 20%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      filter: blur(1px);
+    }
+
+    /* Two-column row for compact form */
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .input-group {
+      margin-bottom: 9px;
+      position: relative;
+      min-width: 0; /* prevent overflow in grid cells */
+    }
+
+    .input-group label {
+      display: block;
+      font-family: var(--sans-font);
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 1.3px;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 4px;
+      padding-left: 4px;
+    }
+
+    .input-field, select.input-field {
+      width: 100%;
+      padding: 10px 12px;
+      background: rgba(0, 0, 0, 0.25);
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      color: var(--cream);
+      font-family: var(--geo-font);
+      font-size: 13px;
+      font-weight: 400;
+      transition: all 0.25s ease;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+
+    .input-field::placeholder {
+      color: rgba(216, 210, 196, 0.4);
+      font-style: italic;
+      font-weight: 300;
+      font-size: 12px;
+    }
+
+    .input-field:focus {
+      outline: none;
+      border-color: var(--pink);
+      background: rgba(0, 0, 0, 0.35);
+      box-shadow: 0 0 0 3px rgba(255, 96, 117, 0.12);
+    }
+
+    select.input-field {
+      cursor: pointer;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='none' stroke='%23e8c468' stroke-width='2' d='M1 1l5 5 5-5'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      padding-right: 32px;
+      font-size: 12.5px;
+    }
+
+    select.input-field option {
+      background: #1a1212;
+      color: var(--cream);
+    }
+
+    .submit-btn {
+      margin-top: 4px;
+    }
+
+    /* ============================================ */
+    /* MESSAGES                                      */
+    /* ============================================ */
+    .msg {
+      display: none;
+      margin-top: 12px;
+      padding: 11px 14px;
+      border-radius: 10px;
+      font-family: var(--sans-font);
+      font-size: 12px;
+      font-weight: 500;
+      text-align: center;
+      letter-spacing: 0.3px;
+      backdrop-filter: blur(10px);
+    }
+
+    .msg.success {
+      background: rgba(74, 222, 128, 0.1);
+      border: 1px solid rgba(74, 222, 128, 0.3);
+      color: var(--success);
+    }
+
+    .msg.error {
+      background: rgba(255, 107, 122, 0.1);
+      border: 1px solid rgba(255, 107, 122, 0.3);
+      color: var(--error);
+    }
+
+    /* ============================================ */
+    /* TOGGLE SECTIONS (cancel, extra)               */
+    /* ============================================ */
+    .secondary-actions {
+      display: grid;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    #cancelWrap, #extraBox {
+      display: none;
+      margin-top: 10px;
+    }
+
+    /* ============================================ */
+    /* LAST REGISTRATION                             */
+    /* ============================================ */
+    .last-card {
+      margin-top: 14px;
+      animation: fadeUp 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.5s both;
+    }
+
+    .last-item {
+      padding: 12px 14px;
+      background: linear-gradient(135deg,
+        rgba(232, 196, 104, 0.08),
+        rgba(255, 96, 117, 0.05));
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      position: relative;
+    }
+
+    .last-item-pulse {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--success);
+      box-shadow: 0 0 10px var(--success);
+      animation: blink 2s ease-in-out infinite;
+    }
+
+    .last-item-name {
+      font-family: var(--display-font);
+      font-size: 17px;
+      font-weight: 500;
+      color: var(--cream);
+      margin-bottom: 4px;
+    }
+
+    .last-item-phone {
+      font-family: var(--sans-font);
+      font-size: 12px;
+      color: var(--cream-dim);
+    }
+
+    .last-item-time {
+      font-family: var(--sans-font);
+      font-size: 10px;
+      color: var(--gold);
+      margin-top: 6px;
+      letter-spacing: 0.8px;
+    }
+
+    /* ============================================ */
+    /* MODAL (schedule)                              */
+    /* ============================================ */
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      padding: 14px;
+      background: rgba(5, 3, 4, 0.85);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      z-index: 1200;
+      align-items: center;
+      justify-content: center;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .modal.open { display: flex; }
+
+    .modal-content {
+      width: 100%;
+      max-width: 460px;
+      max-height: 90vh;
+      max-height: 90dvh;
+      overflow-y: auto;
+      background: linear-gradient(180deg, rgba(30, 22, 24, 0.95), rgba(20, 14, 16, 0.95));
+      backdrop-filter: blur(30px);
+      border: 1px solid var(--border-strong);
+      border-radius: 22px;
+      padding: 22px 16px;
+      box-shadow: var(--shadow-soft), var(--shadow-glow-gold);
+      animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(40px) scale(0.96); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .modal-title {
+      font-family: var(--display-font);
+      font-size: 24px;
+      font-weight: 500;
+      text-align: center;
+      color: var(--cream);
+      margin-bottom: 4px;
+    }
+
+    .modal-title .accent {
+      font-style: italic;
+      background: linear-gradient(135deg, var(--gold-light), var(--gold));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .modal-subtitle {
+      text-align: center;
+      font-family: var(--sans-font);
+      font-size: 9.5px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 12px;
+    }
+
+    .schedule-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .schedule-item {
+      padding: 14px 14px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--gold);
+      border-radius: 10px;
+      position: relative;
+    }
+
+    .schedule-time {
+      font-family: var(--display-font);
+      font-size: 18px;
+      font-weight: 500;
+      color: var(--gold-light);
+      margin-bottom: 4px;
+      letter-spacing: 0.5px;
+    }
+
+    .schedule-text {
+      font-size: 13px;
+      color: var(--cream);
+      line-height: 1.45;
+    }
+
+    /* ============================================ */
+    /* MUSIC + LIVE POPUP                            */
+    /* ============================================ */
+    .music-box {
+      position: fixed;
+      right: 12px;
+      bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      background: rgba(20, 14, 16, 0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      box-shadow: var(--shadow-soft);
+      z-index: 1000;
+    }
+
+    .music-btn {
+      width: 38px;
+      height: 38px;
+      padding: 0;
+      border: none;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--pink), var(--pink-dark));
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+      box-shadow: 0 4px 14px var(--pink-glow);
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .music-btn:hover {
+      transform: scale(1.08);
+    }
+
+    #volume {
+      width: 70px;
+      accent-color: var(--gold);
+      cursor: pointer;
+    }
+
+    .live-popup {
+      position: fixed;
+      left: 12px;
+      bottom: 80px;
+      max-width: 240px;
+      padding: 12px 14px;
+      background: rgba(20, 14, 16, 0.92);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--border-strong);
+      border-radius: 14px;
+      box-shadow: var(--shadow-soft);
+      font-family: var(--sans-font);
+      font-size: 11.5px;
+      color: var(--cream);
+      z-index: 1100;
+      display: none;
+    }
+
+    .live-popup.show {
+      display: block;
+      animation: popIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes popIn {
+      from { opacity: 0; transform: translateY(10px) scale(0.94); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .live-popup strong {
+      display: block;
+      color: var(--gold);
+      font-size: 9.5px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    .live-popup small {
+      color: var(--cream-dim);
+      font-size: 10px;
+    }
+
+    /* ============================================ */
+    /* SUCCESS BURST + STORM                         */
+    /* ============================================ */
+    .storm-layer {
+      position: fixed;
+      inset: 0;
+      overflow: hidden;
+      pointer-events: none;
+      z-index: 1300;
+    }
+
+    .fall-item {
+      position: absolute;
+      top: -120px;
+      pointer-events: none;
+      will-change: transform;
+      animation: fall linear forwards;
+      opacity: 0.96;
+      filter: drop-shadow(0 4px 12px rgba(232, 196, 104, 0.4));
+    }
+
+    @keyframes fall {
+      0% { transform: translateY(-80px) rotate(0deg); }
+      100% { transform: translateY(115vh) rotate(540deg); }
+    }
+
+    .success-burst {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1250;
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .success-burst.show { display: flex; }
+
+    .success-chip {
+      padding: 18px 26px;
+      background: linear-gradient(135deg, rgba(74, 222, 128, 0.95), rgba(34, 197, 94, 0.95));
+      backdrop-filter: blur(20px);
+      color: white;
+      font-family: var(--display-font);
+      font-size: 18px;
+      font-weight: 600;
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 20px 60px rgba(74, 222, 128, 0.4);
+      animation: pop 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    @keyframes pop {
+      0%   { transform: scale(0.5); opacity: 0; }
+      60%  { transform: scale(1.08); opacity: 1; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    /* ============================================ */
+    /* LINKS                                         */
+    /* ============================================ */
+    a {
+      color: var(--gold);
+      text-decoration: none;
+      word-break: break-word;
+      transition: color 0.2s;
+    }
+
+    a:hover { color: var(--gold-light); }
+
+    /* ============================================ */
+    /* FADE UP ANIMATION                             */
+    /* ============================================ */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ============================================ */
+    /* PROGRESS BAR — registration capacity         */
+    /* ============================================ */
+    .progress-card {
+      animation: fadeUp 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.15s both;
+    }
+
+    .progress-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 10px;
+      gap: 8px;
+    }
+
+    .progress-label {
+      font-family: var(--sans-font);
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 2.2px;
+      text-transform: uppercase;
+      color: var(--gold);
+    }
+
+    .progress-count {
+      font-family: var(--display-font);
+      font-size: 16px;
+      font-weight: 500;
+      color: var(--cream);
+    }
+
+    .progress-count .num {
+      background: linear-gradient(135deg, var(--gold-light), var(--gold));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 8px;
+      background: rgba(255, 255, 255, 0.07);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0;
+      background: linear-gradient(90deg, var(--gold-dark), var(--gold), var(--gold-light));
+      border-radius: 999px;
+      transition: width 1.4s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+      box-shadow: 0 0 12px rgba(232, 196, 104, 0.5);
+    }
+
+    .progress-fill::after {
+      content: '';
+      position: absolute;
+      top: 0; right: 0; bottom: 0;
+      width: 30%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4));
+      animation: progressShine 2s ease-in-out infinite;
+    }
+
+    @keyframes progressShine {
+      0%, 100% { opacity: 0.3; }
+      50% { opacity: 0.8; }
+    }
+
+    .progress-fill.warning {
+      background: linear-gradient(90deg, #ff8c42, var(--pink), var(--pink-dark));
+      box-shadow: 0 0 14px rgba(255, 96, 117, 0.6);
+    }
+
+    /* ============================================ */
+    /* URGENCY BANNER — "X spots left"              */
+    /* ============================================ */
+    .urgency-banner {
+      display: none;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 14px;
+      margin: 0 0 14px;
+      background: linear-gradient(135deg,
+        rgba(255, 96, 117, 0.18),
+        rgba(255, 140, 66, 0.12));
+      border: 1px solid var(--border-pink);
+      border-radius: 14px;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      animation: urgencyPulse 2.4s ease-in-out infinite;
+    }
+
+    .urgency-banner.show {
+      display: flex;
+    }
+
+    @keyframes urgencyPulse {
+      0%, 100% { box-shadow: 0 0 0 rgba(255, 96, 117, 0); }
+      50% { box-shadow: 0 0 24px rgba(255, 96, 117, 0.3); }
+    }
+
+    .urgency-icon {
+      flex-shrink: 0;
+      font-size: 22px;
+      line-height: 1;
+      animation: shake 1.6s ease-in-out infinite;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: rotate(0deg); }
+      25% { transform: rotate(-8deg); }
+      75% { transform: rotate(8deg); }
+    }
+
+    .urgency-text {
+      flex: 1;
+      font-family: var(--sans-font);
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--cream);
+      line-height: 1.35;
+    }
+
+    .urgency-text strong {
+      color: var(--pink);
+      font-size: 14px;
+    }
+
+    /* ============================================ */
+    /* TIER BADGE (next available)                  */
+    /* ============================================ */
+    .tier-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      margin-top: 6px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-family: var(--sans-font);
+      font-size: 9.5px;
+      font-weight: 700;
+      letter-spacing: 1.3px;
+      text-transform: uppercase;
+    }
+
+    .tier-pill.tier-early {
+      background: linear-gradient(135deg, #ffd700, #b8860b);
+      color: #2a1a00;
+    }
+
+    .tier-pill.tier-vip {
+      background: linear-gradient(135deg, var(--pink), var(--pink-dark));
+      color: white;
+    }
+
+    .tier-pill.tier-standard {
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--cream-dim);
+      border: 1px solid var(--border);
+    }
+
+    /* ============================================ */
+    /* SPEAKERS SECTION                              */
+    /* ============================================ */
+    .speakers-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      margin-top: 4px;
+    }
+
+    /* Smart layouts based on speaker count */
+    .speakers-grid.count-1 {
+      grid-template-columns: 1fr;
+      max-width: 260px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .speakers-grid.count-3 {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .speakers-grid.count-5,
+    .speakers-grid.count-6 {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    /* On smaller phones, 3-col grids fall back to 2-col */
+    @media (max-width: 400px) {
+      .speakers-grid.count-3,
+      .speakers-grid.count-5,
+      .speakers-grid.count-6 {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .speakers-grid.count-3 .speaker:last-child {
+        grid-column: 1 / -1;
+        max-width: 50%;
+        justify-self: center;
+      }
+    }
+
+    .speaker {
+      padding: 14px 10px;
+      background: linear-gradient(180deg,
+        rgba(255, 255, 255, 0.04) 0%,
+        rgba(255, 255, 255, 0.01) 100%);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+
+    .speaker:hover {
+      border-color: var(--border-strong);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-glow-gold);
+    }
+
+    .speaker-avatar {
+      width: 60px;
+      height: 60px;
+      margin: 0 auto 8px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--display-font);
+      font-weight: 600;
+      font-size: 22px;
+      color: #1a1212;
+      box-shadow: 0 6px 14px rgba(232, 196, 104, 0.25),
+                  inset 0 1px 0 rgba(255, 255, 255, 0.4);
+      letter-spacing: -0.5px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .speaker-avatar.has-photo {
+      background: #1a1212;
+      border: 2px solid var(--gold);
+    }
+
+    .speaker-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      border-radius: 50%;
+    }
+
+    .speaker-name {
+      font-family: var(--display-font);
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--cream);
+      margin-bottom: 2px;
+      line-height: 1.2;
+    }
+
+    .speaker-role {
+      font-family: var(--sans-font);
+      font-size: 9.5px;
+      font-weight: 500;
+      color: var(--gold);
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+      line-height: 1.3;
+    }
+
+    /* ============================================ */
+    /* FAQ ACCORDION                                 */
+    /* ============================================ */
+    .faq-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-top: 4px;
+    }
+
+    .faq-item {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .faq-item.open {
+      border-color: var(--border-strong);
+      background: rgba(232, 196, 104, 0.04);
+    }
+
+    .faq-q {
+      width: 100%;
+      padding: 14px 14px;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      text-align: left;
+      font-family: var(--geo-font);
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--cream);
+      line-height: 1.35;
+    }
+
+    .faq-icon {
+      flex-shrink: 0;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--gold);
+      font-size: 14px;
+      transition: transform 0.3s ease;
+    }
+
+    .faq-item.open .faq-icon {
+      transform: rotate(45deg);
+      background: var(--gold);
+      color: #1a1212;
+    }
+
+    .faq-a {
+      max-height: 0;
+      overflow: hidden;
+      padding: 0 14px;
+      transition: max-height 0.4s ease, padding 0.3s ease;
+      font-family: var(--geo-font);
+      font-size: 12.5px;
+      color: var(--cream-dim);
+      line-height: 1.55;
+    }
+
+    .faq-item.open .faq-a {
+      max-height: 240px;
+      padding: 0 14px 14px;
+    }
+
+    /* ============================================ */
+    /* SUCCESS / TICKET MODAL                       */
+    /* ============================================ */
+    .ticket-card {
+      background: linear-gradient(135deg, rgba(232, 196, 104, 0.12), rgba(255, 96, 117, 0.06));
+      border: 1px solid var(--border-strong);
+      border-radius: 18px;
+      padding: 18px;
+      margin: 8px 0 14px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .ticket-card::before {
+      content: '';
+      position: absolute;
+      top: -1px; left: 15%; right: 15%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    }
+
+    .ticket-tier-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 14px;
+      padding: 6px 16px;
+      border-radius: 999px;
+      font-family: var(--sans-font);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+    }
+
+    .qr-wrap {
+      display: inline-block;
+      padding: 10px;
+      background: white;
+      border-radius: 12px;
+      margin-bottom: 12px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .qr-wrap canvas, .qr-wrap img {
+      display: block;
+    }
+
+    .ticket-id {
+      font-family: 'Courier New', monospace;
+      font-size: 13px;
+      letter-spacing: 1.5px;
+      color: var(--gold-light);
+      margin-bottom: 6px;
+    }
+
+    .ticket-name {
+      font-family: var(--display-font);
+      font-size: 22px;
+      font-weight: 500;
+      color: var(--cream);
+      margin-bottom: 4px;
+    }
+
+    .ticket-meta {
+      font-family: var(--sans-font);
+      font-size: 11px;
+      color: var(--cream-dim);
+      letter-spacing: 0.4px;
+    }
+
+    .action-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .action-btn {
+      padding: 11px 12px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--cream);
+      font-family: var(--sans-font);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.4px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      text-decoration: none;
+    }
+
+    .action-btn:hover {
+      border-color: var(--border-strong);
+      background: rgba(232, 196, 104, 0.08);
+      color: var(--gold-light);
+      transform: translateY(-1px);
+    }
+
+    .action-btn .ico {
+      font-size: 14px;
+    }
+
+    .share-row {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      margin: 10px 0 4px;
+    }
+
+    .share-btn {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--cream);
+      font-size: 18px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+      text-decoration: none;
+    }
+
+    .share-btn:hover {
+      transform: translateY(-2px) scale(1.05);
+      border-color: var(--border-strong);
+      background: var(--gold);
+      color: #1a1212;
+    }
+
+    .share-row-label {
+      font-family: var(--sans-font);
+      font-size: 10px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--gold);
+      text-align: center;
+      margin-top: 6px;
+    }
+
+    /* Toast for "copied" feedback */
+    .toast {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-80px);
+      padding: 10px 18px;
+      background: rgba(20, 14, 16, 0.95);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--border-strong);
+      border-radius: 12px;
+      color: var(--cream);
+      font-family: var(--sans-font);
+      font-size: 12px;
+      letter-spacing: 0.5px;
+      box-shadow: var(--shadow-soft);
+      z-index: 1400;
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      pointer-events: none;
+    }
+
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* ============================================ */
+    /* COMPACT FORM MODE — no labels, tight layout  */
+    /* ============================================ */
+    .modal-content.modal-compact {
+      padding: 20px 16px 18px;
+    }
+
+    .form-compact .input-group {
+      margin-bottom: 8px;
+    }
+
+    .form-compact .input-field {
+      padding: 13px 14px;
+      font-size: 14px;
+      border-radius: 10px;
+    }
+
+    .form-compact .input-field::placeholder {
+      color: rgba(216, 210, 196, 0.55);
+      font-style: normal;
+      font-weight: 400;
+      font-size: 13px;
+    }
+
+    .form-compact select.input-field {
+      padding: 13px 32px 13px 14px;
+      font-size: 13.5px;
+      color: rgba(216, 210, 196, 0.6);
+    }
+
+    .form-compact select.input-field:valid {
+      color: var(--cream);
+    }
+
+    .form-compact .form-row {
+      gap: 8px;
+    }
+
+    .form-compact .submit-btn {
+      margin-top: 6px;
+      padding: 14px 18px;
+    }
+
+    .modal-compact .modal-subtitle {
+      margin-bottom: 6px;
+    }
+
+    .modal-compact .modal-title {
+      margin-bottom: 14px;
+      font-size: 26px;
+    }
+
+    /* Very small phones (≤360px) — iPhone SE 1st gen, older Android */
+    @media (max-width: 360px) {
+      .container { padding: 16px 10px 90px; }
+      .hero-title { font-size: 22px; letter-spacing: 0.5px; }
+      .hero-title .accent { font-size: 32px; }
+      .conference-tag {
+        font-size: 9.5px;
+        letter-spacing: 1.8px;
+        padding: 7px 14px;
+      }
+      .cta-title { font-size: 24px; }
+      .stat-value { font-size: 20px; }
+      .stat-label { font-size: 8.5px; }
+      .cd-num { font-size: 22px; }
+      .cd-label { font-size: 8px; }
+      #volume { width: 50px; }
+      .hero-meta { font-size: 10px; padding: 6px 12px; gap: 7px; }
+    }
+
+    /* Small/medium phones (361–399px) */
+    @media (min-width: 361px) and (max-width: 399px) {
+      .hero-title { font-size: 24px; }
+      .hero-title .accent { font-size: 36px; }
+      .cta-title { font-size: 26px; }
+      .stat-value { font-size: 22px; }
+      .cd-num { font-size: 24px; }
+      #volume { width: 56px; }
+    }
+
+    /* Tablets and larger phones (481–768px) */
+    @media (min-width: 481px) and (max-width: 768px) {
+      .container {
+        max-width: 480px;
+        padding: 32px 16px 110px;
+      }
+      .hero-title { font-size: 30px; }
+      .hero-title .accent { font-size: 50px; }
+      .stats { gap: 10px; }
+      .stat { padding: 14px 8px; }
+      .stat-value { font-size: 30px; }
+      .countdown-grid { gap: 10px; }
+      .cd-num { font-size: 32px; }
+      .cta-card { padding: 32px 22px 26px; }
+      .cta-title { font-size: 38px; }
+      .form-card, .glass-card { padding: 22px 18px; }
+    }
+
+    /* Desktop (≥769px) */
+    @media (min-width: 769px) {
+      .container {
+        max-width: 520px;
+        padding: 44px 18px 130px;
+      }
+      .hero { padding: 36px 8px 12px; }
+      .logo { width: 150px; }
+      .hero-title { font-size: 32px; }
+      .hero-title .accent { font-size: 54px; }
+      .stats { gap: 10px; }
+      .stat { padding: 16px 8px; }
+      .stat-value { font-size: 32px; }
+      .cd-num { font-size: 34px; }
+      .cta-card { padding: 36px 24px 28px; }
+      .cta-title { font-size: 42px; }
+    }
+
+    /* Wide desktop (≥1280px) — subtle vignette frame */
+    @media (min-width: 1280px) {
+      body::before {
+        content: '';
+        position: fixed;
+        inset: 0;
+        z-index: 4;
+        pointer-events: none;
+        background: radial-gradient(ellipse at center,
+          transparent 40%,
+          rgba(10, 8, 8, 0.5) 100%);
+      }
+    }
+
+    /* ============================================ */
+    /* LANDSCAPE PHONES — height < 500px             */
+    /* ============================================ */
+    @media (orientation: landscape) and (max-height: 500px) {
+      .container {
+        max-width: 560px;
+        padding: 14px 14px 80px;
+      }
+
+      .bg-photo {
+        background-position: center 30%;
+      }
+
+      .hero { padding: 8px 8px 4px; }
+
+      .logo-frame { padding: 10px 16px; }
+      .logo {
+        width: 72px;
+        animation-duration: 8s;
+      }
+      .logo-wrap { margin-bottom: 8px; }
+
+      .conference-tag {
+        margin: 6px 0 8px;
+        padding: 5px 12px;
+        font-size: 9px;
+        letter-spacing: 1.6px;
+      }
+
+      .hero-title {
+        font-size: 20px;
+        margin: 4px 0 2px;
+      }
+      .hero-title .accent {
+        font-size: 30px;
+        line-height: 1.05;
+      }
+
+      .hero-subtitle {
+        font-size: 10.5px;
+        margin: 6px 0 8px;
+      }
+
+      .hero-meta {
+        font-size: 9.5px;
+        padding: 5px 10px;
+        gap: 6px;
+      }
+
+      .ornament { margin: 8px auto 8px; max-width: 200px; }
+
+      .status-wrap { margin-bottom: 10px; }
+      .status-badge { padding: 5px 12px; font-size: 9.5px; }
+
+      .stats {
+        gap: 6px;
+        margin-bottom: 10px;
+      }
+      .stat { padding: 8px 4px; }
+      .stat-value { font-size: 20px; }
+      .stat-label { font-size: 8.5px; }
+
+      .glass-card {
+        padding: 12px 12px;
+        margin-bottom: 10px;
+        border-radius: 14px;
+      }
+
+      .countdown-grid { gap: 6px; }
+      .cd-item { padding: 8px 2px; }
+      .cd-num { font-size: 22px; }
+      .cd-label { font-size: 8px; }
+
+      .info-row {
+        padding: 6px 0;
+        font-size: 12px;
+        gap: 8px;
+      }
+      .info-icon { width: 20px; height: 20px; font-size: 10px; }
+
+      .btn { padding: 10px 16px; font-size: 12px; }
+
+      .cta-section { margin-top: 14px; }
+      .cta-card { padding: 18px 14px 14px; }
+      .cta-eyebrow { font-size: 9px; letter-spacing: 2.4px; }
+      .cta-title { font-size: 24px; }
+      .cta-sub { font-size: 11px; margin: 0 0 14px; }
+      .cta-mega-content { padding: 14px 16px; font-size: 12px; }
+      .cta-foot { font-size: 9.5px; margin-top: 10px; }
+
+      .last-card { margin-top: 10px; }
+      .last-item-name { font-size: 15px; }
+
+      .secondary-actions { gap: 8px; margin-top: 10px; }
+
+      /* Music & live popup smaller in landscape */
+      .music-box {
+        right: 8px;
+        bottom: 8px;
+        padding: 6px 10px;
+        gap: 8px;
+      }
+      .music-btn { width: 32px; height: 32px; font-size: 14px; }
+      #volume { width: 50px; }
+
+      .live-popup {
+        left: 8px;
+        bottom: 56px;
+        max-width: 200px;
+        padding: 8px 10px;
+        font-size: 10.5px;
+      }
+
+      /* Modals: tighter for landscape */
+      .modal { padding: 10px; }
+      .modal-content {
+        max-height: 92vh;
+        padding: 16px 14px;
+      }
+      .modal-title { font-size: 22px; }
+      .modal-subtitle { font-size: 9px; margin-bottom: 12px; }
+      .input-group { margin-bottom: 9px; }
+      .input-group label { font-size: 9px; }
+      .input-field { padding: 9px 12px; font-size: 13px; }
+      .submit-btn { margin-top: 4px; }
+      .schedule-item { padding: 10px 12px; }
+      .schedule-time { font-size: 15px; }
+      .schedule-text { font-size: 12px; }
+    }
+
+    /* iOS Safari smooth scroll fix */
+    @supports (-webkit-touch-callout: none) {
+      .bg-photo { background-attachment: scroll; }
+    }
+  </style>
 </head>
 <body>
+  <div class="bg-photo"></div>
+  <div class="bg-overlay"></div>
+  <div class="bg-spotlight"></div>
+  <div class="bg-grain"></div>
+  <div class="particles" id="particles"></div>
 
-<div class="money-rain">
-  <img src="gel100.png" class="note n1" alt="">
-  <img src="usd100.png" class="note n2" alt="">
-  <img src="gel200.png" class="note n3" alt="">
-  <img src="gel100.png" class="note n4" alt="">
-  <img src="usd100.png" class="note n5" alt="">
-  <img src="gel200.png" class="note n6" alt="">
-  <img src="gel100.png" class="note n7" alt="">
-  <img src="usd100.png" class="note n8" alt="">
-  <img src="gel200.png" class="note n9" alt="">
-  <img src="gel100.png" class="note n10" alt="">
-  <img src="usd100.png" class="note n11" alt="">
-  <img src="gel200.png" class="note n12" alt="">
-  <img src="gel100.png" class="note n13" alt="">
-  <img src="usd100.png" class="note n14" alt="">
-  <img src="gel200.png" class="note n15" alt="">
-  <img src="gel100.png" class="note n16" alt="">
-  <img src="usd100.png" class="note n17" alt="">
-  <img src="gel200.png" class="note n18" alt="">
-  <img src="gel100.png" class="note n19" alt="">
-  <img src="usd100.png" class="note n20" alt="">
-</div>
+  <div class="storm-layer" id="stormLayer"></div>
 
-<div class="page-wrap">
-  <div class="card">
-    <div class="logo-wrap">
-      <img src="farmasi.png" class="logo" alt="Farmasi Logo">
+  <div class="success-burst" id="successBurst">
+    <div class="success-chip">✦ რეგისტრაცია წარმატებით დასრულდა ✦</div>
+  </div>
+
+  <div class="container">
+    <!-- HERO -->
+    <section class="hero">
+      <div class="logo-wrap">
+        <div class="logo-frame">
+          <img src="farmasi.png" alt="Farmasi" class="logo" />
+        </div>
+      </div>
+
+      <div class="conference-tag">MARKETING MASTERCLASS · 2026</div>
+
+      <h1 class="hero-title">
+        Farmasi <span class="accent">მასტერკლასი</span>
+      </h1>
+
+      <p class="hero-subtitle" id="pageSubtitle">ფორმა იტვირთება...</p>
+
+      <div class="hero-meta" id="heroMeta"></div>
+
+      <div class="ornament">
+        <div class="ornament-line"></div>
+        <span class="ornament-diamond">◆</span>
+        <div class="ornament-line"></div>
+      </div>
+    </section>
+
+    <!-- STATUS -->
+    <div class="status-wrap">
+      <div id="statusBadge" class="status-badge status-open">OPEN</div>
     </div>
 
-    <h2>ტრენინგზე რეგისტრაცია</h2>
-    <div class="subtitle">შეავსე ფორმა და დაადასტურე მონაწილეობა</div>
-
+    <!-- STATS -->
     <div class="stats">
-      <div class="stat-box">
-        <div class="stat-num" id="totalCount">0</div>
-        <div class="stat-label">სულ</div>
+      <div class="stat">
+        <div class="stat-value" id="statTotal">0</div>
+        <div class="stat-label">სულ რეგისტრაცია</div>
       </div>
-      <div class="stat-box">
-        <div class="stat-num" id="todayCount">0</div>
+      <div class="stat">
+        <div class="stat-value" id="statToday">0</div>
         <div class="stat-label">დღეს</div>
       </div>
-      <div class="stat-box">
-        <div class="stat-num" id="spotsLeft">-</div>
-        <div class="stat-label">დარჩა</div>
+      <div class="stat">
+        <div class="stat-value" id="statLeft">∞</div>
+        <div class="stat-label">დარჩენილი</div>
       </div>
     </div>
 
-    <div class="event">
-      <b>📍 ღონისძიების დეტალები</b>
-      <div id="eventCity" class="event-line">📍 ქალაქი: იტვირთება...</div>
-      <div id="eventDate" class="event-line">📅 თარიღი: ...</div>
-      <div id="eventTime" class="event-line">🕒 დრო: ...</div>
-      <div id="eventLocation" class="event-line">🏢 ლოკაცია: ...</div>
+    <!-- PROGRESS BAR -->
+    <div class="glass-card progress-card" id="progressCard" style="display:none;">
+      <div class="progress-header">
+        <div class="progress-label">დაკავებული ადგილები</div>
+        <div class="progress-count">
+          <span class="num" id="progressNum">0</span>/<span id="progressMax">0</span>
+        </div>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
     </div>
 
-    <form id="form">
-      <input name="first_name" placeholder="სახელი" required>
-      <input name="last_name" placeholder="გვარი" required>
-      <input name="phone" placeholder="ტელეფონი (599123456)" required>
-      <button id="btn" type="submit">დარეგისტრირება</button>
-    </form>
+    <!-- URGENCY BANNER -->
+    <div class="urgency-banner" id="urgencyBanner">
+      <div class="urgency-icon">🔥</div>
+      <div class="urgency-text" id="urgencyText"></div>
+    </div>
 
-    <div id="success" class="msg success"></div>
-    <div id="error" class="msg error"></div>
+    <!-- COUNTDOWN -->
+    <div class="glass-card countdown-card" id="countdownBox">
+      <div class="card-eyebrow">მასტერკლასამდე დარჩა</div>
+      <div class="countdown-grid">
+        <div class="cd-item">
+          <span class="cd-num" id="cdDays">0</span>
+          <span class="cd-label">დღე</span>
+        </div>
+        <div class="cd-item">
+          <span class="cd-num" id="cdHours">0</span>
+          <span class="cd-label">საათი</span>
+        </div>
+        <div class="cd-item">
+          <span class="cd-num" id="cdMinutes">0</span>
+          <span class="cd-label">წუთი</span>
+        </div>
+        <div class="cd-item">
+          <span class="cd-num" id="cdSeconds">0</span>
+          <span class="cd-label">წამი</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- INFO -->
+    <div class="glass-card info-card">
+      <div class="card-eyebrow">დეტალები</div>
+      <div class="info-row" id="infoCity"></div>
+      <div class="info-row" id="infoDate"></div>
+      <div class="info-row" id="infoTime"></div>
+      <div class="info-row" id="infoLocation"></div>
+      <div class="info-row" id="infoHotel"></div>
+    </div>
+
+    <button class="btn btn-ghost" id="scheduleBtn" type="button">✦ სრული პროგრამის ნახვა ✦</button>
+
+    <!-- CTA SECTION: Opens register modal -->
+    <section class="cta-section">
+      <div class="cta-card">
+        <div class="cta-eyebrow">RSVP · INVITATION</div>
+        <h2 class="cta-title">დაიკავე <span class="accent">ადგილი</span></h2>
+        <p class="cta-sub">ექსკლუზიური მიწვევა — ადგილების რაოდენობა შეზღუდულია</p>
+
+        <div id="nextTierBadge" style="margin-bottom:14px;"></div>
+
+        <button class="cta-mega-btn" id="openRegisterBtn" type="button">
+          <span class="cta-mega-bg"></span>
+          <span class="cta-mega-content">
+            <span>დარეგისტრირება</span>
+            <span class="cta-mega-arrow">→</span>
+          </span>
+        </button>
+
+        <div class="cta-foot">
+          <span class="dot"></span>
+          <span>რეგისტრაცია სულ რაღაც 30 წამში</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- SPEAKERS -->
+    <div class="glass-card" id="speakersCard" style="display:none;">
+      <div class="card-eyebrow">სპიკერები</div>
+      <div class="speakers-grid" id="speakersGrid"></div>
+    </div>
+
+    <!-- FAQ -->
+    <div class="glass-card" id="faqCard">
+      <div class="card-eyebrow">ხშირი კითხვები</div>
+      <div class="faq-list" id="faqList"></div>
+    </div>
+
+    <!-- TOGGLES -->
+    <div class="secondary-actions">
+      <button class="btn btn-ghost" id="toggleCancelBtn" type="button">რეგისტრაციის გაუქმება</button>
+
+      <div id="cancelWrap">
+        <div class="form-card">
+          <form id="cancelForm">
+            <div class="input-group">
+              <label for="cancel_phone">ტელეფონი</label>
+              <input class="input-field" type="tel" id="cancel_phone" name="phone" placeholder="ტელეფონის ნომერი" required />
+            </div>
+            <button class="btn btn-ghost" id="cancelBtn" type="submit">გაუქმება</button>
+          </form>
+          <div id="cancelSuccess" class="msg success">რეგისტრაცია გაუქმდა ✓</div>
+          <div id="cancelError" class="msg error">გაუქმება ვერ შესრულდა ⚠</div>
+        </div>
+      </div>
+
+      <button class="btn btn-ghost" id="toggleExtraBtn" type="button">დამატებითი ინფორმაცია</button>
+
+      <div class="glass-card" id="extraBox">
+        <div class="card-eyebrow">ინფორმაცია</div>
+        <div id="extraFields"></div>
+      </div>
+    </div>
+
+    <!-- LAST REGISTRATION -->
+    <div class="glass-card last-card">
+      <div class="card-eyebrow">ბოლო რეგისტრაცია</div>
+      <div id="lastRegistrations"></div>
+    </div>
   </div>
-</div>
 
-<audio id="bgMusic" loop>
-  <source src="music.mp3" type="audio/mpeg">
-</audio>
+  <!-- SCHEDULE MODAL -->
+  <div class="modal" id="scheduleModal">
+    <div class="modal-content">
+      <div class="modal-subtitle">PROGRAM</div>
+      <div class="modal-title">სრული <span class="accent">პროგრამა</span></div>
+      <div class="ornament">
+        <div class="ornament-line"></div>
+        <span class="ornament-diamond">◆</span>
+        <div class="ornament-line"></div>
+      </div>
+      <div class="schedule-list" id="scheduleList"></div>
+      <button class="btn btn-ghost" id="closeScheduleBtn" type="button">დახურვა</button>
+    </div>
+  </div>
 
-<button onclick="toggleMusic()" id="musicBtn">🔊 მუსიკა</button>
+  <!-- REGISTER MODAL -->
+  <div class="modal" id="registerModal">
+    <div class="modal-content modal-compact">
+      <button class="modal-close-x" id="closeRegisterX" type="button" aria-label="Close">×</button>
+      <div class="modal-subtitle">RSVP</div>
+      <div class="modal-title">დაიკავე <span class="accent">ადგილი</span></div>
 
-<script>
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby-6G51SG_QFEHROFvm1PD8rsV5lWQIBDEAAtjXBBauUJ3UlYUU9AYUpx5CNSZk_hhe/exec";
+      <form id="registerForm" class="form-compact">
+        <div class="form-row">
+          <div class="input-group">
+            <input class="input-field" type="text" id="first_name" name="first_name" placeholder="სახელი" required />
+          </div>
+          <div class="input-group">
+            <input class="input-field" type="text" id="last_name" name="last_name" placeholder="გვარი" required />
+          </div>
+        </div>
 
-let playing = false;
-const form = document.getElementById("form");
-const btn = document.getElementById("btn");
-const successBox = document.getElementById("success");
-const errorBox = document.getElementById("error");
+        <div class="input-group">
+          <input class="input-field" type="text" id="city_area_village" name="city_area_village" placeholder="ქალაქი / რაიონი / სოფელი" />
+        </div>
 
-function toggleMusic() {
-  const music = document.getElementById("bgMusic");
-  const musicBtn = document.getElementById("musicBtn");
+        <div class="input-group">
+          <select class="input-field" id="position" name="position" required>
+            <option value="" disabled selected>აირჩიე წოდება</option>
+            <option value="ინფლუენსერი">ინფლუენსერი</option>
+            <option value="მენეჯერი">მენეჯერი</option>
+            <option value="ბრინჯაოს მენეჯერი">ბრინჯაოს მენეჯერი</option>
+            <option value="ოქროს მენეჯერი">ოქროს მენეჯერი</option>
+            <option value="პლატინის მენეჯერი">პლატინის მენეჯერი</option>
+            <option value="ზურმუხტის მენეჯერი">ზურმუხტის მენეჯერი</option>
+            <option value="ბრილიანტის მენეჯერი">ბრილიანტის მენეჯერი</option>
+            <option value="ვიცე-პრეზიდენტი მენეჯერი">ვიცე-პრეზიდენტი მენეჯერი</option>
+            <option value="პრეზიდენტი მენეჯერი">პრეზიდენტი მენეჯერი</option>
+            <option value="ბოს მენეჯერი">ბოს მენეჯერი</option>
+            <option value="აღმასრულებელი ბოს-მენეჯერი">აღმასრულებელი ბოს-მენეჯერი</option>
+          </select>
+        </div>
 
-  if (!playing) {
-    music.play();
-    musicBtn.innerText = "🔇 გამორთვა";
-    playing = true;
-  } else {
-    music.pause();
-    musicBtn.innerText = "🔊 მუსიკა";
-    playing = false;
-  }
-}
+        <div class="input-group">
+          <input class="input-field" type="tel" id="phone" name="phone" placeholder="ტელეფონის ნომერი" required />
+        </div>
 
-async function loadEvent() {
-  try {
-    const res = await fetch(SCRIPT_URL + "?t=" + Date.now());
-    const data = await res.json();
+        <button class="btn btn-primary submit-btn" id="registerBtn" type="submit">დარეგისტრირება</button>
+      </form>
 
-    document.getElementById("eventCity").innerText = "📍 ქალაქი: " + data.city;
-    document.getElementById("eventDate").innerText = "📅 თარიღი: " + data.date;
-    document.getElementById("eventTime").innerText = "🕒 დრო: " + data.time;
-    document.getElementById("eventLocation").innerText = "🏢 ლოკაცია: " + data.location;
+      <div id="registerSuccess" class="msg success">რეგისტრაცია წარმატებით დასრულდა ✦</div>
+      <div id="registerError" class="msg error">დაფიქსირდა შეცდომა ⚠</div>
+    </div>
+  </div>
 
-    document.getElementById("totalCount").innerText = data.totalRegistrations ?? 0;
-    document.getElementById("todayCount").innerText = data.todayRegistrations ?? 0;
-    document.getElementById("spotsLeft").innerText =
-      data.spotsLeft === null ? "∞" : data.spotsLeft;
-  } catch (e) {
-    document.getElementById("eventCity").innerText = "❌ მონაცემები ვერ ჩაიტვირთა";
-  }
-}
+  <!-- LIVE POPUP -->
+  <div class="live-popup" id="livePopup"></div>
 
-form.addEventListener("submit", async (e) => {
-  e.preventDefault();
+  <!-- TOAST -->
+  <div class="toast" id="toast"></div>
 
-  successBox.style.display = "none";
-  errorBox.style.display = "none";
+  <!-- SUCCESS TICKET MODAL -->
+  <div class="modal" id="ticketModal">
+    <div class="modal-content">
+      <button class="modal-close-x" id="closeTicketX" type="button" aria-label="Close">×</button>
+      <div class="modal-subtitle">YOUR TICKET</div>
+      <div class="modal-title">შენი <span class="accent">ბილეთი</span></div>
 
-  btn.disabled = true;
-  btn.innerText = "იგზავნება...";
+      <div class="ticket-card">
+        <div class="ticket-tier-badge" id="ticketTierBadge"></div>
+        <div class="qr-wrap" id="qrWrap"></div>
+        <div class="ticket-id" id="ticketId">FM-2026-00000</div>
+        <div class="ticket-name" id="ticketName">სტუმარი</div>
+        <div class="ticket-meta" id="ticketMeta"></div>
+      </div>
 
-  try {
-    const res = await fetch(SCRIPT_URL, {
-      method: "POST",
-      body: new FormData(form)
-    });
+      <div class="card-eyebrow" style="justify-content:center; margin-top:6px;">დაამატე კალენდარში</div>
+      <div class="action-grid">
+        <a class="action-btn" id="googleCalBtn" href="#" target="_blank" rel="noopener">
+          <span class="ico">📅</span> Google Calendar
+        </a>
+        <a class="action-btn" id="appleCalBtn" href="#" download="masterclass.ics">
+          <span class="ico">🍎</span> Apple / .ics
+        </a>
+      </div>
 
-    const text = (await res.text()).trim();
+      <div class="share-row-label">გაუგზავნე მეგობარს</div>
+      <div class="share-row">
+        <a class="share-btn" id="shareWhatsapp" href="#" target="_blank" rel="noopener" title="WhatsApp">📱</a>
+        <a class="share-btn" id="shareTelegram" href="#" target="_blank" rel="noopener" title="Telegram">✈️</a>
+        <a class="share-btn" id="shareFacebook" href="#" target="_blank" rel="noopener" title="Facebook">📘</a>
+        <button class="share-btn" id="shareCopy" type="button" title="Copy link">🔗</button>
+      </div>
 
-    if (text === "success") {
-      form.reset();
-      successBox.innerText = "რეგისტრაცია წარმატებულია ✅";
-      successBox.style.display = "block";
-      setTimeout(loadEvent, 800);
-    } else if (text === "duplicate") {
-      errorBox.innerText = "ეს ნომერი უკვე დარეგისტრირებულია ❌";
-      errorBox.style.display = "block";
-    } else if (text === "invalid") {
-      errorBox.innerText = "არასწორი ნომერი ❌";
-      errorBox.style.display = "block";
-    } else if (text === "closed") {
-      errorBox.innerText = "რეგისტრაცია დახურულია ❌";
-      errorBox.style.display = "block";
-    } else if (text === "full") {
-      errorBox.innerText = "ადგილები აღარ არის ❌";
-      errorBox.style.display = "block";
-    } else if (text === "sms error") {
-      errorBox.innerText = "SMS ვერ გაიგზავნა ❌";
-      errorBox.style.display = "block";
-    } else {
-      errorBox.innerText = "იგივე ნომრით მალე ხელახლა ცდა არ შეიძლება ⏳";
-      errorBox.style.display = "block";
+      <button class="btn btn-ghost" id="closeTicketBtn" type="button" style="margin-top:16px;">დახურვა</button>
+    </div>
+  </div>
+
+  <!-- AUDIO -->
+  <audio id="music" loop preload="auto">
+    <source src="music.mp3" type="audio/mpeg">
+  </audio>
+
+  <audio id="boom" preload="auto">
+    <source src="boom.mp3" type="audio/mpeg">
+  </audio>
+
+  <!-- MUSIC CONTROL -->
+  <div class="music-box">
+    <button id="playBtn" class="music-btn" type="button">♪</button>
+    <input type="range" id="volume" min="0" max="1" step="0.01" value="0.3">
+  </div>
+
+  <script>
+    // ⚠️ შენი Apps Script Web App URL
+    const API_URL = "https://script.google.com/macros/s/AKfycbz40UE4b9og1Yjs0rPPfDe1H-yRi90hKbK2WOXej4CAWPCnncDFcetadMEdQSYJO7nf/exec";
+
+    let countdownTimer = null;
+    let livePopupTimer = null;
+    let simulatedPopupInterval = null;
+    let musicPlaying = false;
+    let firstInteractionMusicTried = false;
+
+    const fallImages = ["gel100.png", "gel200.png", "usd100.png"];
+
+    const simulatedPeople = [
+      { name: "ანა მ.", phone: "599***211", area: "თბილისი" },
+      { name: "ნინო კ.", phone: "577***845", area: "ბათუმი" },
+      { name: "მარიამ ბ.", phone: "595***420", area: "ქუთაისი" },
+      { name: "თამთა გ.", phone: "555***318", area: "რუსთავი" },
+      { name: "სალომე დ.", phone: "598***771", area: "გორი" }
+    ];
+
+    const RESERVED_KEYS = new Set([
+      "max_registrations","registration_status","event_city","event_date",
+      "event_time","meeting_end_time","event_location","hotel_location",
+      "farewell","admin_phones","admin_chat_ids","schedule",
+      "reminder_day","reminder_2h","faq","speakers",
+      // Speakers (1–6) — name, role, photo
+      "speaker_1_name","speaker_1_role","speaker_1_photo",
+      "speaker_2_name","speaker_2_role","speaker_2_photo",
+      "speaker_3_name","speaker_3_role","speaker_3_photo",
+      "speaker_4_name","speaker_4_role","speaker_4_photo",
+      "speaker_5_name","speaker_5_role","speaker_5_photo",
+      "speaker_6_name","speaker_6_role","speaker_6_photo"
+    ]);
+
+    const els = {
+      pageSubtitle: document.getElementById("pageSubtitle"),
+      heroMeta: document.getElementById("heroMeta"),
+      statusBadge: document.getElementById("statusBadge"),
+      statTotal: document.getElementById("statTotal"),
+      statToday: document.getElementById("statToday"),
+      statLeft: document.getElementById("statLeft"),
+      infoCity: document.getElementById("infoCity"),
+      infoDate: document.getElementById("infoDate"),
+      infoTime: document.getElementById("infoTime"),
+      infoLocation: document.getElementById("infoLocation"),
+      infoHotel: document.getElementById("infoHotel"),
+      registerForm: document.getElementById("registerForm"),
+      cancelForm: document.getElementById("cancelForm"),
+      registerBtn: document.getElementById("registerBtn"),
+      cancelBtn: document.getElementById("cancelBtn"),
+      registerSuccess: document.getElementById("registerSuccess"),
+      registerError: document.getElementById("registerError"),
+      cancelSuccess: document.getElementById("cancelSuccess"),
+      cancelError: document.getElementById("cancelError"),
+      extraBox: document.getElementById("extraBox"),
+      extraFields: document.getElementById("extraFields"),
+      toggleExtraBtn: document.getElementById("toggleExtraBtn"),
+      countdownBox: document.getElementById("countdownBox"),
+      cdDays: document.getElementById("cdDays"),
+      cdHours: document.getElementById("cdHours"),
+      cdMinutes: document.getElementById("cdMinutes"),
+      cdSeconds: document.getElementById("cdSeconds"),
+      scheduleBtn: document.getElementById("scheduleBtn"),
+      scheduleModal: document.getElementById("scheduleModal"),
+      closeScheduleBtn: document.getElementById("closeScheduleBtn"),
+      scheduleList: document.getElementById("scheduleList"),
+      lastRegistrations: document.getElementById("lastRegistrations"),
+      livePopup: document.getElementById("livePopup"),
+      music: document.getElementById("music"),
+      boom: document.getElementById("boom"),
+      playBtn: document.getElementById("playBtn"),
+      volume: document.getElementById("volume"),
+      stormLayer: document.getElementById("stormLayer"),
+      successBurst: document.getElementById("successBurst"),
+      toggleCancelBtn: document.getElementById("toggleCancelBtn"),
+      cancelWrap: document.getElementById("cancelWrap"),
+      particles: document.getElementById("particles"),
+      openRegisterBtn: document.getElementById("openRegisterBtn"),
+      closeRegisterX: document.getElementById("closeRegisterX"),
+      registerModal: document.getElementById("registerModal"),
+
+      // Premium features
+      progressCard: document.getElementById("progressCard"),
+      progressNum: document.getElementById("progressNum"),
+      progressMax: document.getElementById("progressMax"),
+      progressFill: document.getElementById("progressFill"),
+      urgencyBanner: document.getElementById("urgencyBanner"),
+      urgencyText: document.getElementById("urgencyText"),
+      nextTierBadge: document.getElementById("nextTierBadge"),
+      faqCard: document.getElementById("faqCard"),
+      faqList: document.getElementById("faqList"),
+
+      // Ticket modal
+      ticketModal: document.getElementById("ticketModal"),
+      closeTicketX: document.getElementById("closeTicketX"),
+      closeTicketBtn: document.getElementById("closeTicketBtn"),
+      ticketTierBadge: document.getElementById("ticketTierBadge"),
+      qrWrap: document.getElementById("qrWrap"),
+      ticketId: document.getElementById("ticketId"),
+      ticketName: document.getElementById("ticketName"),
+      ticketMeta: document.getElementById("ticketMeta"),
+      googleCalBtn: document.getElementById("googleCalBtn"),
+      appleCalBtn: document.getElementById("appleCalBtn"),
+      shareWhatsapp: document.getElementById("shareWhatsapp"),
+      shareTelegram: document.getElementById("shareTelegram"),
+      shareFacebook: document.getElementById("shareFacebook"),
+      shareCopy: document.getElementById("shareCopy"),
+      toast: document.getElementById("toast"),
+
+      // Speakers
+      speakersCard: document.getElementById("speakersCard"),
+      speakersGrid: document.getElementById("speakersGrid")
+    };
+
+    let lastConfig = {}; // store the latest config for ticket/calendar use
+
+    els.music.volume = 0.3;
+    els.boom.volume = 0.55;
+
+    // ============= UTILS =============
+    function safeText(v) { return String(v || "").trim(); }
+    function isUrl(v) { return /^https?:\/\//i.test(String(v || "").trim()); }
+
+    function makeLocationHtml(icon, label, value) {
+      const v = safeText(value);
+      if (!v) return "";
+      const inner = isUrl(v)
+        ? `<strong>${label}</strong><br><a href="${v}" target="_blank" rel="noopener" class="map-btn">📍 რუკის გახსნა</a>`
+        : `<strong>${label}:</strong> ${v}`;
+      return `<div class="info-icon">${icon}</div><div class="info-text">${inner}</div>`;
     }
-  } catch (err) {
-    errorBox.innerText = "სერვერთან კავშირი ვერ მოხერხდა ❌";
-    errorBox.style.display = "block";
-  }
 
-  btn.disabled = false;
-  btn.innerText = "დარეგისტრირება";
-});
+    function parseEventDateTime(config) {
+      const d = safeText(config.event_date);
+      const t = safeText(config.event_time);
+      if (!d || !t) return null;
 
-loadEvent();
-setInterval(loadEvent, 5000);
-</script>
+      let year, month, day;
+      if (/^\d{4}-\d{2}-\d{2}$/.test(d)) {
+        [year, month, day] = d.split("-").map(Number);
+      } else if (/^\d{2}\.\d{2}\.\d{4}$/.test(d)) {
+        const p = d.split(".").map(Number);
+        day = p[0]; month = p[1]; year = p[2];
+      } else if (/^\d{2}\/\d{2}\/\d{4}$/.test(d)) {
+        const p = d.split("/").map(Number);
+        day = p[0]; month = p[1]; year = p[2];
+      } else {
+        const fb = new Date(d + " " + t);
+        return isNaN(fb.getTime()) ? null : fb;
+      }
 
+      const tm = t.match(/^(\d{1,2}):(\d{2})$/);
+      if (!tm) return null;
+      return new Date(year, month - 1, day, Number(tm[1]), Number(tm[2]), 0, 0);
+    }
+
+    // ============= PARTICLES =============
+    function spawnParticles(count = 25) {
+      for (let i = 0; i < count; i++) {
+        const p = document.createElement("div");
+        p.className = "particle";
+        p.style.left = Math.random() * 100 + "vw";
+        p.style.animationDuration = (12 + Math.random() * 18) + "s";
+        p.style.animationDelay = (Math.random() * 15) + "s";
+        const size = 1 + Math.random() * 3;
+        p.style.width = size + "px";
+        p.style.height = size + "px";
+        els.particles.appendChild(p);
+      }
+    }
+
+    // ============= RENDERERS =============
+    function renderStatus(status) {
+      els.statusBadge.textContent = String(status || "").toUpperCase();
+      els.statusBadge.className = "status-badge " + (status === "open" ? "status-open" : "status-closed");
+    }
+
+    function renderStats(data) {
+      animateNumber(els.statTotal, data.totalRegistrations ?? 0);
+      animateNumber(els.statToday, data.todayRegistrations ?? 0);
+      els.statLeft.textContent = data.spotsLeft === null ? "∞" : data.spotsLeft;
+    }
+
+    // ============= PROGRESS BAR =============
+    function renderProgress(data) {
+      const max = data.maxRegistrations;
+      const total = data.totalRegistrations || 0;
+
+      if (!max || max <= 0) {
+        els.progressCard.style.display = "none";
+        return;
+      }
+
+      els.progressCard.style.display = "block";
+      els.progressNum.textContent = total;
+      els.progressMax.textContent = max;
+
+      const percent = Math.min(100, (total / max) * 100);
+      els.progressFill.style.width = percent + "%";
+
+      if (percent >= 80) {
+        els.progressFill.classList.add("warning");
+      } else {
+        els.progressFill.classList.remove("warning");
+      }
+    }
+
+    // ============= URGENCY BANNER =============
+    function renderUrgency(data) {
+      const max = data.maxRegistrations;
+      const left = data.spotsLeft;
+
+      if (!max || left === null || left === undefined) {
+        els.urgencyBanner.classList.remove("show");
+        return;
+      }
+
+      const percent = ((max - left) / max) * 100;
+
+      if (left <= 0) {
+        els.urgencyText.innerHTML = `ადგილები ამოიწურა — <strong>დაელოდე შემდეგს!</strong>`;
+        els.urgencyBanner.classList.add("show");
+      } else if (percent >= 90) {
+        els.urgencyText.innerHTML = `მხოლოდ <strong>${left} ადგილი</strong> დარჩა — დროულად დაიკავე!`;
+        els.urgencyBanner.classList.add("show");
+      } else if (percent >= 80) {
+        els.urgencyText.innerHTML = `დარჩა მხოლოდ <strong>${left} ადგილი</strong> — სწრაფად ბოლოვდება!`;
+        els.urgencyBanner.classList.add("show");
+      } else {
+        els.urgencyBanner.classList.remove("show");
+      }
+    }
+
+    // ============= SPEAKERS =============
+    function getInitials(name) {
+      const parts = String(name || "").trim().split(/\s+/);
+      if (!parts.length) return "?";
+      if (parts.length === 1) return parts[0].slice(0, 1) + "." + (parts[0].slice(1, 2) || "");
+      return parts[0].slice(0, 1) + "." + parts[1].slice(0, 1);
+    }
+
+    function renderSpeakers(config) {
+      const list = [];
+      for (let i = 1; i <= 6; i++) {
+        const name = safeText(config["speaker_" + i + "_name"]);
+        if (!name) continue;
+        list.push({
+          name: name,
+          role: safeText(config["speaker_" + i + "_role"]),
+          photo: safeText(config["speaker_" + i + "_photo"])
+        });
+      }
+
+      els.speakersGrid.innerHTML = "";
+      els.speakersGrid.className = "speakers-grid count-" + list.length;
+
+      if (!list.length) {
+        els.speakersCard.style.display = "none";
+        return;
+      }
+
+      els.speakersCard.style.display = "block";
+
+      list.forEach(sp => {
+        const card = document.createElement("div");
+        card.className = "speaker";
+
+        const hasPhoto = isUrl(sp.photo);
+        const avatarHtml = hasPhoto
+          ? `<div class="speaker-avatar has-photo"><img src="${sp.photo}" alt="${sp.name}" onerror="this.parentElement.classList.remove('has-photo'); this.parentElement.innerHTML='${getInitials(sp.name)}';"></div>`
+          : `<div class="speaker-avatar">${getInitials(sp.name)}</div>`;
+
+        card.innerHTML = `
+          ${avatarHtml}
+          <div class="speaker-name">${sp.name}</div>
+          <div class="speaker-role">${sp.role || ""}</div>
+        `;
+        els.speakersGrid.appendChild(card);
+      });
+    }
+
+    // ============= NEXT TIER BADGE =============
+    function renderNextTier(data) {
+      const tier = data.nextTier;
+      if (!tier || data.spotsLeft === 0) {
+        els.nextTierBadge.innerHTML = "";
+        return;
+      }
+
+      let cls = "tier-standard";
+      let icon = "🎫";
+      let text = tier;
+
+      if (tier === "Early Bird") {
+        cls = "tier-early";
+        icon = "🥇";
+        text = "Early Bird · შენი სტატუსი";
+      } else if (tier === "VIP") {
+        cls = "tier-vip";
+        icon = "✨";
+        text = "VIP · შენი სტატუსი";
+      } else {
+        text = "Standard · შენი სტატუსი";
+      }
+
+      els.nextTierBadge.innerHTML =
+        `<span class="tier-pill ${cls}">${icon} ${text}</span>`;
+    }
+
+    function animateNumber(el, target) {
+      const current = parseInt(el.textContent) || 0;
+      if (current === target) return;
+      const duration = 800;
+      const start = performance.now();
+      const update = (t) => {
+        const progress = Math.min((t - start) / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        el.textContent = Math.round(current + (target - current) * eased);
+        if (progress < 1) requestAnimationFrame(update);
+      };
+      requestAnimationFrame(update);
+    }
+
+    function renderInfo(config) {
+      els.pageSubtitle.textContent = safeText(config.farewell) || "ექსკლუზიური მარკეტინგის ცოდნა — დაიკავე ადგილი";
+
+      // Hero meta chip: city · date · time
+      const city = safeText(config.event_city);
+      const date = safeText(config.event_date);
+      const time = safeText(config.event_time);
+      const parts = [];
+      if (city) parts.push(city);
+      if (date) parts.push(date);
+      if (time) parts.push(time);
+
+      if (parts.length) {
+        els.heroMeta.innerHTML = parts
+          .map((p, i) => i === 0
+            ? `<span>${p}</span>`
+            : `<span class="dot-sep">◆</span><span>${p}</span>`
+          ).join("");
+      } else {
+        els.heroMeta.innerHTML = "";
+      }
+
+      els.infoCity.innerHTML = makeLocationHtml("◆", "ქალაქი", config.event_city);
+      els.infoDate.innerHTML = `<div class="info-icon">◆</div><div class="info-text"><strong>თარიღი:</strong> ${safeText(config.event_date)}</div>`;
+      els.infoTime.innerHTML = `<div class="info-icon">◆</div><div class="info-text"><strong>დრო:</strong> ${safeText(config.event_time)}</div>`;
+      els.infoLocation.innerHTML = makeLocationHtml("◆", "ლოკაცია", config.event_location);
+      els.infoHotel.innerHTML = safeText(config.hotel_location)
+        ? makeLocationHtml("◆", "სათაო ოფისი", config.hotel_location)
+        : "";
+    }
+
+    function renderExtraFields(config) {
+      const extra = Object.keys(config || {}).filter(k => !RESERVED_KEYS.has(k));
+      els.extraFields.innerHTML = "";
+      if (!extra.length) {
+        els.extraFields.innerHTML = `<div class="info-row"><div class="info-text">დამატებითი ინფორმაცია არ არის.</div></div>`;
+        return;
+      }
+      extra.forEach(key => {
+        const value = safeText(config[key]);
+        if (!value) return;
+        const row = document.createElement("div");
+        row.className = "info-row";
+        const pretty = key.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+        const inner = isUrl(value)
+          ? `<strong>${pretty}:</strong> <a href="${value}" target="_blank" rel="noopener">${value}</a>`
+          : `<strong>${pretty}:</strong> ${value}`;
+        row.innerHTML = `<div class="info-icon">◆</div><div class="info-text">${inner}</div>`;
+        els.extraFields.appendChild(row);
+      });
+    }
+
+    function renderSchedule(config) {
+      const raw = safeText(config.schedule);
+      els.scheduleList.innerHTML = "";
+      if (!raw) {
+        els.scheduleList.innerHTML = `<div class="schedule-item"><div class="schedule-text">პროგრამა მალე დაემატება.</div></div>`;
+        return;
+      }
+      const lines = raw.split("\n").map(x => x.trim()).filter(Boolean);
+      lines.forEach(line => {
+        const item = document.createElement("div");
+        item.className = "schedule-item";
+        const match = line.match(/^(\d{1,2}:\d{2})\s*-\s*(.+)$/);
+        if (match) {
+          item.innerHTML = `<div class="schedule-time">${match[1]}</div><div class="schedule-text">${match[2]}</div>`;
+        } else {
+          item.innerHTML = `<div class="schedule-text">${line}</div>`;
+        }
+        els.scheduleList.appendChild(item);
+      });
+    }
+
+    // ============= FAQ from Config =============
+    function renderFAQ(config) {
+      const raw = safeText(config.faq);
+      let blocks;
+
+      if (raw) {
+        // Custom FAQ from Config sheet
+        // Format: Question on first line, answer on next line(s), then "---" separator
+        blocks = raw.split(/\n\s*(?:---+|===+)\s*\n/).map(b => b.trim()).filter(Boolean);
+      } else {
+        // Default FAQ when nothing in Config
+        blocks = [
+          "ვინ შეიძლება დაესწროს მასტერკლასს?\nმასტერკლასი განკუთვნილია Farmasi-ს ნებისმიერი წოდების მფლობელისთვის — ინფლუენსერიდან აღმასრულებელ ბოს-მენეჯერამდე. ასევე მოწვეულები არიან ისინი, ვინც აპირებენ Farmasi-ს გუნდში გაწევრიანებას.",
+          "რა უნდა წავიღო თან?\nსაჭიროა მხოლოდ რვეული, კალამი და ნათელი გონება. ყველა საჭირო მასალა და კოფი/ჩაი ჩვენ მოგვყავს.",
+          "უფასოა მონაწილეობა?\nდიახ, მასტერკლასი სრულიად უფასოა Farmasi-ს გუნდის წევრებისთვის. ერთადერთი მოთხოვნა — წინასწარი რეგისტრაცია, ვინაიდან ადგილების რაოდენობა შეზღუდულია.",
+          "რა ვისწავლი?\nთანამედროვე მარკეტინგის სტრატეგიებს — სოციალური ქსელების ეფექტურ მართვას, Personal Branding-ს, კლიენტების მოზიდვისა და გაყიდვების ტექნიკებს, რომლებიც პრაქტიკულად დაგვეხმარება შენი Farmasi-ს ბიზნესის გაფართოებაში.",
+          "შემიძლია გავაუქმო რეგისტრაცია?\nდიახ, მთავარ გვერდზე არის ღილაკი 'რეგისტრაციის გაუქმება'. საჭიროა მხოლოდ ტელეფონის ნომრის მითითება. გთხოვთ ადრე გვაცნობოთ თუ ვერ შეძლებთ დასწრებას, რომ ადგილი სხვას ჩავაბაროთ."
+        ];
+      }
+
+      if (!blocks.length) {
+        els.faqCard.style.display = "none";
+        return;
+      }
+
+      els.faqCard.style.display = "block";
+      els.faqList.innerHTML = "";
+
+      blocks.forEach(block => {
+        const lines = block.split("\n").map(l => l.trim()).filter(Boolean);
+        if (lines.length === 0) return;
+
+        const question = lines[0];
+        const answer = lines.slice(1).join(" ");
+
+        if (!question) return;
+
+        const item = document.createElement("div");
+        item.className = "faq-item";
+        item.innerHTML = `
+          <button class="faq-q" type="button">
+            <span>${escapeHtml(question)}</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-a">${escapeHtml(answer || "")}</div>
+        `;
+
+        const btn = item.querySelector(".faq-q");
+        btn.addEventListener("click", () => item.classList.toggle("open"));
+
+        els.faqList.appendChild(item);
+      });
+
+      // If parsing produced nothing, hide the card
+      if (!els.faqList.children.length) {
+        els.faqCard.style.display = "none";
+      }
+    }
+
+    function escapeHtml(str) {
+      return String(str || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    function renderLastRegistrations(items) {
+      els.lastRegistrations.innerHTML = "";
+      const one = (items || []).slice(0, 1);
+      if (!one.length) {
+        els.lastRegistrations.innerHTML = `<div class="last-item"><div class="last-item-name" style="font-size:14px;color:var(--cream-dim);">ჯერ რეგისტრაცია არ დაფიქსირებულა</div></div>`;
+        return;
+      }
+      one.forEach(item => {
+        const box = document.createElement("div");
+        box.className = "last-item";
+        box.innerHTML = `
+          <div class="last-item-pulse"></div>
+          <div class="last-item-name">${safeText(item.name)}</div>
+          <div class="last-item-phone">${safeText(item.phone)}</div>
+          <div class="last-item-time">${safeText(item.time)}</div>
+        `;
+        els.lastRegistrations.appendChild(box);
+      });
+    }
+
+    function startCountdown(config) {
+      if (countdownTimer) clearInterval(countdownTimer);
+      const eventDate = parseEventDateTime(config);
+      if (!eventDate) {
+        els.countdownBox.style.display = "none";
+        return;
+      }
+      els.countdownBox.style.display = "block";
+
+      const update = () => {
+        const diff = eventDate.getTime() - Date.now();
+        if (diff <= 0) {
+          els.cdDays.textContent = "0";
+          els.cdHours.textContent = "0";
+          els.cdMinutes.textContent = "0";
+          els.cdSeconds.textContent = "0";
+          return;
+        }
+        els.cdDays.textContent = Math.floor(diff / (1000 * 60 * 60 * 24));
+        els.cdHours.textContent = Math.floor((diff / (1000 * 60 * 60)) % 24);
+        els.cdMinutes.textContent = Math.floor((diff / (1000 * 60)) % 60);
+        els.cdSeconds.textContent = Math.floor((diff / 1000) % 60);
+      };
+      update();
+      countdownTimer = setInterval(update, 1000);
+    }
+
+    function showMessage(type, text, target) {
+      target.textContent = text;
+      target.className = "msg " + type;
+      target.style.display = "block";
+    }
+
+    function hideMessages() {
+      [els.registerSuccess, els.registerError, els.cancelSuccess, els.cancelError]
+        .forEach(el => { el.style.display = "none"; });
+    }
+
+    function createBurstStorm() {
+      const total = 28;
+      for (let i = 0; i < total; i++) {
+        const img = document.createElement("img");
+        img.src = fallImages[Math.floor(Math.random() * fallImages.length)];
+        img.className = "fall-item";
+        img.style.left = Math.random() * 100 + "vw";
+        img.style.animationDuration = (2.8 + Math.random() * 1.8) + "s";
+        img.style.animationDelay = (Math.random() * 0.4) + "s";
+        img.style.width = (55 + Math.random() * 40) + "px";
+        img.style.transform = `rotate(${Math.random() * 60 - 30}deg)`;
+        els.stormLayer.appendChild(img);
+        setTimeout(() => img.remove(), 5500);
+      }
+    }
+
+    function fadeInMusic(targetVolume = 0.3, duration = 900) {
+      const steps = 12;
+      const stepTime = Math.max(40, Math.floor(duration / steps));
+      let cur = 0;
+      els.music.volume = 0.01;
+      const t = setInterval(() => {
+        cur++;
+        els.music.volume = Math.min(targetVolume, (targetVolume / steps) * cur);
+        if (cur >= steps) { clearInterval(t); els.music.volume = targetVolume; }
+      }, stepTime);
+    }
+
+    async function tryStartMusic() {
+      if (musicPlaying) return;
+      try {
+        await els.music.play();
+        musicPlaying = true;
+        els.playBtn.textContent = "❚❚";
+        fadeInMusic(parseFloat(els.volume.value), 600);
+      } catch (e) {}
+    }
+
+    function triggerRewardEffects() {
+      try {
+        els.boom.currentTime = 0;
+        els.boom.play().catch(() => {});
+      } catch (e) {}
+      if (navigator.vibrate) navigator.vibrate([120, 50, 120]);
+      els.successBurst.classList.add("show");
+      createBurstStorm();
+      setTimeout(() => els.successBurst.classList.remove("show"), 1200);
+    }
+
+    function showLivePopup(item) {
+      if (!item) return;
+      if (livePopupTimer) clearTimeout(livePopupTimer);
+      const area = item.area ? `<small>${safeText(item.area)}</small><br>` : "";
+      els.livePopup.innerHTML = `
+        <strong>✦ ახალი რეგისტრაცია</strong>
+        ${safeText(item.name)}<br>
+        ${area}
+        <small>${safeText(item.time || "")}</small>
+      `;
+      els.livePopup.classList.remove("show");
+      void els.livePopup.offsetWidth;
+      els.livePopup.classList.add("show");
+      livePopupTimer = setTimeout(() => els.livePopup.classList.remove("show"), 3500);
+    }
+
+    function maybeShowLivePopup(items) {
+      if (!items || !items.length) return;
+      showLivePopup(items[0]);
+    }
+
+    function startSimulatedRegistrations() {
+      if (simulatedPopupInterval) clearInterval(simulatedPopupInterval);
+      simulatedPopupInterval = setInterval(() => {
+        const p = simulatedPeople[Math.floor(Math.random() * simulatedPeople.length)];
+        showLivePopup({
+          name: p.name, phone: p.phone, area: p.area,
+          time: new Date().toLocaleTimeString("ka-GE", { hour: "2-digit", minute: "2-digit" })
+        });
+      }, 16000);
+    }
+
+    async function loadData() {
+      try {
+        const res = await fetch(API_URL);
+        const data = await res.json();
+        if (!data.ok) {
+          els.pageSubtitle.textContent = "მონაცემების ჩატვირთვა ვერ მოხერხდა";
+          return;
+        }
+        lastConfig = data.config || {};
+        renderStatus(data.status);
+        renderStats(data);
+        renderProgress(data);
+        renderUrgency(data);
+        renderNextTier(data);
+        renderInfo(data.config || {});
+        renderExtraFields(data.config || {});
+        renderSpeakers(data.config || {});
+        renderSchedule(data.config || {});
+        renderFAQ(data.config || {});
+        renderLastRegistrations(data.lastRegistrations || []);
+        startCountdown(data.config || {});
+        maybeShowLivePopup(data.lastRegistrations || []);
+      } catch (e) {
+        els.pageSubtitle.textContent = "მონაცემების ჩატვირთვა ვერ მოხერხდა";
+      }
+    }
+
+    async function postAction(fields) {
+      const fd = new FormData();
+      Object.keys(fields).forEach(k => fd.append(k, fields[k]));
+      await fetch(API_URL, { method: "POST", body: fd, mode: "no-cors" });
+    }
+
+    // POST that tries to read response (use only for register where we want ticket back)
+    async function postActionWithResponse(fields) {
+      const fd = new FormData();
+      Object.keys(fields).forEach(k => fd.append(k, fields[k]));
+      try {
+        const res = await fetch(API_URL, { method: "POST", body: fd });
+        return await res.json();
+      } catch (e) {
+        // Fallback: in case CORS blocks reading, fire-and-forget
+        try {
+          await fetch(API_URL, { method: "POST", body: fd, mode: "no-cors" });
+        } catch (_) {}
+        return null;
+      }
+    }
+
+    // ============= TICKET MODAL =============
+    function showTicketModal(registrationData, formData) {
+      // Determine tier display
+      const tier = (registrationData && registrationData.tier) || "Standard";
+      const ticketIdStr = (registrationData && registrationData.ticket_id) ||
+        ("FM-" + new Date().getFullYear() + "-" +
+         String(Math.floor(Math.random() * 99999)).padStart(5, '0'));
+
+      let cls = "tier-standard", icon = "🎫";
+      if (tier === "Early Bird") { cls = "tier-early"; icon = "🥇"; }
+      else if (tier === "VIP") { cls = "tier-vip"; icon = "✨"; }
+
+      els.ticketTierBadge.className = "ticket-tier-badge tier-pill " + cls;
+      els.ticketTierBadge.innerHTML = `${icon} ${tier}`;
+
+      els.ticketId.textContent = ticketIdStr;
+      els.ticketName.textContent = (formData.first_name + " " + formData.last_name).trim();
+
+      const city = lastConfig.event_city || "";
+      const date = lastConfig.event_date || "";
+      const time = lastConfig.event_time || "";
+      els.ticketMeta.textContent = [city, date, time].filter(Boolean).join(" · ");
+
+      // Generate QR code
+      els.qrWrap.innerHTML = "";
+      try {
+        if (typeof QRCode !== "undefined") {
+          new QRCode(els.qrWrap, {
+            text: ticketIdStr + "|" + formData.first_name + " " + formData.last_name + "|" + formData.phone,
+            width: 140,
+            height: 140,
+            colorDark: "#1a1212",
+            colorLight: "#ffffff",
+            correctLevel: QRCode.CorrectLevel.H
+          });
+        }
+      } catch (e) {
+        els.qrWrap.innerHTML = `<div style="font-family:monospace; padding:30px; color:#1a1212;">${ticketIdStr}</div>`;
+      }
+
+      // Build calendar URLs
+      buildCalendarLinks();
+
+      // Build share URLs
+      buildShareLinks(formData);
+
+      // Show modal
+      els.ticketModal.classList.add("open");
+    }
+
+    function buildCalendarLinks() {
+      const title = "Farmasi მარკეტინგის მასტერკლასი";
+      const details = lastConfig.farewell || "Farmasi-ს ექსკლუზიური მასტერკლასი";
+      const location = lastConfig.event_location || "";
+      const date = lastConfig.event_date || "";
+      const time = lastConfig.event_time || "14:00";
+
+      if (!date) {
+        els.googleCalBtn.style.display = "none";
+        els.appleCalBtn.style.display = "none";
+        return;
+      }
+
+      // Parse start datetime
+      const [y, m, d] = date.split("-").map(Number);
+      const [hh, mm] = time.split(":").map(Number);
+      const start = new Date(y, m - 1, d, hh, mm);
+      const end = new Date(start.getTime() + 4 * 60 * 60 * 1000); // 4-hour event
+
+      const fmtUTC = (dt) => dt.toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "");
+
+      // Google Calendar URL
+      const gcalUrl = "https://calendar.google.com/calendar/render?action=TEMPLATE" +
+        "&text=" + encodeURIComponent(title) +
+        "&dates=" + fmtUTC(start) + "/" + fmtUTC(end) +
+        "&details=" + encodeURIComponent(details) +
+        "&location=" + encodeURIComponent(location);
+
+      els.googleCalBtn.href = gcalUrl;
+
+      // ICS file (Apple/Outlook)
+      const ics =
+        "BEGIN:VCALENDAR\r\n" +
+        "VERSION:2.0\r\n" +
+        "PRODID:-//Farmasi//Masterclass//EN\r\n" +
+        "BEGIN:VEVENT\r\n" +
+        "UID:" + Date.now() + "@farmasi\r\n" +
+        "DTSTAMP:" + fmtUTC(new Date()) + "\r\n" +
+        "DTSTART:" + fmtUTC(start) + "\r\n" +
+        "DTEND:" + fmtUTC(end) + "\r\n" +
+        "SUMMARY:" + title + "\r\n" +
+        "DESCRIPTION:" + details.replace(/\n/g, "\\n") + "\r\n" +
+        "LOCATION:" + location + "\r\n" +
+        "END:VEVENT\r\n" +
+        "END:VCALENDAR";
+      els.appleCalBtn.href = "data:text/calendar;charset=utf-8," + encodeURIComponent(ics);
+    }
+
+    function buildShareLinks(formData) {
+      const url = window.location.href.split("#")[0];
+      const text = "🎤 ვრეგისტრირდები Farmasi მარკეტინგის მასტერკლასზე! შეუერთდი შენც:";
+      const fullText = text + " " + url;
+
+      els.shareWhatsapp.href = "https://wa.me/?text=" + encodeURIComponent(fullText);
+      els.shareTelegram.href = "https://t.me/share/url?url=" + encodeURIComponent(url) + "&text=" + encodeURIComponent(text);
+      els.shareFacebook.href = "https://www.facebook.com/sharer/sharer.php?u=" + encodeURIComponent(url);
+
+      els.shareCopy.onclick = async () => {
+        try {
+          await navigator.clipboard.writeText(url);
+          showToast("ლინკი დაკოპირდა ✓");
+        } catch (e) {
+          showToast("ვერ დაკოპირდა");
+        }
+      };
+    }
+
+    function showToast(msg) {
+      els.toast.textContent = msg;
+      els.toast.classList.add("show");
+      setTimeout(() => els.toast.classList.remove("show"), 2200);
+    }
+
+    // ============= CONFETTI =============
+    function fireConfetti() {
+      if (typeof confetti === "undefined") return;
+      const colors = ['#ff6075', '#ef445d', '#e8c468', '#f5d98a', '#ffffff'];
+      const count = 200;
+      const defaults = { origin: { y: 0.7 }, colors, ticks: 200 };
+
+      const fire = (particleRatio, opts) => {
+        confetti(Object.assign({}, defaults, opts, {
+          particleCount: Math.floor(count * particleRatio)
+        }));
+      };
+
+      fire(0.25, { spread: 26, startVelocity: 55 });
+      fire(0.2, { spread: 60 });
+      fire(0.35, { spread: 100, decay: 0.91, scalar: 0.8 });
+      fire(0.1, { spread: 120, startVelocity: 25, decay: 0.92, scalar: 1.2 });
+      fire(0.1, { spread: 120, startVelocity: 45 });
+    }
+
+    async function submitRegisterForm(e) {
+      e.preventDefault();
+      hideMessages();
+      els.registerBtn.disabled = true;
+      els.registerBtn.textContent = "იგზავნება...";
+
+      const formData = {
+        action: "register",
+        first_name: document.getElementById("first_name").value,
+        last_name: document.getElementById("last_name").value,
+        city_area_village: document.getElementById("city_area_village").value,
+        position: document.getElementById("position").value,
+        phone: document.getElementById("phone").value
+      };
+
+      try {
+        const response = await postActionWithResponse(formData);
+
+        // Check if response indicates an error
+        if (response && response.ok === false) {
+          let errMsg = "დაფიქსირდა შეცდომა ⚠";
+          if (response.error === "Already registered") errMsg = "ეს ნომერი უკვე დარეგისტრირებულია";
+          else if (response.error === "No spots left") errMsg = "ადგილები ამოიწურა";
+          else if (response.error === "Registration is closed") errMsg = "რეგისტრაცია დახურულია";
+          showMessage("error", errMsg, els.registerError);
+          return;
+        }
+
+        els.registerForm.reset();
+        showMessage("success", "რეგისტრაცია წარმატებით დასრულდა ✦", els.registerSuccess);
+        triggerRewardEffects();
+        fireConfetti();
+
+        // Reload data first to get updated stats
+        await loadData();
+
+        // Then close form modal and show ticket modal
+        setTimeout(() => {
+          els.registerModal.classList.remove("open");
+          hideMessages();
+
+          // Show ticket modal after register modal closes
+          setTimeout(() => {
+            showTicketModal(response, formData);
+          }, 350);
+        }, 1400);
+
+      } catch (err) {
+        showMessage("error", "დაფიქსირდა შეცდომა ⚠", els.registerError);
+      } finally {
+        els.registerBtn.disabled = false;
+        els.registerBtn.textContent = "დარეგისტრირება";
+      }
+    }
+
+    async function submitCancelForm(e) {
+      e.preventDefault();
+      hideMessages();
+      els.cancelBtn.disabled = true;
+      els.cancelBtn.textContent = "იგზავნება...";
+      try {
+        await postAction({
+          action: "cancel",
+          phone: document.getElementById("cancel_phone").value
+        });
+        els.cancelForm.reset();
+        showMessage("success", "გაუქმების მოთხოვნა გაიგზავნა ✓", els.cancelSuccess);
+        await loadData();
+      } catch (err) {
+        showMessage("error", "გაუქმება ვერ შესრულდა ⚠", els.cancelError);
+      } finally {
+        els.cancelBtn.disabled = false;
+        els.cancelBtn.textContent = "გაუქმება";
+      }
+    }
+
+    function setupMusic() {
+      els.music.volume = parseFloat(els.volume.value);
+      els.playBtn.addEventListener("click", async () => {
+        try {
+          if (!musicPlaying) {
+            await els.music.play();
+            musicPlaying = true;
+            els.playBtn.textContent = "❚❚";
+            fadeInMusic(parseFloat(els.volume.value), 600);
+          } else {
+            els.music.pause();
+            musicPlaying = false;
+            els.playBtn.textContent = "♪";
+          }
+        } catch (e) {
+          alert("მუსიკა ვერ ჩაირთო. გადაამოწმე music.mp3 ფაილი.");
+        }
+      });
+      els.volume.addEventListener("input", () => {
+        els.music.volume = parseFloat(els.volume.value);
+      });
+      const firstHandler = async () => {
+        if (firstInteractionMusicTried) return;
+        firstInteractionMusicTried = true;
+        await tryStartMusic();
+      };
+      document.addEventListener("click", firstHandler, { once: true });
+      document.addEventListener("touchstart", firstHandler, { once: true });
+    }
+
+    function setupModal() {
+      els.scheduleBtn.addEventListener("click", () => els.scheduleModal.classList.add("open"));
+      els.closeScheduleBtn.addEventListener("click", () => els.scheduleModal.classList.remove("open"));
+      els.scheduleModal.addEventListener("click", (e) => {
+        if (e.target === els.scheduleModal) els.scheduleModal.classList.remove("open");
+      });
+
+      // Register modal
+      els.openRegisterBtn.addEventListener("click", () => {
+        hideMessages();
+        els.registerModal.classList.add("open");
+      });
+      els.closeRegisterX.addEventListener("click", () => els.registerModal.classList.remove("open"));
+      els.registerModal.addEventListener("click", (e) => {
+        if (e.target === els.registerModal) els.registerModal.classList.remove("open");
+      });
+
+      // Ticket modal
+      els.closeTicketX.addEventListener("click", () => els.ticketModal.classList.remove("open"));
+      els.closeTicketBtn.addEventListener("click", () => els.ticketModal.classList.remove("open"));
+      els.ticketModal.addEventListener("click", (e) => {
+        if (e.target === els.ticketModal) els.ticketModal.classList.remove("open");
+      });
+    }
+
+    // ============= FAQ ACCORDION =============
+    // FAQ items are now created dynamically in renderFAQ from Config sheet,
+    // and event listeners are attached during creation. No separate setup needed.
+
+    function setupToggles() {
+      els.toggleCancelBtn.addEventListener("click", () => {
+        els.cancelWrap.style.display = els.cancelWrap.style.display === "block" ? "none" : "block";
+      });
+      els.toggleExtraBtn.addEventListener("click", () => {
+        els.extraBox.style.display = els.extraBox.style.display === "block" ? "none" : "block";
+      });
+    }
+
+    async function init() {
+      spawnParticles(28);
+      setupMusic();
+      setupModal();
+      setupToggles();
+      els.registerForm.addEventListener("submit", submitRegisterForm);
+      els.cancelForm.addEventListener("submit", submitCancelForm);
+      startSimulatedRegistrations();
+      await loadData();
+    }
+
+    init();
+  </script>
 </body>
 </html>

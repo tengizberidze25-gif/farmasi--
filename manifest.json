@@ -1,0 +1,26 @@
+{
+  "name": "Farmasi მარკეტინგის მასტერკლასი 2026",
+  "short_name": "Farmasi Masterclass",
+  "description": "ექსკლუზიური მარკეტინგის მასტერკლასი — Farmasi 2026",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0a0808",
+  "theme_color": "#0a0808",
+  "lang": "ka",
+  "icons": [
+    {
+      "src": "farmasi.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "farmasi.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
