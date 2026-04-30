@@ -1715,36 +1715,49 @@
     .bus-window:nth-child(6)::before { animation-delay: 2.5s; }
 
     /* === EMERGENCY EXIT INDICATOR (rear-side) === */
+    /* === EMERGENCY EXIT (rear position - above last row, like real bus) === */
     .bus-emergency {
       position: absolute;
-      top: 50%;
-      right: 18px;
-      transform: translateY(-50%);
-      width: 14px;
-      height: 28px;
+      bottom: 78px;
+      right: 22px;
+      width: 36px;
+      height: 14px;
       background:
         linear-gradient(180deg,
           #ff3344 0%,
           #cc2233 100%);
-      border: 1px solid #ff5566;
-      border-radius: 3px;
+      border: 1.5px solid #ff5566;
+      border-radius: 2px;
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 7px;
       color: white;
       font-weight: 900;
-      writing-mode: vertical-rl;
-      letter-spacing: 1px;
+      letter-spacing: 1.5px;
+      font-family: var(--sans-font);
       box-shadow:
         0 0 8px rgba(255, 50, 70, 0.5),
         inset 0 1px 0 rgba(255, 255, 255, 0.2);
       animation: emergencyPulse 2s ease-in-out infinite;
-      z-index: 5;
+      z-index: 6;
     }
 
     .bus-emergency::before {
       content: 'EXIT';
+    }
+
+    /* Small arrow indicating exit direction */
+    .bus-emergency::after {
+      content: '→';
+      position: absolute;
+      right: -12px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 9px;
+      color: #ff5566;
+      font-weight: 900;
+      filter: drop-shadow(0 0 4px rgba(255, 80, 100, 0.6));
     }
 
     @keyframes emergencyPulse {
@@ -2725,43 +2738,30 @@
 
       let seatNum = 1;
 
-      // ROW 1 — first row of cabin
-      // Layout: [empty][empty] | [seat 1][seat 2]
-      // The left side is empty because of the driver/cockpit area
-      // The right side starts the seating (next to the front door)
-      const empty1 = document.createElement("div");
-      empty1.className = "bus-empty-cell";
-      grid.appendChild(empty1);
-      const empty2 = document.createElement("div");
-      empty2.className = "bus-empty-cell";
-      grid.appendChild(empty2);
+      // === REALISTIC BUS LAYOUT ===
+      // Real tourist coaches (Mercedes Tourismo, Setra, Neoplan):
+      // - 12 standard rows × 4 seats (2+2 with central aisle) = 48 seats
+      // - 1 rear row × 6 seats (back bench) = 6 seats
+      // - Total: 54 seats
+      // - Driver area & front door are visually represented in the cockpit above
+      //   (so the seating starts from row 1 normally)
 
-      // Aisle
-      const aisle1 = document.createElement("div");
-      aisle1.className = "bus-aisle";
-      grid.appendChild(aisle1);
-
-      // Right side (entry area): 2 seats
-      grid.appendChild(createBusSeat(seatNum++));
-      grid.appendChild(createBusSeat(seatNum++));
-
-      // ROWS 2-12 — full rows (4 seats each)
-      for (let row = 1; row < 12; row++) {
-        // Left side: 2 seats
+      for (let row = 0; row < 12; row++) {
+        // Left side: 2 seats (window + aisle)
         grid.appendChild(createBusSeat(seatNum++));
         grid.appendChild(createBusSeat(seatNum++));
 
-        // Aisle
+        // Central aisle
         const aisle = document.createElement("div");
         aisle.className = "bus-aisle";
         grid.appendChild(aisle);
 
-        // Right side: 2 seats
+        // Right side: 2 seats (aisle + window)
         grid.appendChild(createBusSeat(seatNum++));
         grid.appendChild(createBusSeat(seatNum++));
       }
 
-      // Rear row — 6 seats
+      // Rear row — 6-seat back bench
       const rear = document.createElement("div");
       rear.className = "bus-rear-row";
       for (let i = 0; i < 6; i++) {
