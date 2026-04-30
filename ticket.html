@@ -131,12 +131,11 @@
       height: auto;
       max-height: 60px;
       object-fit: contain;
-      /* No background — invert dark text to light cream + keep pink icon visible */
+      /* Blend mode removes white JPEG background, keeps logo elements */
+      mix-blend-mode: screen;
       filter:
-        invert(0.95)
-        sepia(0.15)
-        saturate(1.2)
-        hue-rotate(-8deg)
+        brightness(1.4)
+        contrast(1.2)
         drop-shadow(0 0 18px rgba(232, 196, 104, 0.45))
         drop-shadow(0 4px 10px rgba(255, 96, 117, 0.3));
     }
