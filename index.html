@@ -2348,17 +2348,14 @@
       height: auto;
       max-height: 50px;
       object-fit: contain;
-      /* Show ORIGINAL logo - just add cinematic glow */
+      /* No background — just cinematic glow + invert dark text to light */
       filter:
-        drop-shadow(0 0 20px rgba(255, 255, 255, 0.4))
-        drop-shadow(0 0 30px rgba(232, 196, 104, 0.3))
-        drop-shadow(0 4px 12px rgba(0, 0, 0, 0.5));
-      background: rgba(255, 255, 255, 0.95);
-      border-radius: 8px;
-      padding: 6px 10px;
-      box-shadow:
-        0 6px 20px rgba(0, 0, 0, 0.4),
-        0 0 24px rgba(232, 196, 104, 0.25);
+        invert(0.95)
+        sepia(0.15)
+        saturate(1.2)
+        hue-rotate(-8deg)
+        drop-shadow(0 0 18px rgba(232, 196, 104, 0.5))
+        drop-shadow(0 4px 10px rgba(255, 96, 117, 0.3));
     }
 
     /* Hide fallback if image loaded */
