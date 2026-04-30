@@ -501,8 +501,8 @@ function composeTicketSMS(data) {
     text += '📍 ' + addr + '\n';
   }
 
-  // Personalized ticket link — opens ticket directly with QR code
-  text += '\n🎫 ბილეთი: ' + SITE_BASE_URL + '/?t=' + encodeURIComponent(data.ticket_id || '');
+  // Personalized ticket link — opens dedicated ticket page directly
+  text += '\n🎫 ბილეთი: ' + SITE_BASE_URL + '/ticket.html?t=' + encodeURIComponent(data.ticket_id || '');
 
   return text;
 }

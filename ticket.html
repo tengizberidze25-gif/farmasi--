@@ -1,0 +1,1200 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>შენი ბილეთი · Farmasi Masterclass 2026</title>
+  <meta name="theme-color" content="#140e10" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" type="image/png" href="farmasi.png" />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,500&family=Montserrat:wght@400;500;600;700&family=Noto+Sans+Georgian:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- QR Code library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+  <style>
+    :root {
+      --bg-deep: #0a0506;
+      --bg: #140e10;
+      --bg-card: #1f1518;
+      --pink: #ff6075;
+      --pink-dark: #e54a5f;
+      --pink-glow: rgba(255, 96, 117, 0.45);
+      --gold: #e8c468;
+      --gold-light: #f4d989;
+      --gold-dark: #c9a956;
+      --cream: #f5f0e8;
+      --cream-dim: #b5a89a;
+      --border: rgba(232, 196, 104, 0.18);
+      --border-strong: rgba(232, 196, 104, 0.32);
+
+      --display-font: 'Cormorant Garamond', 'Noto Sans Georgian', serif;
+      --geo-font: 'Noto Sans Georgian', 'Cormorant Garamond', serif;
+      --sans-font: 'Montserrat', 'Noto Sans Georgian', sans-serif;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body {
+      width: 100%;
+      min-height: 100vh;
+      background: var(--bg-deep);
+      color: var(--cream);
+      font-family: var(--geo-font);
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* === Background — cinematic ambience === */
+    body {
+      background:
+        radial-gradient(ellipse at top,
+          rgba(232, 196, 104, 0.08) 0%,
+          transparent 50%),
+        radial-gradient(ellipse at bottom,
+          rgba(255, 96, 117, 0.06) 0%,
+          transparent 60%),
+        linear-gradient(180deg, var(--bg-deep) 0%, var(--bg) 50%, var(--bg-deep) 100%);
+      padding: max(20px, env(safe-area-inset-top)) 16px max(40px, env(safe-area-inset-bottom));
+    }
+
+    /* Floating gold particles */
+    .particle {
+      position: fixed;
+      width: 2px;
+      height: 2px;
+      background: var(--gold);
+      border-radius: 50%;
+      opacity: 0;
+      pointer-events: none;
+      animation: float 22s linear infinite;
+      box-shadow: 0 0 4px rgba(232, 196, 104, 0.5);
+      z-index: 0;
+    }
+
+    @keyframes float {
+      0% {
+        opacity: 0;
+        transform: translateY(100vh) translateX(0) scale(0.5);
+      }
+      10% { opacity: 0.5; }
+      90% { opacity: 0.5; }
+      100% {
+        opacity: 0;
+        transform: translateY(-10vh) translateX(40px) scale(1.2);
+      }
+    }
+
+    .container {
+      max-width: 460px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+      animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* === HEADER === */
+    .ticket-header {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .farmasi-logo {
+      width: 56px;
+      height: 56px;
+      margin: 0 auto 12px;
+      filter: brightness(0) invert(1) sepia(0.35) saturate(2.4) hue-rotate(-12deg)
+              drop-shadow(0 0 16px rgba(232, 196, 104, 0.4));
+      opacity: 0.95;
+      animation: logoFloat 4s ease-in-out infinite;
+    }
+
+    @keyframes logoFloat {
+      0%, 100% { transform: translateY(0); }
+      50%      { transform: translateY(-3px); }
+    }
+
+    .event-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 14px;
+      background: linear-gradient(135deg,
+        rgba(255, 96, 117, 0.2),
+        rgba(255, 96, 117, 0.08));
+      border: 1px solid rgba(255, 96, 117, 0.4);
+      border-radius: 999px;
+      font-family: var(--sans-font);
+      font-size: 9.5px;
+      font-weight: 700;
+      letter-spacing: 1.8px;
+      text-transform: uppercase;
+      color: var(--pink);
+      margin-bottom: 12px;
+    }
+
+    .ticket-page-title {
+      font-family: var(--display-font);
+      font-size: 30px;
+      font-weight: 500;
+      line-height: 1.1;
+      color: var(--cream);
+      margin-bottom: 6px;
+    }
+
+    .ticket-page-title .accent {
+      font-style: italic;
+      background: linear-gradient(135deg, var(--gold-light), var(--gold), var(--gold-dark));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .ticket-page-subtitle {
+      font-family: var(--sans-font);
+      font-size: 11px;
+      letter-spacing: 1.4px;
+      text-transform: uppercase;
+      color: var(--cream-dim);
+    }
+
+    /* === LOADING === */
+    .loading-state, .error-state {
+      text-align: center;
+      padding: 60px 20px;
+    }
+
+    .loading-spinner {
+      display: inline-block;
+      width: 40px;
+      height: 40px;
+      border: 3px solid rgba(232, 196, 104, 0.2);
+      border-top-color: var(--gold);
+      border-radius: 50%;
+      animation: spin 0.9s linear infinite;
+      margin-bottom: 16px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .loading-state p,
+    .error-state p {
+      font-family: var(--sans-font);
+      font-size: 12px;
+      letter-spacing: 0.8px;
+      color: var(--cream-dim);
+    }
+
+    .error-state {
+      display: none;
+    }
+
+    .error-state.show { display: block; }
+    .loading-state.hide { display: none; }
+
+    .error-icon {
+      font-size: 48px;
+      margin-bottom: 12px;
+      opacity: 0.5;
+    }
+
+    .error-title {
+      font-family: var(--display-font);
+      font-size: 22px;
+      color: var(--cream);
+      margin-bottom: 8px;
+    }
+
+    .error-back {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 10px 20px;
+      background: linear-gradient(135deg, var(--pink), var(--pink-dark));
+      color: white;
+      text-decoration: none;
+      border-radius: 999px;
+      font-family: var(--sans-font);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      box-shadow: 0 4px 14px var(--pink-glow);
+    }
+
+    /* === TICKET CONTENT (initially hidden) === */
+    .ticket-content {
+      display: none;
+      animation: fadeUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    .ticket-content.show { display: block; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* === MAIN TICKET CARD === */
+    .ticket-card {
+      background:
+        linear-gradient(135deg,
+          rgba(232, 196, 104, 0.05) 0%,
+          rgba(255, 96, 117, 0.03) 100%),
+        var(--bg-card);
+      border: 1px solid var(--border-strong);
+      border-radius: 22px;
+      padding: 24px 18px 20px;
+      position: relative;
+      overflow: hidden;
+      box-shadow:
+        0 12px 40px rgba(0, 0, 0, 0.45),
+        inset 0 1px 0 rgba(232, 196, 104, 0.1);
+      margin-bottom: 16px;
+    }
+
+    /* Top golden glow line */
+    .ticket-card::before {
+      content: '';
+      position: absolute;
+      top: -1px;
+      left: 18%;
+      right: 18%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      filter: blur(1px);
+    }
+
+    /* Tier badge */
+    .tier-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 5px 14px;
+      border-radius: 999px;
+      font-family: var(--sans-font);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1.4px;
+      text-transform: uppercase;
+      margin: 0 auto 14px;
+    }
+
+    .tier-pill.tier-early {
+      background: linear-gradient(135deg, var(--gold-light), var(--gold));
+      color: #1a1212;
+      box-shadow: 0 4px 14px rgba(232, 196, 104, 0.35);
+    }
+
+    .tier-pill.tier-vip {
+      background: linear-gradient(135deg, #d8bfff, #b793ff);
+      color: #1a1212;
+      box-shadow: 0 4px 14px rgba(184, 147, 255, 0.35);
+    }
+
+    .tier-pill.tier-standard {
+      background: linear-gradient(135deg, var(--pink), var(--pink-dark));
+      color: white;
+      box-shadow: 0 4px 14px var(--pink-glow);
+    }
+
+    /* QR Code */
+    .qr-wrap {
+      width: 160px;
+      height: 160px;
+      margin: 0 auto 14px;
+      padding: 10px;
+      background: white;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow:
+        0 8px 24px rgba(0, 0, 0, 0.5),
+        0 0 0 4px rgba(232, 196, 104, 0.15);
+    }
+
+    .qr-wrap img,
+    .qr-wrap canvas {
+      display: block;
+      width: 100% !important;
+      height: 100% !important;
+    }
+
+    .ticket-card-center { text-align: center; }
+
+    .ticket-id {
+      font-family: var(--sans-font);
+      font-size: 11.5px;
+      font-weight: 600;
+      letter-spacing: 4px;
+      color: var(--gold-light);
+      margin-bottom: 6px;
+    }
+
+    .ticket-name {
+      font-family: var(--display-font);
+      font-size: 22px;
+      font-weight: 600;
+      color: var(--cream);
+      margin-bottom: 4px;
+      letter-spacing: 0.3px;
+    }
+
+    .ticket-meta {
+      font-family: var(--sans-font);
+      font-size: 11px;
+      color: var(--cream-dim);
+      letter-spacing: 0.4px;
+      margin-bottom: 14px;
+    }
+
+    /* Seat pill */
+    .ticket-seat {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 16px;
+      background: linear-gradient(135deg,
+        rgba(232, 196, 104, 0.18),
+        rgba(232, 196, 104, 0.08));
+      border: 1px solid var(--gold);
+      border-radius: 999px;
+      box-shadow: 0 4px 12px rgba(232, 196, 104, 0.2);
+    }
+
+    .ticket-seat-icon { font-size: 14px; }
+
+    .ticket-seat-label {
+      font-family: var(--sans-font);
+      font-size: 9.5px;
+      font-weight: 600;
+      letter-spacing: 1.3px;
+      text-transform: uppercase;
+      color: var(--gold);
+    }
+
+    .ticket-seat-num {
+      font-family: var(--display-font);
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--cream);
+      letter-spacing: 0.5px;
+    }
+
+    /* === TRANSPORT INFO === */
+    .ticket-transport {
+      margin-top: 14px;
+      padding: 12px 14px;
+      background: linear-gradient(135deg,
+        rgba(255, 96, 117, 0.06),
+        rgba(232, 196, 104, 0.03));
+      border: 1px solid rgba(232, 196, 104, 0.18);
+      border-radius: 14px;
+    }
+
+    .ticket-transport-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+      padding-bottom: 7px;
+      border-bottom: 1px solid rgba(232, 196, 104, 0.12);
+    }
+
+    .ticket-transport-icon { font-size: 16px; }
+
+    .ticket-transport-title {
+      font-family: var(--display-font);
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--cream);
+    }
+
+    .ticket-transport-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      font-size: 11px;
+      padding: 4px 0;
+    }
+
+    .ttr-label {
+      font-family: var(--sans-font);
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      color: var(--gold);
+      flex-shrink: 0;
+    }
+
+    .ttr-value {
+      font-family: var(--geo-font);
+      color: var(--cream);
+      text-align: right;
+      line-height: 1.35;
+    }
+
+    .ticket-transport-map {
+      display: block;
+      margin-top: 8px;
+      padding: 8px 10px;
+      background: linear-gradient(135deg, var(--pink), var(--pink-dark));
+      color: white !important;
+      text-decoration: none;
+      text-align: center;
+      border-radius: 10px;
+      font-family: var(--sans-font);
+      font-size: 10.5px;
+      font-weight: 700;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      box-shadow: 0 3px 10px var(--pink-glow);
+      transition: transform 0.2s;
+    }
+
+    .ticket-transport-map:hover {
+      transform: translateY(-1px);
+    }
+
+    /* === ACTION GRID (calendar buttons) === */
+    .section-label {
+      font-family: var(--sans-font);
+      font-size: 9px;
+      letter-spacing: 1.8px;
+      text-transform: uppercase;
+      color: var(--gold);
+      text-align: center;
+      margin: 18px 0 10px;
+    }
+
+    .action-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .action-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 12px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      color: var(--cream);
+      text-decoration: none;
+      font-family: var(--sans-font);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.4px;
+      transition: all 0.2s ease;
+    }
+
+    .action-btn:hover {
+      background: rgba(232, 196, 104, 0.06);
+      border-color: var(--gold);
+      transform: translateY(-1px);
+    }
+
+    .action-btn .ico { font-size: 14px; }
+
+    /* === SHARE === */
+    .share-row {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .share-btn {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border);
+      color: var(--cream);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .share-btn:hover {
+      background: rgba(232, 196, 104, 0.1);
+      border-color: var(--gold);
+      transform: translateY(-2px);
+    }
+
+    /* === CANCEL SECTION === */
+    .cancel-section {
+      margin-top: 24px;
+      padding-top: 18px;
+      border-top: 1px dashed rgba(255, 255, 255, 0.08);
+    }
+
+    .cancel-toggle {
+      display: block;
+      width: 100%;
+      padding: 10px 12px;
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 10px;
+      color: var(--cream-dim);
+      font-family: var(--sans-font);
+      font-size: 11px;
+      letter-spacing: 0.4px;
+      cursor: pointer;
+      opacity: 0.6;
+      transition: all 0.25s ease;
+    }
+
+    .cancel-toggle:hover {
+      opacity: 1;
+      border-color: rgba(255, 96, 117, 0.3);
+      color: rgba(255, 96, 117, 0.85);
+    }
+
+    .cancel-toggle.active {
+      opacity: 1;
+      border-color: rgba(255, 96, 117, 0.4);
+      background: rgba(255, 96, 117, 0.05);
+      color: rgba(255, 96, 117, 0.95);
+    }
+
+    .cancel-area {
+      display: none;
+      margin-top: 12px;
+      padding: 16px 14px;
+      background: linear-gradient(135deg,
+        rgba(255, 96, 117, 0.06),
+        rgba(255, 96, 117, 0.02));
+      border: 1px solid rgba(255, 96, 117, 0.2);
+      border-radius: 14px;
+    }
+
+    .cancel-area.show { display: block; }
+
+    .cancel-warning {
+      margin-bottom: 14px;
+      font-family: var(--sans-font);
+      font-size: 11.5px;
+      line-height: 1.5;
+      color: var(--cream-dim);
+      text-align: center;
+    }
+
+    .cancel-warning strong {
+      color: var(--pink);
+      font-weight: 700;
+    }
+
+    .btn-cancel-confirm,
+    .btn-cancel-back {
+      display: block;
+      width: 100%;
+      padding: 11px 14px;
+      border-radius: 10px;
+      font-family: var(--sans-font);
+      font-size: 11.5px;
+      font-weight: 700;
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-cancel-confirm {
+      margin-bottom: 8px;
+      background: linear-gradient(135deg, #d63653, #b62a44);
+      border: 1px solid rgba(255, 96, 117, 0.5);
+      color: white;
+      box-shadow: 0 4px 12px rgba(214, 54, 83, 0.3);
+    }
+
+    .btn-cancel-confirm:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(214, 54, 83, 0.5);
+    }
+
+    .btn-cancel-confirm:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn-cancel-back {
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: var(--cream-dim);
+    }
+
+    .btn-cancel-back:hover {
+      border-color: rgba(232, 196, 104, 0.3);
+      color: var(--gold);
+    }
+
+    .cancel-msg {
+      display: none;
+      margin-top: 12px;
+      padding: 10px;
+      border-radius: 8px;
+      font-family: var(--sans-font);
+      font-size: 11px;
+      text-align: center;
+      line-height: 1.4;
+    }
+
+    .cancel-msg.show { display: block; }
+
+    .cancel-msg.success {
+      background: rgba(60, 200, 120, 0.12);
+      border: 1px solid rgba(60, 200, 120, 0.3);
+      color: #6dd49a;
+    }
+
+    .cancel-msg.error {
+      background: rgba(255, 96, 117, 0.12);
+      border: 1px solid rgba(255, 96, 117, 0.3);
+      color: var(--pink);
+    }
+
+    /* === BACK LINK === */
+    .back-link {
+      display: block;
+      text-align: center;
+      margin-top: 24px;
+      padding: 12px;
+      color: var(--cream-dim);
+      text-decoration: none;
+      font-family: var(--sans-font);
+      font-size: 11px;
+      letter-spacing: 0.4px;
+      transition: color 0.2s;
+    }
+
+    .back-link:hover {
+      color: var(--gold);
+    }
+
+    /* === COPIED TOAST === */
+    .toast {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: var(--bg-card);
+      border: 1px solid var(--gold);
+      color: var(--cream);
+      padding: 10px 18px;
+      border-radius: 999px;
+      font-family: var(--sans-font);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.4px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+      opacity: 0;
+      transition: all 0.3s ease;
+      pointer-events: none;
+      z-index: 999;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* Tiny phones */
+    @media (max-width: 380px) {
+      .ticket-page-title { font-size: 26px; }
+      .qr-wrap { width: 140px; height: 140px; padding: 8px; }
+      .ticket-name { font-size: 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+
+    <!-- Header -->
+    <div class="ticket-header">
+      <img src="farmasi.png" alt="FARMASI" class="farmasi-logo" />
+      <div class="event-badge">✦ Marketing Masterclass · 2026 ✦</div>
+      <h1 class="ticket-page-title">შენი <span class="accent">ბილეთი</span></h1>
+      <div class="ticket-page-subtitle">YOUR PERSONAL TICKET</div>
+    </div>
+
+    <!-- Loading state -->
+    <div class="loading-state" id="loadingState">
+      <div class="loading-spinner"></div>
+      <p>იტვირთება...</p>
+    </div>
+
+    <!-- Error state -->
+    <div class="error-state" id="errorState">
+      <div class="error-icon">🎫</div>
+      <div class="error-title">ბილეთი ვერ მოიძებნა</div>
+      <p id="errorMsg">შესაძლოა ლინკი არასწორია ან ბილეთი გაუქმდა.</p>
+      <a href="index.html" class="error-back">მთავარი გვერდი →</a>
+    </div>
+
+    <!-- Ticket content (initially hidden) -->
+    <div class="ticket-content" id="ticketContent">
+
+      <!-- Main ticket card -->
+      <div class="ticket-card">
+        <div class="ticket-card-center">
+          <div class="tier-pill" id="tierPill"></div>
+          <div class="qr-wrap" id="qrWrap"></div>
+          <div class="ticket-id" id="ticketId">FM-2026-00000</div>
+          <div class="ticket-name" id="ticketName">Guest</div>
+          <div class="ticket-meta" id="ticketMeta"></div>
+          <div class="ticket-seat" id="ticketSeat" style="display:none;">
+            <span class="ticket-seat-icon">🪑</span>
+            <span class="ticket-seat-label">ავტობუსში ადგილი</span>
+            <span class="ticket-seat-num" id="ticketSeatNum">#1</span>
+          </div>
+        </div>
+
+        <!-- Transport info -->
+        <div class="ticket-transport" id="ticketTransport" style="display:none;">
+          <div class="ticket-transport-header">
+            <span class="ticket-transport-icon">🚌</span>
+            <span class="ticket-transport-title" id="ticketTransportTitle">ტრანსპორტი თბილისიდან</span>
+          </div>
+          <div class="ticket-transport-row" id="trTimeRow" style="display:none;">
+            <span class="ttr-label">გასვლის დრო</span>
+            <span class="ttr-value" id="trTime"></span>
+          </div>
+          <div class="ticket-transport-row" id="trAddrRow" style="display:none;">
+            <span class="ttr-label">გასვლის ადგილი</span>
+            <span class="ttr-value" id="trAddr"></span>
+          </div>
+          <a class="ticket-transport-map" id="trMap" href="#" target="_blank" rel="noopener" style="display:none;">
+            📍 რუკაზე ნახვა →
+          </a>
+        </div>
+      </div>
+
+      <!-- Calendar -->
+      <div class="section-label">— დაამატე კალენდარში —</div>
+      <div class="action-grid">
+        <a class="action-btn" id="googleCalBtn" href="#" target="_blank" rel="noopener">
+          <span class="ico">📅</span> Google Calendar
+        </a>
+        <a class="action-btn" id="appleCalBtn" href="#" download="masterclass.ics">
+          <span class="ico">🍎</span> Apple / .ics
+        </a>
+      </div>
+
+      <!-- Share -->
+      <div class="section-label">— გაუგზავნე მეგობარს —</div>
+      <div class="share-row">
+        <a class="share-btn" id="shareWhatsapp" href="#" target="_blank" rel="noopener" title="WhatsApp">📱</a>
+        <a class="share-btn" id="shareTelegram" href="#" target="_blank" rel="noopener" title="Telegram">✈️</a>
+        <a class="share-btn" id="shareFacebook" href="#" target="_blank" rel="noopener" title="Facebook">📘</a>
+        <button class="share-btn" id="shareCopy" type="button" title="Copy link">🔗</button>
+      </div>
+
+      <!-- Cancel section -->
+      <div class="cancel-section">
+        <button class="cancel-toggle" id="cancelToggle" type="button">
+          ვერ ვახერხებ ჩამოსვლას · გავაუქმო რეგისტრაცია
+        </button>
+        <div class="cancel-area" id="cancelArea">
+          <p class="cancel-warning">
+            ⚠️ რეგისტრაციის გაუქმება <strong>შეუქცევადია</strong> — ბილეთი გაუქმდება, ადგილი გათავისუფლდება.
+          </p>
+          <button class="btn-cancel-confirm" id="cancelConfirm" type="button">
+            ✕ დადასტურება — გავაუქმოთ ბილეთი
+          </button>
+          <button class="btn-cancel-back" id="cancelBack" type="button">
+            უკან დავბრუნდე
+          </button>
+          <div class="cancel-msg" id="cancelMsg"></div>
+        </div>
+      </div>
+
+      <!-- Back to home -->
+      <a href="index.html" class="back-link">← მთავარ გვერდზე დაბრუნება</a>
+
+    </div>
+
+  </div>
+
+  <!-- Copied toast -->
+  <div class="toast" id="toast">დაკოპირდა ✓</div>
+
+  <script>
+    'use strict';
+
+    const API_URL = "https://script.google.com/macros/s/AKfycbz40UE4b9og1Yjs0rPPfDe1H-yRi90hKbK2WOXej4CAWPCnncDFcetadMEdQSYJO7nf/exec";
+
+    // DOM references
+    const els = {
+      loadingState: document.getElementById("loadingState"),
+      errorState: document.getElementById("errorState"),
+      errorMsg: document.getElementById("errorMsg"),
+      ticketContent: document.getElementById("ticketContent"),
+
+      tierPill: document.getElementById("tierPill"),
+      qrWrap: document.getElementById("qrWrap"),
+      ticketId: document.getElementById("ticketId"),
+      ticketName: document.getElementById("ticketName"),
+      ticketMeta: document.getElementById("ticketMeta"),
+      ticketSeat: document.getElementById("ticketSeat"),
+      ticketSeatNum: document.getElementById("ticketSeatNum"),
+
+      ticketTransport: document.getElementById("ticketTransport"),
+      ticketTransportTitle: document.getElementById("ticketTransportTitle"),
+      trTimeRow: document.getElementById("trTimeRow"),
+      trTime: document.getElementById("trTime"),
+      trAddrRow: document.getElementById("trAddrRow"),
+      trAddr: document.getElementById("trAddr"),
+      trMap: document.getElementById("trMap"),
+
+      googleCalBtn: document.getElementById("googleCalBtn"),
+      appleCalBtn: document.getElementById("appleCalBtn"),
+      shareWhatsapp: document.getElementById("shareWhatsapp"),
+      shareTelegram: document.getElementById("shareTelegram"),
+      shareFacebook: document.getElementById("shareFacebook"),
+      shareCopy: document.getElementById("shareCopy"),
+
+      cancelToggle: document.getElementById("cancelToggle"),
+      cancelArea: document.getElementById("cancelArea"),
+      cancelConfirm: document.getElementById("cancelConfirm"),
+      cancelBack: document.getElementById("cancelBack"),
+      cancelMsg: document.getElementById("cancelMsg"),
+
+      toast: document.getElementById("toast")
+    };
+
+    let currentTicket = null;
+    let currentConfig = {};
+
+    function safeText(v) {
+      return String(v == null ? "" : v).trim();
+    }
+
+    function isUrl(s) {
+      return /^https?:\/\//i.test(String(s || ""));
+    }
+
+    function spawnParticles(count) {
+      for (let i = 0; i < count; i++) {
+        const p = document.createElement("div");
+        p.className = "particle";
+        p.style.left = Math.random() * 100 + "vw";
+        p.style.animationDelay = (Math.random() * 22) + "s";
+        p.style.animationDuration = (16 + Math.random() * 10) + "s";
+        document.body.appendChild(p);
+      }
+    }
+
+    async function loadTicket() {
+      const params = new URLSearchParams(window.location.search);
+      const ticketId = params.get("t");
+
+      if (!ticketId) {
+        showError("ბილეთის ID არ არის მოცემული. გთხოვთ, გამოიყენოთ SMS-ში მოცემული ლინკი.");
+        return;
+      }
+
+      try {
+        const url = API_URL + "?action=getTicket&id=" + encodeURIComponent(ticketId);
+        const response = await fetch(url, { method: "GET" });
+        const data = await response.json();
+
+        if (!data.ok || !data.ticket) {
+          showError(data.error === "Ticket not found"
+            ? "ეს ბილეთი ვერ მოიძებნა — შესაძლოა გაუქმებულია."
+            : "ბილეთის ჩატვირთვა ვერ მოხერხდა.");
+          return;
+        }
+
+        currentTicket = data.ticket;
+        currentConfig = data.config || {};
+
+        renderTicket(currentTicket, currentConfig);
+
+      } catch (err) {
+        console.error(err);
+        showError("ქსელის შეცდომა — გთხოვთ, სცადოთ კიდევ ერთხელ.");
+      }
+    }
+
+    function showError(message) {
+      els.loadingState.classList.add("hide");
+      els.errorState.classList.add("show");
+      if (message) els.errorMsg.textContent = message;
+    }
+
+    function renderTicket(ticket, config) {
+      // Hide loading
+      els.loadingState.classList.add("hide");
+
+      // Tier pill
+      const tier = ticket.tier || "Standard";
+      let tierCls = "tier-standard", tierIcon = "🎫";
+      if (tier === "Early Bird") { tierCls = "tier-early"; tierIcon = "🥇"; }
+      else if (tier === "VIP") { tierCls = "tier-vip"; tierIcon = "✨"; }
+      els.tierPill.className = "tier-pill " + tierCls;
+      els.tierPill.textContent = tierIcon + " " + tier;
+
+      // QR code
+      const qrText = ticket.ticket_id + "|" +
+        (ticket.first_name || "") + " " + (ticket.last_name || "") + "|" +
+        (ticket.phone || "");
+      els.qrWrap.innerHTML = "";
+      try {
+        if (typeof QRCode !== "undefined") {
+          new QRCode(els.qrWrap, {
+            text: qrText,
+            width: 140,
+            height: 140,
+            colorDark: "#1a1212",
+            colorLight: "#ffffff",
+            correctLevel: QRCode.CorrectLevel.H
+          });
+        }
+      } catch (e) {
+        els.qrWrap.innerHTML = '<div style="font-family:monospace; padding:30px; color:#1a1212;">' + ticket.ticket_id + '</div>';
+      }
+
+      // ID + name + meta
+      els.ticketId.textContent = ticket.ticket_id;
+      els.ticketName.textContent = ((ticket.first_name || "") + " " + (ticket.last_name || "")).trim() || "Guest";
+
+      const city = safeText(config.event_city);
+      const date = safeText(config.event_date);
+      const time = safeText(config.event_time);
+      els.ticketMeta.textContent = [city, date, time].filter(Boolean).join(" · ");
+
+      // Seat
+      if (ticket.seat_number) {
+        els.ticketSeatNum.textContent = "#" + ticket.seat_number;
+        els.ticketSeat.style.display = "inline-flex";
+      }
+
+      // Transport info
+      const trAddress = safeText(config.transport_address);
+      const trMapUrl = safeText(config.transport_map);
+      const trTime = safeText(config.transport_time);
+      const trType = safeText(config.transport_type);
+      const hasTransport = trAddress || trMapUrl || trTime || trType;
+
+      if (hasTransport) {
+        els.ticketTransport.style.display = "block";
+        els.ticketTransportTitle.textContent = trType || "ტრანსპორტი თბილისიდან";
+
+        if (trTime) {
+          els.trTime.textContent = trTime;
+          els.trTimeRow.style.display = "flex";
+        }
+        if (trAddress) {
+          els.trAddr.textContent = trAddress;
+          els.trAddrRow.style.display = "flex";
+        }
+        if (isUrl(trMapUrl)) {
+          els.trMap.href = trMapUrl;
+          els.trMap.style.display = "block";
+        }
+      }
+
+      // Calendar links
+      buildCalendarLinks(config);
+
+      // Share links
+      buildShareLinks(ticket);
+
+      // Show ticket
+      els.ticketContent.classList.add("show");
+    }
+
+    function buildCalendarLinks(config) {
+      const title = "Farmasi მარკეტინგის მასტერკლასი";
+      const details = config.farewell || "Farmasi-ს ექსკლუზიური მასტერკლასი";
+      const location = config.event_location || "";
+      const date = config.event_date || "";
+      const time = config.event_time || "14:00";
+
+      // Build start/end timestamps (default 3-hour event)
+      let startTs = "", endTs = "";
+      if (date) {
+        const dt = date.replace(/-/g, "");
+        const [hh, mm] = time.split(":");
+        const h = parseInt(hh) || 14;
+        const m = parseInt(mm) || 0;
+        const start = String(h).padStart(2, "0") + String(m).padStart(2, "0") + "00";
+        const endH = (h + 3) % 24;
+        const end = String(endH).padStart(2, "0") + String(m).padStart(2, "0") + "00";
+        startTs = dt + "T" + start;
+        endTs = dt + "T" + end;
+      }
+
+      // Google Calendar URL
+      els.googleCalBtn.href =
+        "https://calendar.google.com/calendar/render?action=TEMPLATE" +
+        "&text=" + encodeURIComponent(title) +
+        "&details=" + encodeURIComponent(details) +
+        "&location=" + encodeURIComponent(location) +
+        (startTs && endTs ? "&dates=" + startTs + "/" + endTs : "");
+
+      // Apple .ics
+      const icsContent = [
+        "BEGIN:VCALENDAR",
+        "VERSION:2.0",
+        "BEGIN:VEVENT",
+        "SUMMARY:" + title,
+        "DESCRIPTION:" + details.replace(/\n/g, "\\n"),
+        "LOCATION:" + location,
+        startTs ? "DTSTART:" + startTs + "00" : "",
+        endTs ? "DTEND:" + endTs + "00" : "",
+        "END:VEVENT",
+        "END:VCALENDAR"
+      ].filter(Boolean).join("\r\n");
+
+      els.appleCalBtn.href = "data:text/calendar;charset=utf-8," + encodeURIComponent(icsContent);
+    }
+
+    function buildShareLinks(ticket) {
+      const url = window.location.href;
+      const text = "🎫 ჩემი ბილეთი — Farmasi Masterclass 2026 · " + ticket.ticket_id;
+      const fullText = text + " " + url;
+
+      els.shareWhatsapp.href = "https://wa.me/?text=" + encodeURIComponent(fullText);
+      els.shareTelegram.href = "https://t.me/share/url?url=" + encodeURIComponent(url) + "&text=" + encodeURIComponent(text);
+      els.shareFacebook.href = "https://www.facebook.com/sharer/sharer.php?u=" + encodeURIComponent(url);
+
+      els.shareCopy.addEventListener("click", async () => {
+        try {
+          await navigator.clipboard.writeText(url);
+          showToast("ლინკი დაკოპირდა ✓");
+        } catch {
+          showToast("კოპირება ვერ მოხდა");
+        }
+      });
+    }
+
+    function showToast(text) {
+      els.toast.textContent = text;
+      els.toast.classList.add("show");
+      setTimeout(() => els.toast.classList.remove("show"), 2400);
+    }
+
+    // === Cancel logic ===
+    function setupCancelHandlers() {
+      els.cancelToggle.addEventListener("click", () => {
+        const isOpen = els.cancelArea.classList.contains("show");
+        if (isOpen) {
+          els.cancelArea.classList.remove("show");
+          els.cancelToggle.classList.remove("active");
+        } else {
+          els.cancelArea.classList.add("show");
+          els.cancelToggle.classList.add("active");
+        }
+      });
+
+      els.cancelBack.addEventListener("click", () => {
+        els.cancelArea.classList.remove("show");
+        els.cancelToggle.classList.remove("active");
+      });
+
+      els.cancelConfirm.addEventListener("click", handleCancel);
+    }
+
+    async function handleCancel() {
+      if (!currentTicket || !currentTicket.ticket_id) {
+        showCancelMsg("error", "ბილეთის მონაცემები ვერ მოიძებნა ⚠");
+        return;
+      }
+
+      els.cancelConfirm.disabled = true;
+      els.cancelConfirm.textContent = "მიმდინარეობს...";
+      hideCancelMsg();
+
+      try {
+        // Use form-encoded body so Apps Script doPost can read params from e.parameter
+        const formData = new URLSearchParams();
+        formData.append("action", "cancel");
+        formData.append("ticket_id", currentTicket.ticket_id);
+
+        const response = await fetch(API_URL, {
+          method: "POST",
+          body: formData
+        });
+
+        let data = null;
+        try {
+          data = await response.json();
+        } catch {
+          // CORS may block reading the body — assume success based on HTTP code
+          data = { ok: response.ok };
+        }
+
+        if (data && data.ok === false) {
+          let errMsg = "გაუქმება ვერ შესრულდა";
+          if (data.error === "Not found") errMsg = "ბილეთი ვერ მოიძებნა";
+          showCancelMsg("error", errMsg + " ⚠");
+          els.cancelConfirm.disabled = false;
+          els.cancelConfirm.textContent = "✕ დადასტურება — გავაუქმოთ ბილეთი";
+          return;
+        }
+
+        // Success
+        showCancelMsg("success", "✓ რეგისტრაცია გაუქმდა — ადგილი გათავისუფლდა");
+
+        // Hide ticket card after 2.5 seconds, redirect to home
+        setTimeout(() => {
+          window.location.href = "index.html";
+        }, 2800);
+
+      } catch (err) {
+        console.error(err);
+        // Network errors during POST are common with Apps Script + CORS,
+        // but the action usually succeeds. Try to optimistically show success.
+        showCancelMsg("success", "✓ მოთხოვნა გაიგზავნა");
+        setTimeout(() => {
+          window.location.href = "index.html";
+        }, 2800);
+      }
+    }
+
+    function showCancelMsg(type, text) {
+      els.cancelMsg.className = "cancel-msg show " + type;
+      els.cancelMsg.textContent = text;
+    }
+
+    function hideCancelMsg() {
+      els.cancelMsg.classList.remove("show");
+      els.cancelMsg.textContent = "";
+    }
+
+    // === INIT ===
+    function init() {
+      spawnParticles(20);
+      setupCancelHandlers();
+      loadTicket();
+    }
+
+    init();
+  </script>
+
+</body>
+</html>
