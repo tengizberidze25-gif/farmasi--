@@ -4163,6 +4163,14 @@
       RESERVED_KEYS.add("faq_" + i + "_a");
     }
 
+    // Helper: check if a key is reserved (handles `info_*` prefix dynamically)
+    function isReservedKey(key) {
+      const k = String(key || "").toLowerCase();
+      if (RESERVED_KEYS.has(k)) return true;
+      if (k.startsWith("info_")) return true; // any info_* field is reserved
+      return false;
+    }
+
     const els = {
       pageSubtitle: document.getElementById("pageSubtitle"),
       heroMeta: document.getElementById("heroMeta"),
@@ -4191,6 +4199,7 @@
       miTime: document.getElementById("miTime"),
       miLocation: document.getElementById("miLocation"),
       miHotel: document.getElementById("miHotel"),
+      moreInfoList: document.getElementById("moreInfoList"),
       registerForm: document.getElementById("registerForm"),
       cancelForm: document.getElementById("cancelForm"),
       registerBtn: document.getElementById("registerBtn"),
@@ -4805,7 +4814,7 @@
       const dividers = document.querySelectorAll(".event-pill-top .ep-divider");
       dividers.forEach(d => d.style.display = "");
 
-      // Detailed "More Info" modal
+      // Detailed "More Info" modal — base fields
       els.miCity.innerHTML = city
         ? `<div class="info-icon">◆</div><div class="info-text"><strong>ქალაქი:</strong> ${city}</div>`
         : "";
@@ -4821,10 +4830,59 @@
       els.miHotel.innerHTML = safeText(config.hotel_location)
         ? `<div class="info-icon">◆</div><div class="info-text"><strong>სათაო ოფისი:</strong> ${safeText(config.hotel_location)}</div>`
         : "";
+
+      // 🆕 Dynamic "info_*" fields from Config sheet
+      // Any key like info_dress_code, info_lunch, info_parking, etc.
+      // is automatically added to the More Info modal.
+      renderDynamicInfoFields(config);
+    }
+
+    /**
+     * Build dynamic info rows from any config key starting with "info_".
+     * Order: keys are sorted alphabetically.
+     * Format: "info_dress_code" → label "Dress Code" (underscores → spaces, title case).
+     * Use "info_LABEL_NAME=value" pattern? No — just info_label_name in key, value is the actual content.
+     */
+    function renderDynamicInfoFields(config) {
+      const wrap = els.moreInfoList;
+      if (!wrap) return;
+
+      // Remove any previously-added dynamic rows
+      const oldDynamics = wrap.querySelectorAll(".more-info-row.dynamic");
+      oldDynamics.forEach(el => el.remove());
+
+      // Find all info_* keys
+      const infoKeys = Object.keys(config || {})
+        .filter(k => k.toLowerCase().startsWith("info_"))
+        .sort();
+
+      infoKeys.forEach(key => {
+        const value = safeText(config[key]);
+        if (!value) return;
+
+        // Convert "info_dress_code" → "Dress Code"
+        const label = key
+          .replace(/^info_/i, "")
+          .replace(/_/g, " ")
+          .replace(/\b\w/g, c => c.toUpperCase());
+
+        // Render value: detect URL → make clickable link
+        let valueHtml;
+        if (isUrl(value)) {
+          valueHtml = `<a href="${value}" target="_blank" rel="noopener" style="color:var(--gold-light); text-decoration:underline;">${value}</a>`;
+        } else {
+          valueHtml = escapeHtml(value);
+        }
+
+        const row = document.createElement("div");
+        row.className = "more-info-row dynamic";
+        row.innerHTML = `<div class="info-icon">◆</div><div class="info-text"><strong>${escapeHtml(label)}:</strong> ${valueHtml}</div>`;
+        wrap.appendChild(row);
+      });
     }
 
     function renderExtraFields(config) {
-      const extra = Object.keys(config || {}).filter(k => !RESERVED_KEYS.has(k));
+      const extra = Object.keys(config || {}).filter(k => !isReservedKey(k));
       els.extraFields.innerHTML = "";
       if (!extra.length) {
         els.extraFields.innerHTML = `<div class="info-row"><div class="info-text">დამატებითი ინფორმაცია არ არის.</div></div>`;
