@@ -503,6 +503,13 @@
       -webkit-tap-highlight-color: transparent;
       user-select: none;
       touch-action: manipulation;
+      pointer-events: auto;
+      z-index: 5;
+    }
+
+    /* Make sure children don't block clicks */
+    .ticket-seat * {
+      pointer-events: none;
     }
 
     .ticket-seat:hover,
@@ -2813,9 +2820,32 @@
     }
 
     function setupBusModalHandlers() {
-      // Seat pill click — opens bus modal
+      // Seat pill click — uses event delegation as a safeguard for desktop
+      // (works even if ticketSeat reference is initially hidden/recreated)
+      document.addEventListener("click", (e) => {
+        const seat = e.target.closest("#ticketSeat, .ticket-seat");
+        if (seat) {
+          e.preventDefault();
+          openBusModal();
+        }
+      });
+
+      // Also direct binding (works if element exists at this point)
       if (els.ticketSeat) {
-        els.ticketSeat.addEventListener("click", openBusModal);
+        els.ticketSeat.addEventListener("click", (e) => {
+          e.preventDefault();
+          openBusModal();
+        });
+
+        // Make it keyboard accessible
+        els.ticketSeat.setAttribute("tabindex", "0");
+        els.ticketSeat.setAttribute("role", "button");
+        els.ticketSeat.addEventListener("keydown", (e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            openBusModal();
+          }
+        });
       }
 
       els.busModalClose.addEventListener("click", closeBusModal);
