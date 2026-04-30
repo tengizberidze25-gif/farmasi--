@@ -114,13 +114,43 @@
       width: 64px;
       height: 64px;
       margin: 0 auto 14px;
-      filter: brightness(0) invert(1) sepia(0.45) saturate(2.8) hue-rotate(-12deg)
-              drop-shadow(0 0 18px rgba(232, 196, 104, 0.55))
-              drop-shadow(0 4px 12px rgba(255, 96, 117, 0.25));
-      opacity: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, var(--gold-light) 0%, var(--gold) 50%, var(--gold-dark) 100%);
+      border-radius: 16px;
+      font-family: var(--display-font);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1.2px;
+      color: #1a1212;
+      box-shadow:
+        0 0 24px rgba(232, 196, 104, 0.55),
+        0 8px 20px rgba(232, 196, 104, 0.35),
+        0 4px 12px rgba(255, 96, 117, 0.25),
+        inset 0 1px 0 rgba(255, 255, 255, 0.4),
+        inset 0 -2px 4px rgba(0, 0, 0, 0.15);
       animation: logoFloat 4s ease-in-out infinite;
-      object-fit: contain;
-      display: block;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .farmasi-logo::before {
+      content: '✦';
+      position: absolute;
+      top: 6px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 9px;
+      color: rgba(26, 18, 18, 0.8);
+    }
+
+    .farmasi-logo span {
+      margin-top: 8px;
+      font-family: var(--display-font);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
     }
 
     @keyframes logoFloat {
@@ -1537,7 +1567,9 @@
 
     <!-- Header -->
     <div class="ticket-header">
-      <img src="farmasi.png" alt="FARMASI" class="farmasi-logo" />
+      <div class="farmasi-logo">
+        <span>FARMASI</span>
+      </div>
       <div class="event-badge">✦ Marketing Masterclass · 2026 ✦</div>
       <h1 class="ticket-page-title">შენი <span class="accent">ბილეთი</span></h1>
       <div class="ticket-page-subtitle">YOUR PERSONAL TICKET</div>
@@ -1871,8 +1903,6 @@
       if (ticket.seat_number) {
         els.ticketSeatNum.textContent = "#" + ticket.seat_number;
         els.ticketSeat.style.display = "inline-flex";
-        // Click opens bus modal
-        els.ticketSeat.addEventListener("click", openBusModal);
       }
 
       // Transport info
@@ -2174,6 +2204,11 @@
     }
 
     function setupBusModalHandlers() {
+      // Seat pill click — opens bus modal
+      if (els.ticketSeat) {
+        els.ticketSeat.addEventListener("click", openBusModal);
+      }
+
       els.busModalClose.addEventListener("click", closeBusModal);
       els.busModal.addEventListener("click", (e) => {
         if (e.target === els.busModal) closeBusModal();

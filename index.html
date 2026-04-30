@@ -2833,13 +2833,14 @@
     }
 
     .seat-legend-free {
-      background: linear-gradient(135deg, #2a1f1c 0%, #1a1414 100%);
-      border: 1px solid rgba(232, 196, 104, 0.4);
+      background: linear-gradient(135deg, #4caf73, #2d8854);
+      border: 1px solid #5dc885;
+      box-shadow: 0 0 4px rgba(76, 175, 115, 0.5);
     }
 
     .seat-legend-taken {
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid rgba(255, 255, 255, 0.06);
+      background: linear-gradient(135deg, #6b2a35, #2e1117);
+      border: 1px solid #7a3340;
     }
 
     .seat-legend-selected {
@@ -2850,39 +2851,303 @@
 
     /* Bus/Maybach interior */
     .seat-bus-wrap {
+      position: relative;
       background:
+        repeating-linear-gradient(90deg,
+          rgba(0, 0, 0, 0.3) 0px,
+          rgba(0, 0, 0, 0.3) 1px,
+          transparent 1px,
+          transparent 8px),
         linear-gradient(180deg,
-          rgba(0, 0, 0, 0.65) 0%,
-          rgba(15, 10, 10, 0.55) 100%);
-      border: 1px solid rgba(232, 196, 104, 0.2);
-      border-radius: 28px 28px 16px 16px;
-      padding: 12px 14px 16px;
+          rgba(232, 196, 104, 0.04) 0%,
+          rgba(232, 196, 104, 0.08) 50%,
+          rgba(232, 196, 104, 0.04) 100%),
+        linear-gradient(180deg,
+          #1a1212 0%,
+          #261a1d 50%,
+          #1a1212 100%);
+      border: 2px solid rgba(232, 196, 104, 0.35);
+      border-radius: 38px 38px 22px 22px;
+      padding: 0;
       max-width: 320px;
       margin: 0 auto;
+      box-shadow:
+        0 12px 30px rgba(0, 0, 0, 0.6),
+        inset 0 0 40px rgba(0, 0, 0, 0.7),
+        inset 0 2px 0 rgba(232, 196, 104, 0.2),
+        inset 8px 0 16px rgba(0, 0, 0, 0.4),
+        inset -8px 0 16px rgba(0, 0, 0, 0.4);
+      overflow: hidden;
+    }
+
+    /* Side window strips */
+    .seat-bus-wrap::before {
+      content: '';
+      position: absolute;
+      top: 90px;
+      left: 4px;
+      bottom: 60px;
+      width: 3px;
+      background: linear-gradient(180deg,
+        transparent,
+        rgba(232, 196, 104, 0.3) 10%,
+        rgba(232, 196, 104, 0.3) 90%,
+        transparent);
+      border-radius: 2px;
+      box-shadow: 0 0 8px rgba(232, 196, 104, 0.2);
+    }
+
+    .seat-bus-wrap::after {
+      content: '';
+      position: absolute;
+      top: 90px;
+      right: 4px;
+      bottom: 60px;
+      width: 3px;
+      background: linear-gradient(180deg,
+        transparent,
+        rgba(232, 196, 104, 0.3) 10%,
+        rgba(232, 196, 104, 0.3) 90%,
+        transparent);
+      border-radius: 2px;
+      box-shadow: 0 0 8px rgba(232, 196, 104, 0.2);
+    }
+
+    /* Driver cockpit (cinematic) */
+    .seat-driver {
+      position: relative;
+      padding: 14px 12px 12px;
+      margin-bottom: 0;
+      background:
+        radial-gradient(ellipse at top center,
+          rgba(232, 196, 104, 0.08) 0%,
+          transparent 70%),
+        linear-gradient(180deg,
+          rgba(40, 26, 30, 0.9) 0%,
+          rgba(20, 12, 14, 0.7) 100%);
+      border-bottom: 1px solid rgba(232, 196, 104, 0.25);
+      display: block;
+      letter-spacing: normal;
+      text-transform: none;
+      font-family: var(--display-font);
+      color: var(--cream);
+      font-size: inherit;
+    }
+
+    /* Windshield */
+    .seat-windshield {
+      height: 24px;
+      margin: -14px -12px 12px;
+      background:
+        radial-gradient(circle at 15% 40%, rgba(232, 196, 104, 0.4) 0%, transparent 12%),
+        radial-gradient(circle at 35% 60%, rgba(232, 196, 104, 0.3) 0%, transparent 10%),
+        radial-gradient(circle at 55% 30%, rgba(255, 96, 117, 0.3) 0%, transparent 10%),
+        radial-gradient(circle at 75% 50%, rgba(232, 196, 104, 0.25) 0%, transparent 12%),
+        radial-gradient(circle at 92% 35%, rgba(232, 196, 104, 0.35) 0%, transparent 10%),
+        linear-gradient(180deg, #0a0608 0%, #1a0e12 100%);
+      border-bottom: 2px solid rgba(232, 196, 104, 0.2);
+      box-shadow: inset 0 -4px 8px rgba(0, 0, 0, 0.6);
+      position: relative;
+    }
+
+    .seat-windshield::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 6px;
+      background: linear-gradient(180deg,
+        transparent 0%,
+        rgba(232, 196, 104, 0.15) 100%);
+    }
+
+    /* Dashboard layout */
+    .seat-dashboard {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 10px;
+      align-items: center;
+    }
+
+    /* Steering wheel */
+    .seat-steering {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at center,
+          transparent 0%,
+          transparent 28%,
+          #2a1a1c 28%,
+          #2a1a1c 35%,
+          var(--gold-dark) 35%,
+          var(--gold) 50%,
+          var(--gold-dark) 65%,
+          #1a1010 65%,
+          #1a1010 100%);
       position: relative;
       box-shadow:
-        inset 0 0 30px rgba(0, 0, 0, 0.6),
-        0 8px 24px rgba(0, 0, 0, 0.5);
+        0 4px 10px rgba(0, 0, 0, 0.6),
+        inset 0 0 5px rgba(232, 196, 104, 0.3),
+        0 0 18px rgba(232, 196, 104, 0.15);
+      animation: steeringRotate 8s linear infinite;
+      justify-self: center;
     }
 
-    /* Driver area */
-    .seat-driver {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-      padding: 8px 12px;
-      margin-bottom: 12px;
-      background: linear-gradient(180deg, rgba(232, 196, 104, 0.05), transparent);
-      border-bottom: 1px solid rgba(232, 196, 104, 0.18);
-      font-family: var(--sans-font);
-      font-size: 9px;
-      letter-spacing: 1.8px;
+    .seat-steering::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 70%;
+      height: 4px;
+      background: linear-gradient(90deg, var(--gold-dark), var(--gold), var(--gold-dark));
+      border-radius: 2px;
+      box-shadow: 0 0 4px rgba(232, 196, 104, 0.5);
+    }
+
+    .seat-steering::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 4px;
+      height: 70%;
+      background: linear-gradient(180deg, var(--gold-dark), var(--gold), var(--gold-dark));
+      border-radius: 2px;
+      box-shadow: 0 0 4px rgba(232, 196, 104, 0.5);
+    }
+
+    @keyframes steeringRotate {
+      0%   { transform: rotate(-8deg); }
+      50%  { transform: rotate(8deg); }
+      100% { transform: rotate(-8deg); }
+    }
+
+    /* Console */
+    .seat-console {
+      text-align: center;
+    }
+
+    .seat-console-label {
+      font-family: var(--display-font);
+      font-size: 8.5px;
+      letter-spacing: 2px;
       text-transform: uppercase;
       color: var(--gold);
+      font-weight: 600;
+      margin-bottom: 3px;
+      text-shadow: 0 0 8px rgba(232, 196, 104, 0.4);
     }
 
-    .seat-driver-icon { font-size: 16px; }
+    .seat-console-screen {
+      width: 64px;
+      height: 18px;
+      margin: 0 auto;
+      background: linear-gradient(180deg, #0a1a2a, #051522);
+      border: 1px solid rgba(232, 196, 104, 0.3);
+      border-radius: 3px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--sans-font);
+      font-size: 7px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: #6dd49a;
+      box-shadow:
+        inset 0 0 6px rgba(109, 212, 154, 0.2),
+        0 0 5px rgba(109, 212, 154, 0.15);
+      animation: screenFlicker 3s ease-in-out infinite;
+    }
+
+    @keyframes screenFlicker {
+      0%, 100% { opacity: 1; }
+      50%      { opacity: 0.85; }
+    }
+
+    /* Driver seat indicator */
+    .seat-driver-chair {
+      width: 32px;
+      height: 38px;
+      background: linear-gradient(180deg,
+        #2a1a1c 0%,
+        #1a1010 50%,
+        #15090b 100%);
+      border: 1.5px solid var(--gold-dark);
+      border-radius: 8px 8px 4px 4px;
+      position: relative;
+      box-shadow:
+        inset 0 1px 0 rgba(232, 196, 104, 0.2),
+        inset 0 -2px 4px rgba(0, 0, 0, 0.5),
+        0 2px 6px rgba(0, 0, 0, 0.4);
+      justify-self: center;
+    }
+
+    .seat-driver-chair::before {
+      content: '';
+      position: absolute;
+      top: -4px;
+      left: 4px;
+      right: 4px;
+      height: 7px;
+      background: linear-gradient(180deg, #3a262a, #2a1a1c);
+      border: 1px solid var(--gold-dark);
+      border-bottom: none;
+      border-radius: 4px 4px 0 0;
+    }
+
+    .seat-driver-chair::after {
+      content: '👨‍✈️';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 16px;
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+    }
+
+    .seat-driver-chair-label {
+      display: block;
+      font-family: var(--sans-font);
+      font-size: 7px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--gold);
+      text-align: center;
+      margin-top: 3px;
+      opacity: 0.7;
+    }
+
+    /* Cabin (passenger area) */
+    .seat-cabin {
+      padding: 14px 12px 16px;
+      position: relative;
+    }
+
+    /* Ceiling light */
+    .seat-cabin::before {
+      content: '';
+      position: absolute;
+      top: 4px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60%;
+      height: 2px;
+      background: linear-gradient(90deg,
+        transparent,
+        rgba(232, 196, 104, 0.25) 20%,
+        rgba(232, 196, 104, 0.25) 80%,
+        transparent);
+      border-radius: 1px;
+      box-shadow: 0 2px 8px rgba(232, 196, 104, 0.2);
+    }
+
+    .seat-driver-icon { display: none; }
+    .seat-driver-label { display: none; }
 
     /* Seats grid — 4 columns with center aisle */
     .seat-grid {
@@ -2915,46 +3180,48 @@
     /* === MAYBACH SEAT (luxury chair) === */
     .seat {
       position: relative;
-      aspect-ratio: 1 / 1.1;
-      min-height: 36px;
+      aspect-ratio: 1 / 1.15;
+      min-height: 38px;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
       font-family: var(--display-font);
-      font-size: 10px;
-      font-weight: 600;
-      color: var(--cream);
+      font-size: 11px;
+      font-weight: 700;
+      color: #fff;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
       transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
       user-select: none;
       -webkit-tap-highlight-color: transparent;
-      background: linear-gradient(180deg,
-        #2a1f1c 0%,
-        #1f1614 50%,
-        #15100e 100%);
-      border: 1.5px solid rgba(232, 196, 104, 0.5);
-      border-radius: 8px 8px 6px 6px;
+      background:
+        radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.08) 0%, transparent 35%),
+        radial-gradient(circle at 70% 70%, rgba(255, 255, 255, 0.05) 0%, transparent 35%),
+        linear-gradient(180deg,
+          #4caf73 0%,
+          #3a9c64 35%,
+          #2d8854 100%);
+      border: 1.5px solid #5dc885;
+      border-radius: 10px 10px 6px 6px;
       box-shadow:
-        inset 0 1px 0 rgba(232, 196, 104, 0.2),
-        inset 0 -2px 4px rgba(0, 0, 0, 0.5),
-        0 2px 4px rgba(0, 0, 0, 0.4);
+        inset 0 1px 0 rgba(255, 255, 255, 0.3),
+        inset 0 -3px 5px rgba(0, 0, 0, 0.3),
+        0 3px 8px rgba(76, 175, 115, 0.4);
     }
 
     /* Seat back (top "bump") */
     .seat::before {
       content: '';
       position: absolute;
-      top: -3px;
-      left: 5px;
-      right: 5px;
-      height: 5px;
-      background: linear-gradient(180deg,
-        #3a2c28 0%,
-        #2a1f1c 100%);
-      border: 1px solid rgba(232, 196, 104, 0.4);
+      top: -5px;
+      left: 4px;
+      right: 4px;
+      height: 8px;
+      background: linear-gradient(180deg, #6dd189, #4caf73 50%, #3a9c64 100%);
+      border: 1px solid #5dc885;
       border-bottom: none;
-      border-radius: 4px 4px 0 0;
-      box-shadow: inset 0 1px 0 rgba(232, 196, 104, 0.15);
+      border-radius: 6px 6px 0 0;
+      box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.3);
     }
 
     /* Seat headrest accent (Maybach's signature top stripe) */
@@ -2986,23 +3253,31 @@
       z-index: 2;
     }
 
-    /* TAKEN — gray, disabled */
+    /* TAKEN — burgundy/wine luxury (Maybach style) */
     .seat.taken {
-      background: linear-gradient(180deg, #1a1515 0%, #100c0c 100%);
-      border-color: rgba(255, 255, 255, 0.06);
-      color: rgba(255, 255, 255, 0.15);
+      background:
+        radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.05) 0%, transparent 35%),
+        linear-gradient(180deg,
+          #6b2a35 0%,
+          #4a1c25 50%,
+          #2e1117 100%);
+      border-color: #7a3340;
+      color: rgba(255, 255, 255, 0.4);
       cursor: not-allowed;
       pointer-events: none;
-      box-shadow: inset 0 -2px 4px rgba(0, 0, 0, 0.3);
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.1),
+        inset 0 -3px 5px rgba(0, 0, 0, 0.5),
+        0 2px 5px rgba(0, 0, 0, 0.4);
     }
 
     .seat.taken::before {
-      background: #1a1515;
-      border-color: rgba(255, 255, 255, 0.06);
+      background: linear-gradient(180deg, #7a3340, #4a1c25);
+      border-color: #6b2a35;
     }
 
     .seat.taken::after {
-      opacity: 0.05;
+      opacity: 0.4;
     }
 
     /* SELECTED — Maybach VIP gold */
@@ -4042,14 +4317,26 @@
           </div>
 
           <div class="seat-bus-wrap">
-            <!-- Driver indicator -->
+            <!-- Cinematic Maybach driver cockpit -->
             <div class="seat-driver">
-              <span class="seat-driver-icon">🚌</span>
-              <span class="seat-driver-label">წინა / მძღოლი</span>
+              <div class="seat-windshield"></div>
+              <div class="seat-dashboard">
+                <div class="seat-steering"></div>
+                <div class="seat-console">
+                  <div class="seat-console-label">Farmasi Express</div>
+                  <div class="seat-console-screen">12:00 ✦ TBS</div>
+                </div>
+                <div>
+                  <div class="seat-driver-chair"></div>
+                  <div class="seat-driver-chair-label">მძღოლი</div>
+                </div>
+              </div>
             </div>
 
-            <!-- Seats grid will be injected here -->
-            <div class="seat-grid" id="seatGrid"></div>
+            <!-- Passenger cabin with seats -->
+            <div class="seat-cabin">
+              <div class="seat-grid" id="seatGrid"></div>
+            </div>
           </div>
 
           <input type="hidden" id="seat_number" name="seat_number" required />
