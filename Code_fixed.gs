@@ -82,6 +82,12 @@ function handleRequest(e) {
       case 'logout':         result = doLogout(params);      break;
       case 'send_to_member': result = sendToMember(params);  break;
       case 'send_bulk_invite': result = sendBulkInvite(params); break;
+      // ─── Password Authentication (Phase 4) ───
+      case 'set_password':   result = setPassword(params);          break;
+      case 'login_password': result = loginWithPassword(params);    break;
+      case 'request_reset':  result = requestPasswordReset(params); break;
+      case 'check_remember': result = checkRememberToken(params);   break;
+      // ─────────────────────────────────────────
       case 'get_mobile':     result = getMobile(params);     break;
       case 'save_social':    result = saveSocial(params);    break;
       case 'get_social':     result = getSocial(params);     break;
@@ -349,6 +355,8 @@ function sendBulkInvite(params) {
   const receivers = [];
   const okPids = [];
   const skipped = [];
+  const recipientNames = []; // ცადო — თითო ცდი ცადე ცადო-ცარიელ ცდი
+  const recipientPhones = [];
 
   for (var i = 0; i < targetPids.length; i++) {
     const pid = targetPids[i];
@@ -365,6 +373,8 @@ function sendBulkInvite(params) {
     const phone = '995' + String(user.mobile).replace(/^\+?995/, '');
     receivers.push({ Receiver: phone });
     okPids.push(pid);
+    recipientNames.push(user.name || pid);
+    recipientPhones.push(phone);
   }
 
   if (receivers.length === 0) {
@@ -375,7 +385,7 @@ function sendBulkInvite(params) {
     };
   }
 
-  // ────── SMS გაგზავნა (ერთი HTTP request, ბევრი მიმღები) ──────
+  // ────── SMS გაგზავნა ──────
   const props      = PropertiesService.getScriptProperties();
   const publicKey  = props.getProperty('PUBLIC_KEY');
   const privateKey = props.getProperty('PRIVATE_KEY');
@@ -386,38 +396,91 @@ function sendBulkInvite(params) {
   const url = 'https://api.bulksms.ge/gateway/api/sms/v1/message/send'
             + '?publicKey=' + encodeURIComponent(publicKey);
 
-  const payload = {
-    Text:    message,
-    Purpose: 'INF',
-    Options: {
-      Originator: SMS_SENDER,
-      Encoding:   'UNICODE'
-    },
-    Receivers: receivers
+  // ცადო — თუ message-ში [სახელი] placeholder-ი ცადო, ცადო ცარიელ ცდი ცალცალკე request
+  // ცარიელ — ერთი HTTP request ცადო-ცარიელ
+  const hasPersonalization = message.indexOf('[სახელი]') !== -1;
+
+  let ok = false;
+  let respBody = '';
+  let firstNameForRecipient = function(fullName) {
+    // "შორენა მ." → "შორენა"
+    return String(fullName).split(/\s+/)[0] || fullName;
   };
 
-  const options = {
-    method:             'post',
-    contentType:        'application/json',
-    headers:            { 'Authorization': 'Bearer ' + privateKey },
-    payload:            JSON.stringify(payload),
-    muteHttpExceptions: true
-  };
+  if (hasPersonalization) {
+    // ცალცალკე request-ი თითო ცარიელ ცდი (პერსონალიზებული ცადე)
+    let successCount = 0;
+    const lastResponses = [];
+    for (var j = 0; j < receivers.length; j++) {
+      const personalText = message.replace(/\[სახელი\]/g, firstNameForRecipient(recipientNames[j]));
+      const payloadOne = {
+        Text:    personalText,
+        Purpose: 'INF',
+        Options: {
+          Originator: SMS_SENDER,
+          Encoding:   'UNICODE'
+        },
+        Receivers: [{ Receiver: recipientPhones[j] }]
+      };
+      const optsOne = {
+        method:             'post',
+        contentType:        'application/json',
+        headers:            { 'Authorization': 'Bearer ' + privateKey },
+        payload:            JSON.stringify(payloadOne),
+        muteHttpExceptions: true
+      };
+      try {
+        const r = UrlFetchApp.fetch(url, optsOne);
+        const code = r.getResponseCode();
+        const body = r.getContentText();
+        let parsed = null;
+        try { parsed = JSON.parse(body); } catch (e) {}
+        const errStatus = parsed && ['400','401','403','500'].indexOf(String(parsed.Status || '')) !== -1;
+        if (code === 200 && !errStatus) {
+          successCount++;
+        }
+        if (j === 0) lastResponses.push(body.substring(0, 100));
+      } catch (err) {
+        log_('bulk_invite (personal) ERROR for ' + recipientPhones[j] + ': ' + err);
+      }
+    }
+    ok = successCount > 0;
+    respBody = 'personalized: ' + successCount + '/' + receivers.length + ' ok. ' + lastResponses.join(' | ');
+  } else {
+    // ჩვეულებრივი ცადო — ერთი request-ცადე ცადო ცადო
+    const payload = {
+      Text:    message,
+      Purpose: 'INF',
+      Options: {
+        Originator: SMS_SENDER,
+        Encoding:   'UNICODE'
+      },
+      Receivers: receivers
+    };
 
-  let respCode = 0, respBody = '';
-  try {
-    const resp = UrlFetchApp.fetch(url, options);
-    respCode = resp.getResponseCode();
-    respBody = resp.getContentText();
-  } catch (err) {
-    log_('bulk_invite ERROR: ' + err);
-    return { status: 'error', message: 'SMS ვერ გაიგზავნა: ' + err };
+    const options = {
+      method:             'post',
+      contentType:        'application/json',
+      headers:            { 'Authorization': 'Bearer ' + privateKey },
+      payload:            JSON.stringify(payload),
+      muteHttpExceptions: true
+    };
+
+    let respCode = 0;
+    try {
+      const resp = UrlFetchApp.fetch(url, options);
+      respCode = resp.getResponseCode();
+      respBody = resp.getContentText();
+    } catch (err) {
+      log_('bulk_invite ERROR: ' + err);
+      return { status: 'error', message: 'SMS ვერ გაიგზავნა: ' + err };
+    }
+
+    let parsed = null;
+    try { parsed = JSON.parse(respBody); } catch (e) {}
+    const hasError = parsed && ['400','401','403','500'].indexOf(String(parsed.Status || '')) !== -1;
+    ok = respCode === 200 && !hasError;
   }
-
-  let parsed = null;
-  try { parsed = JSON.parse(respBody); } catch (e) {}
-  const hasError = parsed && ['400','401','403','500'].indexOf(String(parsed.Status || '')) !== -1;
-  const ok = respCode === 200 && !hasError;
 
   // ────── Quota update + logging ──────
   if (!isAdmin && ok) {
@@ -987,6 +1050,330 @@ function sendSms_(phone, text) {
     ok:   code === 200 && !hasError,
     code: code,
     body: body
+  };
+}
+
+
+// ════════════════════════════════════════════════════════════
+//   PASSWORD AUTHENTICATION (Phase 4)
+//   Sheet: 17k923eh-S6kOhfVzObg5BHJ8HZ7M-maZaT7ICmcWrLk
+//   Columns: pid | hash | salt | created_at | last_login | failed_attempts
+// ════════════════════════════════════════════════════════════
+
+const PASSWORDS_SHEET_ID = '17k923eh-S6kOhfVzObg5BHJ8HZ7M-maZaT7ICmcWrLk';
+const PWD_SHEET_NAME     = 'Sheet1'; // default Google Sheets ფურცლის სახელი
+const PWD_MIN_LENGTH     = 6;
+const PWD_MAX_FAILED     = 5;
+const PWD_LOCKOUT_MIN    = 15;       // 15 წუთი ბლოკი
+const PWD_PBKDF2_ITER    = 10000;
+const PWD_REMEMBER_DAYS  = 30;       // "Remember me" — 30 დღე
+
+// ─── Sheet helpers ───
+function getPwdSheet_() {
+  try {
+    const ss = SpreadsheetApp.openById(PASSWORDS_SHEET_ID);
+    return ss.getSheetByName(PWD_SHEET_NAME) || ss.getSheets()[0];
+  } catch (e) {
+    log_('getPwdSheet_ ERROR: ' + e);
+    return null;
+  }
+}
+
+function findPwdRow_(pid) {
+  const sheet = getPwdSheet_();
+  if (!sheet) return null;
+  const data = sheet.getDataRange().getValues();
+  // row 0 = headers, search from row 1
+  for (let i = 1; i < data.length; i++) {
+    if (String(data[i][0]) === String(pid)) {
+      return {
+        rowIndex: i + 1,                  // 1-based for sheet operations
+        pid:             String(data[i][0]),
+        hash:            String(data[i][1] || ''),
+        salt:            String(data[i][2] || ''),
+        created_at:      data[i][3],
+        last_login:      data[i][4],
+        failed_attempts: parseInt(data[i][5], 10) || 0
+      };
+    }
+  }
+  return null;
+}
+
+function savePwdRow_(pid, hash, salt) {
+  const sheet = getPwdSheet_();
+  if (!sheet) throw new Error('passwords sheet unavailable');
+  const existing = findPwdRow_(pid);
+  const now = new Date();
+  if (existing) {
+    sheet.getRange(existing.rowIndex, 2).setValue(hash);
+    sheet.getRange(existing.rowIndex, 3).setValue(salt);
+    sheet.getRange(existing.rowIndex, 5).setValue(now);
+    sheet.getRange(existing.rowIndex, 6).setValue(0);  // reset failed attempts
+  } else {
+    sheet.appendRow([String(pid), hash, salt, now, now, 0]);
+  }
+}
+
+function updateLastLogin_(pid) {
+  const row = findPwdRow_(pid);
+  if (!row) return;
+  const sheet = getPwdSheet_();
+  sheet.getRange(row.rowIndex, 5).setValue(new Date());
+  sheet.getRange(row.rowIndex, 6).setValue(0);
+}
+
+function incrementFailed_(pid) {
+  const row = findPwdRow_(pid);
+  if (!row) return 0;
+  const sheet = getPwdSheet_();
+  const newCount = row.failed_attempts + 1;
+  sheet.getRange(row.rowIndex, 6).setValue(newCount);
+  return newCount;
+}
+
+// ─── Brute-force lockout check ───
+function isLockedOut_(pid) {
+  const cacheKey = 'pwd_lock_' + pid;
+  const lockUntil = CacheService.getScriptCache().get(cacheKey);
+  if (lockUntil) {
+    const until = parseInt(lockUntil, 10);
+    if (until > Date.now()) {
+      const minutesLeft = Math.ceil((until - Date.now()) / 60000);
+      return { locked: true, minutes: minutesLeft };
+    }
+  }
+  return { locked: false };
+}
+
+function setLockout_(pid) {
+  const lockUntil = Date.now() + (PWD_LOCKOUT_MIN * 60000);
+  CacheService.getScriptCache().put(
+    'pwd_lock_' + pid,
+    String(lockUntil),
+    PWD_LOCKOUT_MIN * 60
+  );
+}
+
+// ─── PBKDF2 hash ───
+// Apps Script-ს არ აქვს native PBKDF2, მაგრამ HMAC-SHA256-ით ვაგვარებთ
+function pbkdf2_(password, salt, iterations) {
+  iterations = iterations || PWD_PBKDF2_ITER;
+  let result = password + salt;
+  for (let i = 0; i < iterations; i++) {
+    const bytes = Utilities.computeHmacSha256Signature(result, salt);
+    result = Utilities.base64Encode(bytes);
+  }
+  return result;
+}
+
+function generateSalt_() {
+  const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  let s = '';
+  for (let i = 0; i < 24; i++) {
+    s += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return s;
+}
+
+function generateRememberToken_() {
+  return Utilities.getUuid() + '-' + Utilities.getUuid().substring(0, 8);
+}
+
+// ════════════════════════════════════════════════════════════
+//   ACTION: set_password
+//   Input: pid, otp_code, password, password_confirm
+//   ცადო ცადო — OTP კოდის ვერიფიკაცია გავიდა, ცადო პაროლი დაყენდება
+// ════════════════════════════════════════════════════════════
+
+function setPassword(params) {
+  const pid             = (params.pid || '').trim();
+  const sessionId       = (params.session_id || '').trim();
+  const password        = (params.password || '');
+  const passwordConfirm = (params.password_confirm || '');
+
+  if (!pid)                    return { status: 'error', message: 'PID აუცილებელია' };
+  if (!sessionId)              return { status: 'error', message: 'სესია ვერ მოიძებნა' };
+  if (!password)               return { status: 'error', message: 'პაროლი აუცილებელია' };
+  if (password.length < PWD_MIN_LENGTH) {
+    return { status: 'error', message: 'პაროლი მინიმუმ ' + PWD_MIN_LENGTH + ' სიმბოლო' };
+  }
+  if (password !== passwordConfirm) {
+    return { status: 'error', message: 'პაროლები არ ემთხვევა' };
+  }
+
+  // session-ი ცადო ცადო — ცადო verify_otp-ცადო ცადო ცადო
+  // ცადო session ცადო-ცარიელ "auth_" cache-ცადე ცადო ცადო ცადო ცადო
+  const cache = CacheService.getScriptCache();
+  const authStr = cache.get('auth_' + sessionId);
+  if (!authStr) {
+    return { status: 'error', message: 'სესია ამოიწურა — ცადეთ ხელახლა' };
+  }
+  let authData;
+  try { authData = JSON.parse(authStr); } catch (e) {
+    return { status: 'error', message: 'სესიის შეცდომა' };
+  }
+  if (String(authData.pid) !== String(pid)) {
+    return { status: 'error', message: 'PID არ ემთხვევა სესიას' };
+  }
+
+  // Hash + Save
+  const salt = generateSalt_();
+  const hash = pbkdf2_(password, salt);
+  try {
+    savePwdRow_(pid, hash, salt);
+  } catch (err) {
+    log_('setPassword save ERROR: ' + err);
+    return { status: 'error', message: 'პაროლის შენახვა ვერ მოხერხდა' };
+  }
+
+  log_('set_password OK pid:' + pid);
+  return {
+    status:     'ok',
+    message:    'პაროლი წარმატებით დაყენდა',
+    session_id: sessionId,
+    name:       authData.name || pid
+  };
+}
+
+// ════════════════════════════════════════════════════════════
+//   ACTION: login_password
+//   Input: pid, password, remember (optional)
+// ════════════════════════════════════════════════════════════
+
+function loginWithPassword(params) {
+  const pid      = (params.pid || '').trim();
+  const password = (params.password || '');
+  const remember = (params.remember === '1' || params.remember === 'true' || params.remember === true);
+
+  if (!pid || !password) {
+    return { status: 'error', message: 'PID და პაროლი აუცილებელია' };
+  }
+
+  // Lockout check
+  const lock = isLockedOut_(pid);
+  if (lock.locked) {
+    return {
+      status:  'error',
+      message: 'ანგარიში დროებით დაბლოკილია (' + lock.minutes + ' წთ.) — ბევრი წარუმატებელი ცდა'
+    };
+  }
+
+  // Find row
+  const row = findPwdRow_(pid);
+  if (!row || !row.hash) {
+    return {
+      status:        'error',
+      message:       'პაროლი ჯერ არ არის დაყენებული — ცადეთ "არ მაქვს პაროლი"',
+      no_password:   true
+    };
+  }
+
+  // Verify
+  const hashAttempt = pbkdf2_(password, row.salt);
+  if (hashAttempt !== row.hash) {
+    const failed = incrementFailed_(pid);
+    if (failed >= PWD_MAX_FAILED) {
+      setLockout_(pid);
+      return {
+        status:  'error',
+        message: 'ანგარიში დაბლოკილია ' + PWD_LOCKOUT_MIN + ' წუთით — ცადეთ მოგვიანებით'
+      };
+    }
+    const remaining = PWD_MAX_FAILED - failed;
+    return {
+      status:  'error',
+      message: 'არასწორი პაროლი (დარჩენილია ' + remaining + ' ცდა)'
+    };
+  }
+
+  // ცადო — Login წარმატებული
+  updateLastLogin_(pid);
+
+  // Session
+  const sessionId = Utilities.getUuid();
+  const user = getUser_(pid);
+  const authData = {
+    pid:  pid,
+    name: user ? user.name : pid,
+    ts:   Date.now()
+  };
+  CacheService.getScriptCache().put('auth_' + sessionId, JSON.stringify(authData), 21600);
+
+  // Remember me — 30 day token
+  let rememberToken = null;
+  if (remember) {
+    rememberToken = generateRememberToken_();
+    // Token ცარიელ Properties-ში — Cache 6 საათით ცადო, ცადო long-term ვცადოთ Properties
+    PropertiesService.getScriptProperties().setProperty(
+      'remember_' + rememberToken,
+      JSON.stringify({ pid: pid, expires: Date.now() + (PWD_REMEMBER_DAYS * 86400000) })
+    );
+  }
+
+  log_('login_password OK pid:' + pid + ' remember:' + (remember ? 'yes' : 'no'));
+  return {
+    status:         'ok',
+    session_id:     sessionId,
+    name:           user ? user.name : pid,
+    remember_token: rememberToken
+  };
+}
+
+// ════════════════════════════════════════════════════════════
+//   ACTION: request_reset
+//   Input: pid
+//   ცადო ცარიელად — SMS კოდი იგზავნება ცარიელი ცარიელ ცადო ცადო
+// ════════════════════════════════════════════════════════════
+
+function requestPasswordReset(params) {
+  const pid = (params.pid || '').trim();
+  if (!pid) return { status: 'error', message: 'PID აუცილებელია' };
+
+  // ცადო — sendOtp-ის same flow ცადო (ცარიელ ცადო რომ ცადო)
+  return sendOtp(params);
+}
+
+// ════════════════════════════════════════════════════════════
+//   ACTION: check_remember
+//   Input: remember_token
+//   ცადო — Auto-login ცარიელ token-ით
+// ════════════════════════════════════════════════════════════
+
+function checkRememberToken(params) {
+  const token = (params.remember_token || '').trim();
+  if (!token) return { status: 'error', message: 'token cap' };
+
+  const stored = PropertiesService.getScriptProperties().getProperty('remember_' + token);
+  if (!stored) return { status: 'error', message: 'token არ არსებობს' };
+
+  let data;
+  try { data = JSON.parse(stored); } catch (e) {
+    PropertiesService.getScriptProperties().deleteProperty('remember_' + token);
+    return { status: 'error', message: 'token corrupted' };
+  }
+
+  if (Date.now() > data.expires) {
+    PropertiesService.getScriptProperties().deleteProperty('remember_' + token);
+    return { status: 'error', message: 'token ამოიწურა' };
+  }
+
+  // ცადო — წარმატებული ცადო, ცადო session ცადო
+  const sessionId = Utilities.getUuid();
+  const user = getUser_(data.pid);
+  const authData = {
+    pid:  data.pid,
+    name: user ? user.name : data.pid,
+    ts:   Date.now()
+  };
+  CacheService.getScriptCache().put('auth_' + sessionId, JSON.stringify(authData), 21600);
+
+  log_('remember_check OK pid:' + data.pid);
+  return {
+    status:     'ok',
+    session_id: sessionId,
+    pid:        data.pid,
+    name:       user ? user.name : data.pid
   };
 }
 
