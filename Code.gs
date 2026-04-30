@@ -233,14 +233,32 @@ function handleCancel(params) {
   const regSheet = ss.getSheetByName(SHEET_NAME);
 
   const phone = normalizePhone(params.phone);
-  if (!phone) return jsonResponse({ ok: false, error: 'Phone required' });
+  const ticketId = String(params.ticket_id || '').trim();
+
+  // Either phone OR ticket_id must be provided
+  if (!phone && !ticketId) {
+    return jsonResponse({ ok: false, error: 'Phone or ticket_id required' });
+  }
 
   const data = regSheet.getDataRange().getValues();
 
   for (let i = data.length - 1; i >= 1; i--) {
-    if (normalizePhone(data[i][4]) === phone) {
+    const rowPhone = normalizePhone(data[i][4]);
+    const rowTicketId = String(data[i][6] || '').trim();
+
+    // Match by phone OR ticket_id
+    const matchesPhone = phone && rowPhone === phone;
+    const matchesTicketId = ticketId && rowTicketId === ticketId;
+
+    if (matchesPhone || matchesTicketId) {
       regSheet.deleteRow(i + 1);
-      return jsonResponse({ ok: true });
+      return jsonResponse({
+        ok: true,
+        cancelled: {
+          ticket_id: rowTicketId,
+          seat_number: data[i][8] || null
+        }
+      });
     }
   }
 

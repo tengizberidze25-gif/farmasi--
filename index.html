@@ -2890,6 +2890,138 @@
     }
 
     /* ============================================ */
+    /* TICKET CANCEL SECTION                         */
+    /* ============================================ */
+    .ticket-cancel-section {
+      margin-top: 18px;
+      padding-top: 14px;
+      border-top: 1px dashed rgba(255, 255, 255, 0.08);
+    }
+
+    .ticket-cancel-toggle {
+      display: block;
+      width: 100%;
+      padding: 8px 12px;
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 10px;
+      color: var(--cream-dim);
+      font-family: var(--sans-font);
+      font-size: 10px;
+      letter-spacing: 0.4px;
+      cursor: pointer;
+      opacity: 0.55;
+      transition: all 0.25s ease;
+    }
+
+    .ticket-cancel-toggle:hover {
+      opacity: 1;
+      border-color: rgba(255, 96, 117, 0.3);
+      color: rgba(255, 96, 117, 0.85);
+    }
+
+    .ticket-cancel-toggle.active {
+      opacity: 1;
+      border-color: rgba(255, 96, 117, 0.4);
+      background: rgba(255, 96, 117, 0.05);
+      color: rgba(255, 96, 117, 0.95);
+    }
+
+    .ticket-cancel-area {
+      margin-top: 12px;
+      padding: 14px 12px;
+      background: linear-gradient(135deg,
+        rgba(255, 96, 117, 0.06),
+        rgba(255, 96, 117, 0.02));
+      border: 1px solid rgba(255, 96, 117, 0.18);
+      border-radius: 12px;
+    }
+
+    .ticket-cancel-warning {
+      margin: 0 0 12px;
+      font-family: var(--sans-font);
+      font-size: 11px;
+      line-height: 1.5;
+      color: var(--cream-dim);
+      text-align: center;
+    }
+
+    .ticket-cancel-warning strong {
+      color: var(--pink);
+      font-weight: 700;
+    }
+
+    .btn-cancel-confirm {
+      display: block;
+      width: 100%;
+      margin-bottom: 8px;
+      padding: 10px 14px;
+      background: linear-gradient(135deg, #d63653, #b62a44);
+      border: 1px solid rgba(255, 96, 117, 0.5);
+      border-radius: 10px;
+      color: white;
+      font-family: var(--sans-font);
+      font-size: 11.5px;
+      font-weight: 700;
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 12px rgba(214, 54, 83, 0.3);
+    }
+
+    .btn-cancel-confirm:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(214, 54, 83, 0.5);
+    }
+
+    .btn-cancel-confirm:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn-cancel-back {
+      display: block;
+      width: 100%;
+      padding: 8px 14px;
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      color: var(--cream-dim);
+      font-family: var(--sans-font);
+      font-size: 10.5px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn-cancel-back:hover {
+      border-color: rgba(232, 196, 104, 0.3);
+      color: var(--gold);
+    }
+
+    .ticket-cancel-msg {
+      margin-top: 10px;
+      padding: 10px;
+      border-radius: 8px;
+      font-size: 11px;
+      text-align: center;
+      line-height: 1.4;
+    }
+
+    .ticket-cancel-msg.success {
+      background: rgba(60, 200, 120, 0.12);
+      border: 1px solid rgba(60, 200, 120, 0.3);
+      color: #6dd49a;
+    }
+
+    .ticket-cancel-msg.error {
+      background: rgba(255, 96, 117, 0.12);
+      border: 1px solid rgba(255, 96, 117, 0.3);
+      color: var(--pink);
+    }
+
+    /* ============================================ */
     /* MODAL TRANSPORT BANNER (in register modal)   */
     /* ============================================ */
     @keyframes photoZoom {
@@ -3615,6 +3747,25 @@
       </div>
 
       <button class="btn btn-ghost" id="closeTicketBtn" type="button" style="margin-top:16px;">დახურვა</button>
+
+      <!-- CANCEL REGISTRATION (subtle, at bottom) -->
+      <div class="ticket-cancel-section">
+        <button class="ticket-cancel-toggle" id="ticketCancelToggle" type="button">
+          <span>ვერ ვახერხებ ჩამოსვლას · გავაუქმო რეგისტრაცია</span>
+        </button>
+        <div class="ticket-cancel-area" id="ticketCancelArea" hidden>
+          <p class="ticket-cancel-warning">
+            ⚠️ რეგისტრაციის გაუქმება <strong>შეუქცევადია</strong> — ბილეთი გაუქმდება, ადგილი გათავისუფლდება.
+          </p>
+          <button class="btn-cancel-confirm" id="ticketCancelConfirm" type="button">
+            ✕ დადასტურება — გავაუქმოთ ბილეთი
+          </button>
+          <button class="btn-cancel-back" id="ticketCancelBack" type="button">
+            უკან დავბრუნდე
+          </button>
+          <div class="ticket-cancel-msg" id="ticketCancelMsg" hidden></div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -3732,6 +3883,13 @@
       ticketModal: document.getElementById("ticketModal"),
       closeTicketX: document.getElementById("closeTicketX"),
       closeTicketBtn: document.getElementById("closeTicketBtn"),
+
+      // Ticket cancel section
+      ticketCancelToggle: document.getElementById("ticketCancelToggle"),
+      ticketCancelArea: document.getElementById("ticketCancelArea"),
+      ticketCancelConfirm: document.getElementById("ticketCancelConfirm"),
+      ticketCancelBack: document.getElementById("ticketCancelBack"),
+      ticketCancelMsg: document.getElementById("ticketCancelMsg"),
       ticketTierBadge: document.getElementById("ticketTierBadge"),
       qrWrap: document.getElementById("qrWrap"),
       ticketId: document.getElementById("ticketId"),
@@ -3793,6 +3951,7 @@
     let modalTransportSlideshowTimer = null;
     let occupiedSeats = []; // updated from server on every loadData()
     let selectedSeat = null; // currently picked seat number
+    let currentTicketContext = null; // { ticket_id, phone } — for cancel
 
     els.music.volume = 0.3;
     els.boom.volume = 0.55;
@@ -4705,8 +4864,36 @@
       // Build share URLs
       buildShareLinks(formData);
 
+      // Save context for potential cancellation
+      currentTicketContext = {
+        ticket_id: ticketIdStr,
+        phone: formData.phone || "",
+        name: formData.first_name + " " + formData.last_name
+      };
+
+      // Reset cancel section UI to its default state every time the modal opens
+      resetTicketCancelUI();
+
       // Show modal
       els.ticketModal.classList.add("open");
+    }
+
+    function resetTicketCancelUI() {
+      if (els.ticketCancelArea) {
+        els.ticketCancelArea.setAttribute("hidden", "");
+      }
+      if (els.ticketCancelToggle) {
+        els.ticketCancelToggle.classList.remove("active");
+      }
+      if (els.ticketCancelMsg) {
+        els.ticketCancelMsg.setAttribute("hidden", "");
+        els.ticketCancelMsg.className = "ticket-cancel-msg";
+        els.ticketCancelMsg.textContent = "";
+      }
+      if (els.ticketCancelConfirm) {
+        els.ticketCancelConfirm.disabled = false;
+        els.ticketCancelConfirm.textContent = "✕ დადასტურება — გავაუქმოთ ბილეთი";
+      }
     }
 
     function buildCalendarLinks() {
@@ -4926,6 +5113,84 @@
       }
     }
 
+    /**
+     * Cancel registration directly from the ticket modal.
+     * Uses currentTicketContext (set when ticket modal opens).
+     */
+    async function handleTicketCancel() {
+      if (!currentTicketContext || !currentTicketContext.phone) {
+        showTicketCancelMsg("error", "გაუქმება ვერ შესრულდა — ნომერი არ არის ხელმისაწვდომი");
+        return;
+      }
+
+      // The phone might be masked (599***266) if the ticket was loaded via URL
+      // In that case, we can't use it directly — fall back to ticket_id-based cancel
+      const phoneStr = String(currentTicketContext.phone || "");
+      const isMaskedPhone = phoneStr.indexOf("*") !== -1;
+
+      els.ticketCancelConfirm.disabled = true;
+      els.ticketCancelConfirm.textContent = "მიმდინარეობს...";
+      hideTicketCancelMsg();
+
+      try {
+        const payload = {
+          action: "cancel"
+        };
+
+        if (isMaskedPhone) {
+          // Cancel by ticket_id when phone is masked (URL-loaded tickets)
+          payload.ticket_id = currentTicketContext.ticket_id || "";
+        } else {
+          payload.phone = phoneStr;
+        }
+
+        const response = await postActionWithResponse(payload);
+
+        if (response && response.ok === false) {
+          let errMsg = "გაუქმება ვერ შესრულდა";
+          if (response.error === "Not found") errMsg = "ბილეთი ვერ მოიძებნა";
+          showTicketCancelMsg("error", errMsg + " ⚠");
+          els.ticketCancelConfirm.disabled = false;
+          els.ticketCancelConfirm.textContent = "✕ დადასტურება — გავაუქმოთ ბილეთი";
+          return;
+        }
+
+        // Success
+        showTicketCancelMsg("success", "✓ რეგისტრაცია გაუქმდა — ადგილი გათავისუფლდა");
+
+        // Clear local ticket
+        clearMyTicket();
+        refreshMyTicketCard();
+
+        // Refresh data (occupied seats, total count)
+        await loadData();
+
+        // Auto-close ticket modal after 2.5 seconds
+        setTimeout(() => {
+          els.ticketModal.classList.remove("open");
+          resetTicketCancelUI();
+        }, 2500);
+
+      } catch (err) {
+        showTicketCancelMsg("error", "გაუქმება ვერ შესრულდა ⚠");
+        els.ticketCancelConfirm.disabled = false;
+        els.ticketCancelConfirm.textContent = "✕ დადასტურება — გავაუქმოთ ბილეთი";
+      }
+    }
+
+    function showTicketCancelMsg(type, text) {
+      if (!els.ticketCancelMsg) return;
+      els.ticketCancelMsg.className = "ticket-cancel-msg " + type;
+      els.ticketCancelMsg.textContent = text;
+      els.ticketCancelMsg.removeAttribute("hidden");
+    }
+
+    function hideTicketCancelMsg() {
+      if (!els.ticketCancelMsg) return;
+      els.ticketCancelMsg.setAttribute("hidden", "");
+      els.ticketCancelMsg.textContent = "";
+    }
+
     function setupMusic() {
       els.music.volume = parseFloat(els.volume.value);
       els.playBtn.addEventListener("click", async () => {
@@ -5011,6 +5276,32 @@
           }
         });
       }
+
+      // Ticket cancel section handlers
+      if (els.ticketCancelToggle) {
+        els.ticketCancelToggle.addEventListener("click", () => {
+          const isHidden = els.ticketCancelArea.hasAttribute("hidden");
+          if (isHidden) {
+            els.ticketCancelArea.removeAttribute("hidden");
+            els.ticketCancelToggle.classList.add("active");
+          } else {
+            els.ticketCancelArea.setAttribute("hidden", "");
+            els.ticketCancelToggle.classList.remove("active");
+          }
+        });
+      }
+
+      if (els.ticketCancelBack) {
+        els.ticketCancelBack.addEventListener("click", () => {
+          els.ticketCancelArea.setAttribute("hidden", "");
+          els.ticketCancelToggle.classList.remove("active");
+        });
+      }
+
+      if (els.ticketCancelConfirm) {
+        els.ticketCancelConfirm.addEventListener("click", handleTicketCancel);
+      }
+
       refreshMyTicketCard();
       startSimulatedRegistrations();
 
