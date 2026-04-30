@@ -3292,13 +3292,13 @@
     /* Seats grid — 4 columns with center aisle */
     .seat-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr 16px 1fr 1fr;
-      gap: 8px 6px;
+      grid-template-columns: 1fr 1fr 12px 1fr 1fr;
+      gap: 5px 4px;
     }
 
     .seat-aisle {
       grid-column: 3;
-      width: 16px;
+      width: 12px;
       position: relative;
     }
 
@@ -3320,95 +3320,104 @@
     /* === MAYBACH SEAT (luxury chair) === */
     .seat {
       position: relative;
-      aspect-ratio: 1 / 1.15;
-      min-height: 38px;
+      aspect-ratio: 1 / 1.2;
+      min-height: 26px;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
       font-family: var(--display-font);
-      font-size: 11px;
+      font-size: 8.5px;
       font-weight: 700;
       color: #fff;
-      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
       transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
       user-select: none;
       -webkit-tap-highlight-color: transparent;
+      /* Cinematic premium leather texture - quilted Maybach */
       background:
-        radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.08) 0%, transparent 35%),
-        radial-gradient(circle at 70% 70%, rgba(255, 255, 255, 0.05) 0%, transparent 35%),
-        linear-gradient(180deg,
-          #4caf73 0%,
-          #3a9c64 35%,
+        radial-gradient(ellipse at 30% 25%, rgba(255, 255, 255, 0.18) 0%, transparent 30%),
+        radial-gradient(ellipse at 70% 75%, rgba(0, 0, 0, 0.2) 0%, transparent 35%),
+        radial-gradient(circle at 50% 50%, transparent 30%, rgba(0, 0, 0, 0.15) 100%),
+        linear-gradient(165deg,
+          #5dc885 0%,
+          #4caf73 25%,
+          #3a9c64 60%,
           #2d8854 100%);
-      border: 1.5px solid #5dc885;
-      border-radius: 10px 10px 6px 6px;
+      border: 1px solid #6dd189;
+      border-radius: 7px 7px 4px 4px;
       box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.3),
-        inset 0 -3px 5px rgba(0, 0, 0, 0.3),
-        0 3px 8px rgba(76, 175, 115, 0.4);
+        inset 0 1px 0 rgba(255, 255, 255, 0.35),
+        inset 0 -2px 3px rgba(0, 0, 0, 0.4),
+        inset 1px 0 1px rgba(255, 255, 255, 0.1),
+        inset -1px 0 1px rgba(0, 0, 0, 0.2),
+        0 2px 5px rgba(76, 175, 115, 0.45),
+        0 0 0 0.5px rgba(0, 0, 0, 0.3);
     }
 
-    /* Seat back (top "bump") */
-    .seat::before {
-      content: '';
-      position: absolute;
-      top: -5px;
-      left: 4px;
-      right: 4px;
-      height: 8px;
-      background: linear-gradient(180deg, #6dd189, #4caf73 50%, #3a9c64 100%);
-      border: 1px solid #5dc885;
-      border-bottom: none;
-      border-radius: 6px 6px 0 0;
-      box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.3);
-    }
-
-    /* Seat headrest accent (Maybach's signature top stripe) */
+    /* Quilted stitching pattern */
     .seat::after {
       content: '';
       position: absolute;
-      top: -1px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 30%;
-      height: 1.5px;
-      background: linear-gradient(90deg,
-        transparent,
-        var(--gold) 40%,
-        var(--gold) 60%,
-        transparent);
-      border-radius: 1px;
+      inset: 3px 4px 5px 4px;
+      background:
+        repeating-linear-gradient(45deg,
+          transparent 0px,
+          transparent 5px,
+          rgba(0, 0, 0, 0.04) 5px,
+          rgba(0, 0, 0, 0.04) 6px),
+        repeating-linear-gradient(-45deg,
+          transparent 0px,
+          transparent 5px,
+          rgba(0, 0, 0, 0.04) 5px,
+          rgba(0, 0, 0, 0.04) 6px);
+      border-radius: 4px;
       pointer-events: none;
-      opacity: 0.6;
+    }
+
+    /* Seat back top (small headrest cushion) */
+    .seat::before {
+      content: '';
+      position: absolute;
+      top: -3px;
+      left: 3px;
+      right: 3px;
+      height: 5px;
+      background: linear-gradient(180deg, #6dd189, #4caf73 50%, #3a9c64 100%);
+      border: 1px solid #6dd189;
+      border-bottom: none;
+      border-radius: 4px 4px 0 0;
+      box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.4);
     }
 
     .seat:hover {
-      transform: translateY(-2px) scale(1.06);
+      transform: translateY(-2px) scale(1.08);
       border-color: var(--gold);
       box-shadow:
-        inset 0 1px 0 rgba(232, 196, 104, 0.3),
+        inset 0 1px 0 rgba(232, 196, 104, 0.4),
         inset 0 -2px 4px rgba(0, 0, 0, 0.5),
-        0 6px 16px rgba(232, 196, 104, 0.4);
+        0 6px 16px rgba(232, 196, 104, 0.5);
       z-index: 2;
     }
 
     /* TAKEN — burgundy/wine luxury (Maybach style) */
     .seat.taken {
       background:
-        radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.05) 0%, transparent 35%),
-        linear-gradient(180deg,
-          #6b2a35 0%,
-          #4a1c25 50%,
+        radial-gradient(ellipse at 30% 25%, rgba(255, 255, 255, 0.06) 0%, transparent 30%),
+        radial-gradient(ellipse at 70% 75%, rgba(0, 0, 0, 0.4) 0%, transparent 35%),
+        linear-gradient(165deg,
+          #7a3340 0%,
+          #6b2a35 25%,
+          #4a1c25 60%,
           #2e1117 100%);
       border-color: #7a3340;
-      color: rgba(255, 255, 255, 0.4);
+      color: rgba(255, 255, 255, 0.35);
       cursor: not-allowed;
       pointer-events: none;
       box-shadow:
         inset 0 1px 0 rgba(255, 255, 255, 0.1),
-        inset 0 -3px 5px rgba(0, 0, 0, 0.5),
-        0 2px 5px rgba(0, 0, 0, 0.4);
+        inset 0 -3px 5px rgba(0, 0, 0, 0.6),
+        0 2px 5px rgba(0, 0, 0, 0.5);
     }
 
     .seat.taken::before {
@@ -3417,56 +3426,70 @@
     }
 
     .seat.taken::after {
-      opacity: 0.4;
+      opacity: 0.5;
     }
 
-    /* SELECTED — Maybach VIP gold */
+    /* SELECTED — Maybach VIP gold quilted */
     .seat.selected {
-      background: linear-gradient(180deg,
-        #f5d98a 0%,
-        var(--gold) 50%,
-        #c9a956 100%);
+      background:
+        radial-gradient(ellipse at 30% 25%, rgba(255, 255, 255, 0.5) 0%, transparent 35%),
+        radial-gradient(ellipse at 70% 75%, rgba(255, 255, 255, 0.2) 0%, transparent 35%),
+        linear-gradient(165deg,
+          #ffe4a0 0%,
+          #f5d98a 25%,
+          var(--gold) 60%,
+          #c9a956 100%);
       border-color: var(--gold);
       color: #1a1212;
-      transform: translateY(-3px) scale(1.1);
+      text-shadow: 0 1px 1px rgba(255, 255, 255, 0.5);
+      transform: translateY(-3px) scale(1.15);
       box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.4),
-        inset 0 -2px 4px rgba(0, 0, 0, 0.2),
-        0 8px 22px rgba(232, 196, 104, 0.6),
-        0 0 0 3px rgba(232, 196, 104, 0.25);
+        inset 0 1px 0 rgba(255, 255, 255, 0.6),
+        inset 0 -2px 4px rgba(0, 0, 0, 0.15),
+        0 8px 22px rgba(232, 196, 104, 0.7),
+        0 0 0 2px rgba(232, 196, 104, 0.35),
+        0 0 30px rgba(232, 196, 104, 0.4);
       animation: seatPulse 1.5s ease-in-out infinite;
       z-index: 3;
-      font-weight: 700;
+      font-weight: 800;
     }
 
     .seat.selected::before {
-      background: linear-gradient(180deg, #f5d98a, var(--gold));
+      background: linear-gradient(180deg, #ffe4a0, var(--gold-light) 50%, var(--gold));
       border-color: var(--gold);
     }
 
     .seat.selected::after {
-      background: linear-gradient(90deg,
-        transparent,
-        rgba(255, 255, 255, 0.6) 40%,
-        rgba(255, 255, 255, 0.6) 60%,
-        transparent);
+      background:
+        repeating-linear-gradient(45deg,
+          transparent 0px,
+          transparent 5px,
+          rgba(255, 255, 255, 0.15) 5px,
+          rgba(255, 255, 255, 0.15) 6px),
+        repeating-linear-gradient(-45deg,
+          transparent 0px,
+          transparent 5px,
+          rgba(255, 255, 255, 0.15) 5px,
+          rgba(255, 255, 255, 0.15) 6px);
       opacity: 1;
     }
 
     @keyframes seatPulse {
       0%, 100% {
         box-shadow:
-          inset 0 1px 0 rgba(255, 255, 255, 0.4),
-          inset 0 -2px 4px rgba(0, 0, 0, 0.2),
-          0 8px 22px rgba(232, 196, 104, 0.6),
-          0 0 0 3px rgba(232, 196, 104, 0.25);
+          inset 0 1px 0 rgba(255, 255, 255, 0.6),
+          inset 0 -2px 4px rgba(0, 0, 0, 0.15),
+          0 8px 22px rgba(232, 196, 104, 0.7),
+          0 0 0 2px rgba(232, 196, 104, 0.35),
+          0 0 30px rgba(232, 196, 104, 0.4);
       }
       50% {
         box-shadow:
-          inset 0 1px 0 rgba(255, 255, 255, 0.5),
-          inset 0 -2px 4px rgba(0, 0, 0, 0.2),
-          0 10px 26px rgba(232, 196, 104, 0.75),
-          0 0 0 5px rgba(232, 196, 104, 0.35);
+          inset 0 1px 0 rgba(255, 255, 255, 0.7),
+          inset 0 -2px 4px rgba(0, 0, 0, 0.15),
+          0 10px 28px rgba(232, 196, 104, 0.85),
+          0 0 0 4px rgba(232, 196, 104, 0.45),
+          0 0 40px rgba(232, 196, 104, 0.55);
       }
     }
 
@@ -3474,19 +3497,19 @@
     .seat-rear-row {
       display: grid;
       grid-template-columns: repeat(6, 1fr);
-      gap: 5px;
+      gap: 4px;
       grid-column: 1 / -1;
-      margin-top: 8px;
-      padding-top: 10px;
+      margin-top: 6px;
+      padding-top: 8px;
       border-top: 1px dashed rgba(232, 196, 104, 0.25);
     }
 
     /* Very small phones */
     @media (max-width: 380px) {
-      .seat { min-height: 30px; font-size: 9px; }
+      .seat { min-height: 22px; font-size: 7.5px; }
       .seat-bus-wrap { padding: 10px 10px 14px; }
-      .seat-grid { gap: 6px 4px; grid-template-columns: 1fr 1fr 12px 1fr 1fr; }
-      .seat-rear-row { gap: 4px; }
+      .seat-grid { gap: 4px 3px; grid-template-columns: 1fr 1fr 10px 1fr 1fr; }
+      .seat-rear-row { gap: 3px; }
     }
 
     /* ============================================ */
@@ -5095,7 +5118,7 @@
       cursor: default;
     }
 
-    /* Realistic seat back (top cushion - smaller) */
+    /* Quilted leather stitching pattern (cinematic) */
     .bus-seat::before {
       content: '';
       position: absolute;
@@ -5104,72 +5127,76 @@
       right: 3px;
       height: 5px;
       border-radius: 4px 4px 0 0;
-      box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.4);
+      z-index: 1;
     }
 
-    /* Realistic headrest stripe (Maybach signature accent) */
+    /* Quilted stitching pattern (Maybach diamond stitch) */
     .bus-seat::after {
       content: '';
       position: absolute;
-      top: -3px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 36%;
-      height: 2.5px;
-      border-radius: 2px;
+      inset: 2px 3px 4px 3px;
+      background:
+        repeating-linear-gradient(45deg,
+          transparent 0px,
+          transparent 4px,
+          rgba(0, 0, 0, 0.08) 4px,
+          rgba(0, 0, 0, 0.08) 5px),
+        repeating-linear-gradient(-45deg,
+          transparent 0px,
+          transparent 4px,
+          rgba(0, 0, 0, 0.08) 4px,
+          rgba(0, 0, 0, 0.08) 5px);
+      border-radius: 3px;
       pointer-events: none;
+      z-index: 0;
     }
 
-    /* === FREE seat — luxury cream/green leather === */
+    /* === FREE seat — luxurious cream/green leather === */
     .bus-seat.free {
       background:
-        /* Quilted leather pattern */
-        radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.08) 0%, transparent 35%),
-        radial-gradient(circle at 70% 70%, rgba(255, 255, 255, 0.05) 0%, transparent 35%),
-        linear-gradient(180deg,
-          #4caf73 0%,
-          #3a9c64 35%,
+        radial-gradient(ellipse at 30% 25%, rgba(255, 255, 255, 0.22) 0%, transparent 30%),
+        radial-gradient(ellipse at 70% 75%, rgba(0, 0, 0, 0.25) 0%, transparent 35%),
+        linear-gradient(165deg,
+          #5dc885 0%,
+          #4caf73 25%,
+          #3a9c64 60%,
           #2d8854 100%);
-      border: 1.5px solid #5dc885;
+      border: 1px solid #6dd189;
       color: #fff;
-      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
       box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.3),
-        inset 0 -3px 5px rgba(0, 0, 0, 0.3),
-        0 3px 8px rgba(76, 175, 115, 0.4);
+        inset 0 1px 0 rgba(255, 255, 255, 0.4),
+        inset 0 -2px 3px rgba(0, 0, 0, 0.4),
+        inset 1px 0 1px rgba(255, 255, 255, 0.1),
+        inset -1px 0 1px rgba(0, 0, 0, 0.2),
+        0 2px 5px rgba(76, 175, 115, 0.45);
     }
 
     .bus-seat.free::before {
       background: linear-gradient(180deg, #6dd189, #4caf73 50%, #3a9c64 100%);
-      border: 1px solid #5dc885;
+      border: 1px solid #6dd189;
       border-bottom: none;
     }
 
-    .bus-seat.free::after {
-      background: linear-gradient(90deg,
-        transparent,
-        rgba(255, 255, 255, 0.6) 40%,
-        rgba(255, 255, 255, 0.6) 60%,
-        transparent);
-      opacity: 0.7;
-    }
-
-    /* === TAKEN seat — burgundy/wine luxury === */
+    /* === TAKEN seat — luxurious burgundy leather === */
     .bus-seat.taken {
       background:
-        radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.05) 0%, transparent 35%),
-        linear-gradient(180deg,
-          #6b2a35 0%,
-          #4a1c25 50%,
+        radial-gradient(ellipse at 30% 25%, rgba(255, 255, 255, 0.06) 0%, transparent 30%),
+        radial-gradient(ellipse at 70% 75%, rgba(0, 0, 0, 0.4) 0%, transparent 35%),
+        linear-gradient(165deg,
+          #7a3340 0%,
+          #6b2a35 25%,
+          #4a1c25 60%,
           #2e1117 100%);
-      border: 1.5px solid #7a3340;
-      color: rgba(255, 255, 255, 0.4);
+      border: 1px solid #7a3340;
+      color: rgba(255, 255, 255, 0.35);
       text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
       cursor: not-allowed;
       box-shadow:
         inset 0 1px 0 rgba(255, 255, 255, 0.1),
-        inset 0 -3px 5px rgba(0, 0, 0, 0.5),
-        0 2px 5px rgba(0, 0, 0, 0.4);
+        inset 0 -3px 5px rgba(0, 0, 0, 0.6),
+        0 2px 5px rgba(0, 0, 0, 0.5);
     }
 
     .bus-seat.taken::before {
@@ -5178,36 +5205,27 @@
       border-bottom: none;
     }
 
-    .bus-seat.taken::after {
-      background: linear-gradient(90deg,
-        transparent,
-        rgba(255, 255, 255, 0.2) 40%,
-        rgba(255, 255, 255, 0.2) 60%,
-        transparent);
-      opacity: 0.4;
-    }
-
-    /* === YOUR seat — VIP gold (Maybach signature) === */
+    /* === YOUR seat — VIP gold quilted Maybach leather === */
     .bus-seat.yours {
       background:
-        /* Quilted Maybach pattern */
-        radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.4) 0%, transparent 35%),
-        radial-gradient(circle at 70% 70%, rgba(255, 255, 255, 0.2) 0%, transparent 35%),
-        linear-gradient(180deg,
-          #f5d98a 0%,
-          var(--gold-light) 30%,
+        radial-gradient(ellipse at 30% 25%, rgba(255, 255, 255, 0.55) 0%, transparent 35%),
+        radial-gradient(ellipse at 70% 75%, rgba(255, 255, 255, 0.25) 0%, transparent 35%),
+        linear-gradient(165deg,
+          #ffe4a0 0%,
+          #f5d98a 25%,
           var(--gold) 60%,
           #c9a956 100%);
-      border: 2px solid var(--gold);
+      border: 1.5px solid var(--gold);
       color: #1a1212;
-      text-shadow: 0 1px 1px rgba(255, 255, 255, 0.3);
-      transform: scale(1.15);
+      text-shadow: 0 1px 1px rgba(255, 255, 255, 0.5);
+      transform: scale(1.18);
       z-index: 3;
+      font-weight: 800;
       box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.5),
-        inset 0 -3px 5px rgba(0, 0, 0, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.6),
+        inset 0 -2px 4px rgba(0, 0, 0, 0.15),
         0 8px 24px rgba(232, 196, 104, 0.7),
-        0 0 0 3px rgba(232, 196, 104, 0.3),
+        0 0 0 2px rgba(232, 196, 104, 0.35),
         0 0 30px rgba(232, 196, 104, 0.4);
       animation: yourSeatPulse 1.6s ease-in-out infinite;
     }
@@ -5219,21 +5237,26 @@
     }
 
     .bus-seat.yours::after {
-      background: linear-gradient(90deg,
-        transparent,
-        rgba(255, 255, 255, 0.85) 40%,
-        rgba(255, 255, 255, 0.85) 60%,
-        transparent);
-      opacity: 1;
+      background:
+        repeating-linear-gradient(45deg,
+          transparent 0px,
+          transparent 4px,
+          rgba(255, 255, 255, 0.2) 4px,
+          rgba(255, 255, 255, 0.2) 5px),
+        repeating-linear-gradient(-45deg,
+          transparent 0px,
+          transparent 4px,
+          rgba(255, 255, 255, 0.2) 4px,
+          rgba(255, 255, 255, 0.2) 5px);
     }
 
     @keyframes yourSeatPulse {
       0%, 100% {
         box-shadow:
-          inset 0 1px 0 rgba(255, 255, 255, 0.5),
-          inset 0 -3px 5px rgba(0, 0, 0, 0.15),
+          inset 0 1px 0 rgba(255, 255, 255, 0.6),
+          inset 0 -2px 4px rgba(0, 0, 0, 0.15),
           0 8px 24px rgba(232, 196, 104, 0.7),
-          0 0 0 3px rgba(232, 196, 104, 0.3),
+          0 0 0 2px rgba(232, 196, 104, 0.35),
           0 0 30px rgba(232, 196, 104, 0.4);
       }
       50% {
