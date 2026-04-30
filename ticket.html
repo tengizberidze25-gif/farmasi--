@@ -111,46 +111,44 @@
     }
 
     .farmasi-logo {
-      width: 64px;
-      height: 64px;
       margin: 0 auto 14px;
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
-      background: linear-gradient(135deg, var(--gold-light) 0%, var(--gold) 50%, var(--gold-dark) 100%);
-      border-radius: 16px;
-      font-family: var(--display-font);
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 1.2px;
-      color: #1a1212;
-      box-shadow:
-        0 0 24px rgba(232, 196, 104, 0.55),
-        0 8px 20px rgba(232, 196, 104, 0.35),
-        0 4px 12px rgba(255, 96, 117, 0.25),
-        inset 0 1px 0 rgba(255, 255, 255, 0.4),
-        inset 0 -2px 4px rgba(0, 0, 0, 0.15);
+      gap: 2px;
       animation: logoFloat 4s ease-in-out infinite;
       position: relative;
-      overflow: hidden;
+      padding: 0;
+    }
+
+    .farmasi-logo span {
+      font-family: var(--display-font);
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: 6px;
+      line-height: 1;
+      background: linear-gradient(135deg,
+        #f5d98a 0%,
+        var(--gold-light) 30%,
+        var(--gold) 50%,
+        var(--gold-dark) 80%,
+        #f5d98a 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 0 30px rgba(232, 196, 104, 0.4);
+      filter: drop-shadow(0 2px 8px rgba(232, 196, 104, 0.3));
     }
 
     .farmasi-logo::before {
       content: '✦';
-      position: absolute;
-      top: 6px;
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 9px;
-      color: rgba(26, 18, 18, 0.8);
-    }
-
-    .farmasi-logo span {
-      margin-top: 8px;
-      font-family: var(--display-font);
-      font-size: 12px;
-      font-weight: 700;
-      letter-spacing: 1.5px;
+      font-size: 11px;
+      color: var(--gold);
+      letter-spacing: 0;
+      opacity: 0.7;
+      filter: drop-shadow(0 0 6px rgba(232, 196, 104, 0.6));
+      margin-bottom: 4px;
     }
 
     @keyframes logoFloat {
@@ -399,36 +397,55 @@
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      padding: 7px 16px;
+      padding: 8px 18px;
       background: linear-gradient(135deg,
-        rgba(232, 196, 104, 0.18),
-        rgba(232, 196, 104, 0.08));
-      border: 1px solid var(--gold);
+        rgba(232, 196, 104, 0.22),
+        rgba(232, 196, 104, 0.1));
+      border: 1.5px solid var(--gold);
       border-radius: 999px;
-      box-shadow: 0 4px 12px rgba(232, 196, 104, 0.2);
+      box-shadow:
+        0 4px 14px rgba(232, 196, 104, 0.25),
+        0 0 20px rgba(232, 196, 104, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
       cursor: pointer;
       transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
       position: relative;
+      font-family: inherit;
+      color: inherit;
+      outline: none;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+      touch-action: manipulation;
     }
 
-    .ticket-seat:hover {
+    .ticket-seat:hover,
+    .ticket-seat:focus {
       transform: translateY(-2px) scale(1.04);
-      box-shadow: 0 8px 22px rgba(232, 196, 104, 0.4);
+      box-shadow:
+        0 10px 26px rgba(232, 196, 104, 0.5),
+        0 0 30px rgba(232, 196, 104, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.15);
       background: linear-gradient(135deg,
-        rgba(232, 196, 104, 0.28),
-        rgba(232, 196, 104, 0.12));
+        rgba(232, 196, 104, 0.32),
+        rgba(232, 196, 104, 0.16));
+      border-color: var(--gold-light);
+    }
+
+    .ticket-seat:active {
+      transform: translateY(0) scale(1);
     }
 
     .ticket-seat::after {
       content: '👁';
-      font-size: 11px;
-      opacity: 0.6;
+      font-size: 12px;
+      opacity: 0.7;
       margin-left: 4px;
-      transition: opacity 0.2s;
+      transition: opacity 0.2s, transform 0.2s;
     }
 
     .ticket-seat:hover::after {
       opacity: 1;
+      transform: scale(1.15);
     }
 
     .ticket-seat-icon { font-size: 14px; }
