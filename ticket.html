@@ -1385,60 +1385,25 @@
     }
 
     /* Steering wheel - left side (driver position) */
+    /* === REALISTIC MERCEDES-STYLE STEERING WHEEL === */
     .bus-steering {
-      width: 50px;
-      height: 50px;
-      border-radius: 50%;
-      background:
-        radial-gradient(circle at center,
-          transparent 0%,
-          transparent 28%,
-          #2a1a1c 28%,
-          #2a1a1c 35%,
-          var(--gold-dark) 35%,
-          var(--gold) 50%,
-          var(--gold-dark) 65%,
-          #1a1010 65%,
-          #1a1010 100%);
+      width: 56px;
+      height: 56px;
       position: relative;
-      box-shadow:
-        0 4px 12px rgba(0, 0, 0, 0.6),
-        inset 0 0 6px rgba(232, 196, 104, 0.3),
-        0 0 20px rgba(232, 196, 104, 0.15);
-      animation: steeringRotate 8s linear infinite;
+      animation: steeringRotate 8s ease-in-out infinite;
+      filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.6));
     }
 
-    /* Steering wheel spokes */
-    .bus-steering::before {
-      content: '';
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 70%;
-      height: 4px;
-      background: linear-gradient(90deg, var(--gold-dark), var(--gold), var(--gold-dark));
-      border-radius: 2px;
-      box-shadow: 0 0 4px rgba(232, 196, 104, 0.5);
-    }
-
-    .bus-steering::after {
-      content: '';
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 4px;
-      height: 70%;
-      background: linear-gradient(180deg, var(--gold-dark), var(--gold), var(--gold-dark));
-      border-radius: 2px;
-      box-shadow: 0 0 4px rgba(232, 196, 104, 0.5);
+    .bus-steering svg {
+      display: block;
+      width: 100%;
+      height: 100%;
     }
 
     @keyframes steeringRotate {
-      0%   { transform: rotate(-8deg); }
-      50%  { transform: rotate(8deg); }
-      100% { transform: rotate(-8deg); }
+      0%   { transform: rotate(-15deg); }
+      50%  { transform: rotate(15deg); }
+      100% { transform: rotate(-15deg); }
     }
 
     /* Center console with FARMASI label */
@@ -1840,6 +1805,12 @@
     .bus-aisle {
       grid-column: 3;
       width: 18px;
+    }
+
+    /* Empty cell (where driver/door area is, no seat) */
+    .bus-empty-cell {
+      aspect-ratio: 1 / 1.15;
+      min-height: 38px;
     }
 
     /* === LUXURY MAYBACH-STYLE PASSENGER SEATS === */
@@ -2282,7 +2253,49 @@
           </div>
 
           <div class="bus-dashboard">
-            <div class="bus-steering"></div>
+            <div class="bus-steering">
+              <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                  <radialGradient id="rimGradient" cx="50%" cy="40%" r="55%">
+                    <stop offset="0%" stop-color="#3a262a" />
+                    <stop offset="60%" stop-color="#1a0e10" />
+                    <stop offset="100%" stop-color="#0a0608" />
+                  </radialGradient>
+                  <radialGradient id="hubGradient" cx="35%" cy="35%" r="65%">
+                    <stop offset="0%" stop-color="#f5d98a" />
+                    <stop offset="50%" stop-color="#e8c468" />
+                    <stop offset="100%" stop-color="#a8854a" />
+                  </radialGradient>
+                  <linearGradient id="spokeGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stop-color="#1a0e10" />
+                    <stop offset="50%" stop-color="#3a262a" />
+                    <stop offset="100%" stop-color="#1a0e10" />
+                  </linearGradient>
+                </defs>
+
+                <!-- Outer rim (the wheel ring) -->
+                <circle cx="50" cy="50" r="46" fill="none" stroke="url(#rimGradient)" stroke-width="11" />
+                <!-- Inner rim shadow -->
+                <circle cx="50" cy="50" r="40" fill="none" stroke="rgba(0,0,0,0.5)" stroke-width="1" />
+                <!-- Top highlight on rim -->
+                <path d="M 18 30 A 38 38 0 0 1 82 30" fill="none" stroke="rgba(232,196,104,0.25)" stroke-width="1.5" stroke-linecap="round" />
+
+                <!-- Three spokes (Mercedes 3-spoke design) -->
+                <!-- Left spoke -->
+                <rect x="10" y="47" width="30" height="6" rx="2" fill="url(#spokeGradient)" />
+                <!-- Right spoke -->
+                <rect x="60" y="47" width="30" height="6" rx="2" fill="url(#spokeGradient)" />
+                <!-- Bottom spoke -->
+                <rect x="47" y="60" width="6" height="30" rx="2" fill="url(#spokeGradient)" />
+
+                <!-- Center hub with FARMASI emblem -->
+                <circle cx="50" cy="50" r="13" fill="url(#hubGradient)" stroke="#a8854a" stroke-width="0.5" />
+                <!-- Hub highlight -->
+                <ellipse cx="46" cy="46" rx="6" ry="4" fill="rgba(255,255,255,0.3)" />
+                <!-- Center star -->
+                <text x="50" y="55" text-anchor="middle" font-size="11" fill="#1a1212" font-weight="700" font-family="serif">✦</text>
+              </svg>
+            </div>
             <div class="bus-console">
               <div class="bus-console-label">Farmasi Express</div>
               <div class="bus-console-screen">12:00 ✦ TBS</div>
@@ -2705,8 +2718,28 @@
 
       let seatNum = 1;
 
-      // 12 rows × 4 seats (with center aisle)
-      for (let row = 0; row < 12; row++) {
+      // ROW 1 — first row of cabin
+      // Layout: [empty][empty] | [seat 1][seat 2]
+      // The left side is empty because of the driver/cockpit area
+      // The right side starts the seating (next to the front door)
+      const empty1 = document.createElement("div");
+      empty1.className = "bus-empty-cell";
+      grid.appendChild(empty1);
+      const empty2 = document.createElement("div");
+      empty2.className = "bus-empty-cell";
+      grid.appendChild(empty2);
+
+      // Aisle
+      const aisle1 = document.createElement("div");
+      aisle1.className = "bus-aisle";
+      grid.appendChild(aisle1);
+
+      // Right side (entry area): 2 seats
+      grid.appendChild(createBusSeat(seatNum++));
+      grid.appendChild(createBusSeat(seatNum++));
+
+      // ROWS 2-12 — full rows (4 seats each)
+      for (let row = 1; row < 12; row++) {
         // Left side: 2 seats
         grid.appendChild(createBusSeat(seatNum++));
         grid.appendChild(createBusSeat(seatNum++));
