@@ -2348,13 +2348,17 @@
       height: auto;
       max-height: 50px;
       object-fit: contain;
+      /* Show ORIGINAL logo - just add cinematic glow */
       filter:
-        invert(0.95)
-        sepia(0.15)
-        saturate(1.2)
-        hue-rotate(-8deg)
-        drop-shadow(0 0 18px rgba(232, 196, 104, 0.5))
-        drop-shadow(0 4px 10px rgba(255, 96, 117, 0.3));
+        drop-shadow(0 0 20px rgba(255, 255, 255, 0.4))
+        drop-shadow(0 0 30px rgba(232, 196, 104, 0.3))
+        drop-shadow(0 4px 12px rgba(0, 0, 0, 0.5));
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 8px;
+      padding: 6px 10px;
+      box-shadow:
+        0 6px 20px rgba(0, 0, 0, 0.4),
+        0 0 24px rgba(232, 196, 104, 0.25);
     }
 
     /* Hide fallback if image loaded */
@@ -3660,38 +3664,90 @@
     /* TICKET CANCEL SECTION                         */
     /* ============================================ */
     .ticket-cancel-section {
-      margin-top: 18px;
-      padding-top: 14px;
-      border-top: 1px dashed rgba(255, 255, 255, 0.08);
+      margin-top: 24px;
+      padding-top: 18px;
+      border-top: 1px dashed rgba(232, 196, 104, 0.15);
+      position: relative;
+    }
+
+    .ticket-cancel-section::before {
+      content: '⚠️';
+      position: absolute;
+      top: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--bg-card);
+      padding: 0 10px;
+      font-size: 14px;
     }
 
     .ticket-cancel-toggle {
-      display: block;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
       width: 100%;
-      padding: 8px 12px;
-      background: transparent;
-      border: 1px solid rgba(255, 255, 255, 0.06);
-      border-radius: 10px;
-      color: var(--cream-dim);
+      padding: 13px 16px;
+      background: linear-gradient(135deg,
+        rgba(255, 96, 117, 0.12) 0%,
+        rgba(255, 96, 117, 0.06) 100%);
+      border: 1.5px solid rgba(255, 96, 117, 0.4);
+      border-radius: 12px;
+      color: var(--pink);
       font-family: var(--sans-font);
-      font-size: 10px;
-      letter-spacing: 0.4px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.6px;
       cursor: pointer;
-      opacity: 0.55;
-      transition: all 0.25s ease;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow:
+        0 3px 12px rgba(255, 96, 117, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.05);
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Subtle scanning line animation */
+    .ticket-cancel-toggle::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 50%;
+      height: 100%;
+      background: linear-gradient(90deg,
+        transparent,
+        rgba(255, 96, 117, 0.2),
+        transparent);
+      animation: cancelScanIndex 4s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    @keyframes cancelScanIndex {
+      0%   { left: -100%; }
+      50%, 100% { left: 200%; }
     }
 
     .ticket-cancel-toggle:hover {
-      opacity: 1;
-      border-color: rgba(255, 96, 117, 0.3);
-      color: rgba(255, 96, 117, 0.85);
+      background: linear-gradient(135deg,
+        rgba(255, 96, 117, 0.2) 0%,
+        rgba(255, 96, 117, 0.1) 100%);
+      border-color: var(--pink);
+      transform: translateY(-1px);
+      box-shadow:
+        0 6px 18px rgba(255, 96, 117, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
     }
 
     .ticket-cancel-toggle.active {
-      opacity: 1;
-      border-color: rgba(255, 96, 117, 0.4);
-      background: rgba(255, 96, 117, 0.05);
-      color: rgba(255, 96, 117, 0.95);
+      background: linear-gradient(135deg,
+        rgba(255, 96, 117, 0.25) 0%,
+        rgba(255, 96, 117, 0.15) 100%);
+      border-color: var(--pink);
+      color: white;
+      box-shadow:
+        0 8px 22px rgba(255, 96, 117, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.15);
     }
 
     .ticket-cancel-area {
@@ -4572,10 +4628,11 @@
 
       <button class="btn btn-ghost" id="closeTicketBtn" type="button" style="margin-top:16px;">დახურვა</button>
 
-      <!-- CANCEL REGISTRATION (subtle, at bottom) -->
+      <!-- CANCEL REGISTRATION (cinematic, at bottom) -->
       <div class="ticket-cancel-section">
         <button class="ticket-cancel-toggle" id="ticketCancelToggle" type="button">
-          <span>ვერ ვახერხებ ჩამოსვლას · გავაუქმო რეგისტრაცია</span>
+          <span style="font-size:14px;">✕</span>
+          <span>ვერ ვახერხებ ჩამოსვლას · რეგისტრაციის გაუქმება</span>
         </button>
         <div class="ticket-cancel-area" id="ticketCancelArea" hidden>
           <p class="ticket-cancel-warning">
