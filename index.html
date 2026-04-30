@@ -2327,6 +2327,97 @@
     /* ============================================ */
     /* SUCCESS / TICKET MODAL                       */
     /* ============================================ */
+    /* === TICKET MODAL FARMASI LOGO === */
+    .ticket-modal-logo {
+      margin: 0 auto 14px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      animation: tmlFloat 4s ease-in-out infinite;
+    }
+
+    @keyframes tmlFloat {
+      0%, 100% { transform: translateY(0); }
+      50%      { transform: translateY(-3px); }
+    }
+
+    .ticket-modal-logo-img {
+      display: block;
+      width: 110px;
+      height: auto;
+      max-height: 50px;
+      object-fit: contain;
+      filter:
+        invert(0.95)
+        sepia(0.15)
+        saturate(1.2)
+        hue-rotate(-8deg)
+        drop-shadow(0 0 18px rgba(232, 196, 104, 0.5))
+        drop-shadow(0 4px 10px rgba(255, 96, 117, 0.3));
+    }
+
+    /* Hide fallback if image loaded */
+    .ticket-modal-logo-img:not([data-failed]) ~ .ticket-modal-logo-fallback {
+      display: none;
+    }
+
+    .ticket-modal-logo-img[data-failed] {
+      display: none;
+    }
+
+    .ticket-modal-logo-img[data-failed] ~ .ticket-modal-logo-fallback {
+      display: flex;
+    }
+
+    .ticket-modal-logo-fallback {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+    }
+
+    .ticket-modal-logo-fallback .tml-star {
+      font-size: 11px;
+      color: var(--gold);
+      opacity: 0.7;
+      filter: drop-shadow(0 0 6px rgba(232, 196, 104, 0.6));
+    }
+
+    .ticket-modal-logo-fallback .tml-text {
+      font-family: var(--display-font);
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: 5px;
+      line-height: 1;
+      background: linear-gradient(135deg,
+        #f5d98a 0%,
+        var(--gold-light) 30%,
+        var(--gold) 50%,
+        var(--gold-dark) 80%,
+        #f5d98a 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 2px 8px rgba(232, 196, 104, 0.5));
+    }
+
+    /* Responsive logo sizing */
+    @media (min-width: 481px) and (max-width: 1024px) {
+      .ticket-modal-logo-img { width: 120px; max-height: 55px; }
+      .ticket-modal-logo-fallback .tml-text { font-size: 26px; letter-spacing: 6px; }
+    }
+
+    @media (min-width: 1025px) {
+      .ticket-modal-logo-img { width: 130px; max-height: 60px; }
+      .ticket-modal-logo-fallback .tml-text { font-size: 28px; letter-spacing: 7px; }
+    }
+
+    @media (max-width: 380px) {
+      .ticket-modal-logo-img { width: 95px; max-height: 44px; }
+      .ticket-modal-logo-fallback .tml-text { font-size: 20px; letter-spacing: 4px; }
+    }
+
     .ticket-card {
       background: linear-gradient(135deg, rgba(232, 196, 104, 0.12), rgba(255, 96, 117, 0.06));
       border: 1px solid var(--border-strong);
@@ -2402,13 +2493,62 @@
       align-items: center;
       gap: 6px;
       margin-top: 12px;
-      padding: 7px 14px;
+      padding: 8px 18px;
       background: linear-gradient(135deg,
-        rgba(232, 196, 104, 0.18),
-        rgba(232, 196, 104, 0.08));
-      border: 1px solid var(--gold);
+        rgba(232, 196, 104, 0.22),
+        rgba(232, 196, 104, 0.1));
+      border: 1.5px solid var(--gold);
       border-radius: 999px;
-      box-shadow: 0 4px 12px rgba(232, 196, 104, 0.2);
+      box-shadow:
+        0 4px 14px rgba(232, 196, 104, 0.25),
+        0 0 20px rgba(232, 196, 104, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      cursor: pointer;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+      font-family: inherit;
+      color: inherit;
+      outline: none;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+      touch-action: manipulation;
+      pointer-events: auto;
+      z-index: 5;
+    }
+
+    /* Children don't block clicks */
+    .ticket-seat * {
+      pointer-events: none;
+    }
+
+    .ticket-seat:hover,
+    .ticket-seat:focus {
+      transform: translateY(-2px) scale(1.04);
+      box-shadow:
+        0 10px 26px rgba(232, 196, 104, 0.5),
+        0 0 30px rgba(232, 196, 104, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.15);
+      background: linear-gradient(135deg,
+        rgba(232, 196, 104, 0.32),
+        rgba(232, 196, 104, 0.16));
+      border-color: var(--gold-light);
+    }
+
+    .ticket-seat:active {
+      transform: translateY(0) scale(1);
+    }
+
+    .ticket-seat::after {
+      content: '👁';
+      font-size: 12px;
+      opacity: 0.7;
+      margin-left: 4px;
+      transition: opacity 0.2s, transform 0.2s;
+    }
+
+    .ticket-seat:hover::after {
+      opacity: 1;
+      transform: scale(1.15);
     }
 
     .ticket-seat-icon {
@@ -4360,6 +4500,21 @@
   <div class="modal" id="ticketModal">
     <div class="modal-content">
       <button class="modal-close-x" id="closeTicketX" type="button" aria-label="Close">×</button>
+
+      <!-- FARMASI logo at top of ticket -->
+      <div class="ticket-modal-logo">
+        <img
+          src="farmasi.png"
+          alt="FARMASI"
+          class="ticket-modal-logo-img"
+          onerror="this.setAttribute('data-failed','true')"
+        />
+        <div class="ticket-modal-logo-fallback">
+          <span class="tml-star">✦</span>
+          <span class="tml-text">FARMASI</span>
+        </div>
+      </div>
+
       <div class="modal-subtitle">YOUR TICKET</div>
       <div class="modal-title">შენი <span class="accent">ბილეთი</span></div>
 
@@ -4369,11 +4524,11 @@
         <div class="ticket-id" id="ticketId">FM-2026-00000</div>
         <div class="ticket-name" id="ticketName">სტუმარი</div>
         <div class="ticket-meta" id="ticketMeta"></div>
-        <div class="ticket-seat" id="ticketSeat" style="display:none;">
+        <button class="ticket-seat" id="ticketSeat" type="button" style="display:none;">
           <span class="ticket-seat-icon">🪑</span>
           <span class="ticket-seat-label">ავტობუსში ადგილი</span>
           <span class="ticket-seat-num" id="ticketSeatNum">#1</span>
-        </div>
+        </button>
       </div>
 
       <!-- TRANSPORT INFO (inside ticket modal) -->
@@ -5636,6 +5791,12 @@
       if (seat) {
         els.ticketSeatNum.textContent = "#" + seat;
         els.ticketSeat.style.display = "inline-flex";
+
+        // Click handler — show seat info with cinematic toast
+        els.ticketSeat.onclick = function(e) {
+          e.preventDefault();
+          showSeatToast(seat);
+        };
       } else {
         els.ticketSeat.style.display = "none";
       }
@@ -5766,6 +5927,13 @@
       els.toast.textContent = msg;
       els.toast.classList.add("show");
       setTimeout(() => els.toast.classList.remove("show"), 2200);
+    }
+
+    function showSeatToast(seatNum) {
+      const msg = "🪑 თქვენი ადგილი: #" + seatNum + " · ✨ ბრენდირებული ავტობუსი";
+      els.toast.textContent = msg;
+      els.toast.classList.add("show");
+      setTimeout(() => els.toast.classList.remove("show"), 3500);
     }
 
     // ============= CONFETTI =============
