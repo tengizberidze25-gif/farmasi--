@@ -610,9 +610,119 @@
     /* ============================================ */
     /* INFO ROWS                                     */
     /* ============================================ */
+    /* ============================================ */
+    /* COMPACT EVENT PILL                            */
+    /* ============================================ */
+    .event-pill {
+      margin: 0 auto 14px;
+      padding: 12px 16px;
+      background: linear-gradient(135deg,
+        rgba(232, 196, 104, 0.08) 0%,
+        rgba(255, 96, 117, 0.05) 100%),
+        var(--bg-card);
+      border: 1px solid rgba(232, 196, 104, 0.25);
+      border-radius: 14px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+      animation: fadeUp 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both;
+    }
+
+    .event-pill::before {
+      content: '';
+      position: absolute;
+      top: -1px;
+      left: 22%;
+      right: 22%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      filter: blur(1px);
+    }
+
+    .event-pill-top {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      margin-bottom: 6px;
+      flex-wrap: wrap;
+    }
+
+    .ep-item {
+      font-family: var(--display-font);
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--cream);
+      letter-spacing: 0.3px;
+    }
+
+    .ep-divider {
+      font-family: var(--display-font);
+      font-size: 9px;
+      color: var(--gold);
+      opacity: 0.7;
+    }
+
+    .event-pill-location {
+      font-family: var(--sans-font);
+      font-size: 10.5px;
+      font-weight: 600;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      color: var(--gold-light);
+      padding-top: 6px;
+      border-top: 1px solid rgba(232, 196, 104, 0.12);
+    }
+
+    .extra-info-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      margin-bottom: 14px;
+    }
+
+    .extra-info-buttons .btn {
+      font-size: 11px;
+      padding: 9px 14px;
+    }
+
+    @media (min-width: 481px) {
+      .extra-info-buttons {
+        flex-direction: row;
+      }
+      .extra-info-buttons .btn {
+        flex: 1;
+      }
+    }
+
     .info-card {
       animation: fadeUp 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both;
     }
+
+    /* More Info modal styling */
+    .more-info-list {
+      margin: 14px 0 16px;
+      padding: 12px;
+      background: rgba(0, 0, 0, 0.25);
+      border: 1px solid rgba(232, 196, 104, 0.12);
+      border-radius: 12px;
+    }
+
+    .more-info-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 9px 0;
+      font-size: 13px;
+      line-height: 1.4;
+      color: var(--cream);
+      border-bottom: 1px solid rgba(232, 196, 104, 0.08);
+      word-break: break-word;
+    }
+
+    .more-info-row:last-child { border-bottom: none; }
+    .more-info-row:empty     { display: none; }
 
     .info-row {
       display: flex;
@@ -3446,16 +3556,22 @@
     </div>
 
     <!-- INFO -->
-    <div class="glass-card info-card">
-      <div class="card-eyebrow">დეტალები</div>
-      <div class="info-row" id="infoCity"></div>
-      <div class="info-row" id="infoDate"></div>
-      <div class="info-row" id="infoTime"></div>
-      <div class="info-row" id="infoLocation"></div>
-      <div class="info-row" id="infoHotel"></div>
+    <!-- COMPACT EVENT PILL (replaced bulky info card) -->
+    <div class="event-pill" id="eventPill">
+      <div class="event-pill-top">
+        <span class="ep-item" id="epCity"></span>
+        <span class="ep-divider">✦</span>
+        <span class="ep-item" id="epDate"></span>
+        <span class="ep-divider">✦</span>
+        <span class="ep-item" id="epTime"></span>
+      </div>
+      <div class="event-pill-location" id="epLocation"></div>
     </div>
 
-    <button class="btn btn-ghost" id="scheduleBtn" type="button">✦ სრული პროგრამის ნახვა ✦</button>
+    <div class="extra-info-buttons">
+      <button class="btn btn-ghost" id="scheduleBtn" type="button">✦ სრული პროგრამის ნახვა ✦</button>
+      <button class="btn btn-ghost" id="moreInfoBtn" type="button">ℹ️ დამატებითი ინფორმაცია</button>
+    </div>
 
     <!-- CTA SECTION: Opens register modal -->
     <section class="cta-section">
@@ -3557,6 +3673,30 @@
       </div>
       <div class="schedule-list" id="scheduleList"></div>
       <button class="btn btn-ghost" id="closeScheduleBtn" type="button">დახურვა</button>
+    </div>
+  </div>
+
+  <!-- MORE INFO MODAL -->
+  <div class="modal" id="moreInfoModal">
+    <div class="modal-content">
+      <button class="modal-close-x" id="closeMoreInfoX" type="button" aria-label="Close">×</button>
+      <div class="modal-subtitle">EVENT DETAILS</div>
+      <div class="modal-title">დამატებითი <span class="accent">ინფორმაცია</span></div>
+      <div class="ornament">
+        <div class="ornament-line"></div>
+        <span class="ornament-diamond">◆</span>
+        <div class="ornament-line"></div>
+      </div>
+
+      <div class="more-info-list" id="moreInfoList">
+        <div class="more-info-row" id="miCity"></div>
+        <div class="more-info-row" id="miDate"></div>
+        <div class="more-info-row" id="miTime"></div>
+        <div class="more-info-row" id="miLocation"></div>
+        <div class="more-info-row" id="miHotel"></div>
+      </div>
+
+      <button class="btn btn-ghost" id="closeMoreInfoBtn" type="button">დახურვა</button>
     </div>
   </div>
 
@@ -3828,11 +3968,22 @@
       statTotal: document.getElementById("statTotal"),
       statToday: document.getElementById("statToday"),
       statLeft: document.getElementById("statLeft"),
-      infoCity: document.getElementById("infoCity"),
-      infoDate: document.getElementById("infoDate"),
-      infoTime: document.getElementById("infoTime"),
-      infoLocation: document.getElementById("infoLocation"),
-      infoHotel: document.getElementById("infoHotel"),
+      // Compact event pill (replaces old info card)
+      epCity: document.getElementById("epCity"),
+      epDate: document.getElementById("epDate"),
+      epTime: document.getElementById("epTime"),
+      epLocation: document.getElementById("epLocation"),
+
+      // Detailed info modal (More Info)
+      moreInfoBtn: document.getElementById("moreInfoBtn"),
+      moreInfoModal: document.getElementById("moreInfoModal"),
+      closeMoreInfoX: document.getElementById("closeMoreInfoX"),
+      closeMoreInfoBtn: document.getElementById("closeMoreInfoBtn"),
+      miCity: document.getElementById("miCity"),
+      miDate: document.getElementById("miDate"),
+      miTime: document.getElementById("miTime"),
+      miLocation: document.getElementById("miLocation"),
+      miHotel: document.getElementById("miHotel"),
       registerForm: document.getElementById("registerForm"),
       cancelForm: document.getElementById("cancelForm"),
       registerBtn: document.getElementById("registerBtn"),
@@ -4421,6 +4572,7 @@
       const city = safeText(config.event_city);
       const date = safeText(config.event_date);
       const time = safeText(config.event_time);
+      const location = safeText(config.event_location);
       const parts = [];
       if (city) parts.push(city);
       if (date) parts.push(date);
@@ -4436,12 +4588,31 @@
         els.heroMeta.innerHTML = "";
       }
 
-      els.infoCity.innerHTML = makeLocationHtml("◆", "ქალაქი", config.event_city);
-      els.infoDate.innerHTML = `<div class="info-icon">◆</div><div class="info-text"><strong>თარიღი:</strong> ${safeText(config.event_date)}</div>`;
-      els.infoTime.innerHTML = `<div class="info-icon">◆</div><div class="info-text"><strong>დრო:</strong> ${safeText(config.event_time)}</div>`;
-      els.infoLocation.innerHTML = makeLocationHtml("◆", "ლოკაცია", config.event_location);
-      els.infoHotel.innerHTML = safeText(config.hotel_location)
-        ? makeLocationHtml("◆", "სათაო ოფისი", config.hotel_location)
+      // Compact event pill
+      els.epCity.textContent = city ? "📍 " + city : "";
+      els.epDate.textContent = date ? "📅 " + date : "";
+      els.epTime.textContent = time ? "⏰ " + time : "";
+      els.epLocation.textContent = location || "";
+
+      // Hide separators if some parts are missing
+      const dividers = document.querySelectorAll(".event-pill-top .ep-divider");
+      dividers.forEach(d => d.style.display = "");
+
+      // Detailed "More Info" modal
+      els.miCity.innerHTML = city
+        ? `<div class="info-icon">◆</div><div class="info-text"><strong>ქალაქი:</strong> ${city}</div>`
+        : "";
+      els.miDate.innerHTML = date
+        ? `<div class="info-icon">◆</div><div class="info-text"><strong>თარიღი:</strong> ${date}</div>`
+        : "";
+      els.miTime.innerHTML = time
+        ? `<div class="info-icon">◆</div><div class="info-text"><strong>დრო:</strong> ${time}</div>`
+        : "";
+      els.miLocation.innerHTML = location
+        ? `<div class="info-icon">◆</div><div class="info-text"><strong>ლოკაცია:</strong> ${location}</div>`
+        : "";
+      els.miHotel.innerHTML = safeText(config.hotel_location)
+        ? `<div class="info-icon">◆</div><div class="info-text"><strong>სათაო ოფისი:</strong> ${safeText(config.hotel_location)}</div>`
         : "";
     }
 
@@ -5227,6 +5398,16 @@
       els.scheduleModal.addEventListener("click", (e) => {
         if (e.target === els.scheduleModal) els.scheduleModal.classList.remove("open");
       });
+
+      // More Info modal
+      if (els.moreInfoBtn && els.moreInfoModal) {
+        els.moreInfoBtn.addEventListener("click", () => els.moreInfoModal.classList.add("open"));
+        els.closeMoreInfoBtn.addEventListener("click", () => els.moreInfoModal.classList.remove("open"));
+        els.closeMoreInfoX.addEventListener("click", () => els.moreInfoModal.classList.remove("open"));
+        els.moreInfoModal.addEventListener("click", (e) => {
+          if (e.target === els.moreInfoModal) els.moreInfoModal.classList.remove("open");
+        });
+      }
 
       // Register modal
       els.openRegisterBtn.addEventListener("click", () => {
