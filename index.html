@@ -3961,6 +3961,12 @@
       "transport_photo","transport_photo_2","transport_photo_3","transport_photo_4","transport_photo_5"
     ]);
 
+    // Auto-add FAQ keys (faq_1_q, faq_1_a, ..., faq_20_q, faq_20_a)
+    for (let i = 1; i <= 20; i++) {
+      RESERVED_KEYS.add("faq_" + i + "_q");
+      RESERVED_KEYS.add("faq_" + i + "_a");
+    }
+
     const els = {
       pageSubtitle: document.getElementById("pageSubtitle"),
       heroMeta: document.getElementById("heroMeta"),
@@ -4660,21 +4666,45 @@
 
     // ============= FAQ from Config =============
     function renderFAQ(config) {
-      const raw = safeText(config.faq);
-      let blocks;
+      let blocks = [];
 
-      if (raw) {
-        // Custom FAQ from Config sheet
-        // Format: Question on first line, answer on next line(s), then "---" separator
-        blocks = raw.split(/\n\s*(?:---+|===+)\s*\n/).map(b => b.trim()).filter(Boolean);
+      // 🆕 Method 1: Individual faq_N_q + faq_N_a fields (recommended for easy editing)
+      // Examples: faq_1_q, faq_1_a, faq_2_q, faq_2_a, ...
+      // Supports up to 20 questions
+      const individualBlocks = [];
+      for (let i = 1; i <= 20; i++) {
+        const question = safeText(config["faq_" + i + "_q"]);
+        const answer = safeText(config["faq_" + i + "_a"]);
+        if (question) {
+          individualBlocks.push({ question, answer });
+        }
+      }
+
+      if (individualBlocks.length > 0) {
+        blocks = individualBlocks;
       } else {
-        // Default FAQ when nothing in Config
+        // Method 2 (legacy): Single "faq" field with --- separator
+        const raw = safeText(config.faq);
+        if (raw) {
+          const sections = raw.split(/\n\s*(?:---+|===+)\s*\n/).map(b => b.trim()).filter(Boolean);
+          blocks = sections.map(section => {
+            const lines = section.split("\n").map(l => l.trim()).filter(Boolean);
+            return {
+              question: lines[0] || "",
+              answer: lines.slice(1).join(" ")
+            };
+          }).filter(b => b.question);
+        }
+      }
+
+      // Fallback to defaults if nothing in Sheet
+      if (!blocks.length) {
         blocks = [
-          "ვინ შეიძლება დაესწროს მასტერკლასს?\nმასტერკლასი განკუთვნილია Farmasi-ს ნებისმიერი წოდების მფლობელისთვის — ინფლუენსერიდან აღმასრულებელ ბოს-მენეჯერამდე. ასევე მოწვეულები არიან ისინი, ვინც აპირებენ Farmasi-ს გუნდში გაწევრიანებას.",
-          "რა უნდა წავიღო თან?\nსაჭიროა მხოლოდ რვეული, კალამი და ნათელი გონება. ყველა საჭირო მასალა და კოფი/ჩაი ჩვენ მოგვყავს.",
-          "უფასოა მონაწილეობა?\nდიახ, მასტერკლასი სრულიად უფასოა Farmasi-ს გუნდის წევრებისთვის. ერთადერთი მოთხოვნა — წინასწარი რეგისტრაცია, ვინაიდან ადგილების რაოდენობა შეზღუდულია.",
-          "რა ვისწავლი?\nთანამედროვე მარკეტინგის სტრატეგიებს — სოციალური ქსელების ეფექტურ მართვას, Personal Branding-ს, კლიენტების მოზიდვისა და გაყიდვების ტექნიკებს, რომლებიც პრაქტიკულად დაგვეხმარება შენი Farmasi-ს ბიზნესის გაფართოებაში.",
-          "შემიძლია გავაუქმო რეგისტრაცია?\nდიახ, მთავარ გვერდზე არის ღილაკი 'რეგისტრაციის გაუქმება'. საჭიროა მხოლოდ ტელეფონის ნომრის მითითება. გთხოვთ ადრე გვაცნობოთ თუ ვერ შეძლებთ დასწრებას, რომ ადგილი სხვას ჩავაბაროთ."
+          { question: "ვინ შეიძლება დაესწროს მასტერკლასს?", answer: "მასტერკლასი განკუთვნილია Farmasi-ს ნებისმიერი წოდების მფლობელისთვის — ინფლუენსერიდან აღმასრულებელ ბოს-მენეჯერამდე. ასევე მოწვეულები არიან ისინი, ვინც აპირებენ Farmasi-ს გუნდში გაწევრიანებას." },
+          { question: "რა უნდა წავიღო თან?", answer: "საჭიროა მხოლოდ რვეული, კალამი და ნათელი გონება. ყველა საჭირო მასალა და კოფი/ჩაი ჩვენ მოგვყავს." },
+          { question: "უფასოა მონაწილეობა?", answer: "დიახ, მასტერკლასი სრულიად უფასოა Farmasi-ს გუნდის წევრებისთვის. ერთადერთი მოთხოვნა — წინასწარი რეგისტრაცია, ვინაიდან ადგილების რაოდენობა შეზღუდულია." },
+          { question: "რა ვისწავლი?", answer: "თანამედროვე მარკეტინგის სტრატეგიებს — სოციალური ქსელების ეფექტურ მართვას, Personal Branding-ს, კლიენტების მოზიდვისა და გაყიდვების ტექნიკებს, რომლებიც პრაქტიკულად დაგვეხმარება შენი Farmasi-ს ბიზნესის გაფართოებაში." },
+          { question: "შემიძლია გავაუქმო რეგისტრაცია?", answer: "დიახ, ბილეთის გვერდზე არის ღილაკი 'რეგისტრაციის გაუქმება'. გთხოვთ ადრე გვაცნობოთ თუ ვერ შეძლებთ დასწრებას, რომ ადგილი სხვას ჩავაბაროთ." }
         ];
       }
 
@@ -4686,13 +4716,7 @@
       els.faqCard.style.display = "block";
       els.faqList.innerHTML = "";
 
-      blocks.forEach(block => {
-        const lines = block.split("\n").map(l => l.trim()).filter(Boolean);
-        if (lines.length === 0) return;
-
-        const question = lines[0];
-        const answer = lines.slice(1).join(" ");
-
+      blocks.forEach(({ question, answer }) => {
         if (!question) return;
 
         const item = document.createElement("div");
@@ -4711,7 +4735,6 @@
         els.faqList.appendChild(item);
       });
 
-      // If parsing produced nothing, hide the card
       if (!els.faqList.children.length) {
         els.faqCard.style.display = "none";
       }
