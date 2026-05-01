@@ -5087,7 +5087,7 @@
       <button class="modal-close-x" id="closeRegisterX" type="button" aria-label="Close">×</button>
 
       <!-- Transport photo banner inside modal (cinematic, slideshow if multiple photos) -->
-      <div class="modal-transport-banner" id="modalTransportBanner" style="display:none;">
+      <div class="modal-transport-banner" id="modalTransportBanner" style="display:none !important;">
         <div class="modal-transport-slides" id="modalTransportSlides"></div>
         <div class="modal-transport-overlay"></div>
         <div class="modal-transport-label">
@@ -5097,11 +5097,11 @@
         <div class="modal-transport-dots" id="modalTransportDots"></div>
       </div>
 
-      <div class="modal-subtitle">SEAT</div>
-      <div class="modal-title">აირჩიე <span class="accent">ადგილი</span></div>
+      <div class="modal-subtitle" style="display:none;">SEAT</div>
+      <div class="modal-title" style="display:none;">აირჩიე <span class="accent">ადგილი</span></div>
 
         <!-- TRANSPORT INFO (inside register modal) -->
-        <div class="modal-transport-info" id="modalTransportInfo" style="display:none;">
+        <div class="modal-transport-info" id="modalTransportInfo" style="display:none !important;">
           <div class="modal-transport-info-header">
             <span class="modal-transport-info-icon">🚌</span>
             <span class="modal-transport-info-title" id="modalTransportInfoTitle">ბრენდირებული ავტობუსით</span>
@@ -5123,7 +5123,7 @@
 
         <!-- SEAT PICKER -->
         <div class="seat-picker-section">
-          <div class="seat-picker-header">
+          <div class="seat-picker-header" style="display:none;">
             <div class="seat-picker-eyebrow">ადგილის არჩევა</div>
             <div class="seat-selected-display" id="seatSelectedDisplay">
               <span class="seat-no-pick">აირჩიე ადგილი ⬇</span>
