@@ -5227,6 +5227,98 @@
       #registerBtn .rgb-arrow { animation: none !important; }
     }
 
+  
+    /* === FARMASI BRAND COLORS — applied to reserve + register buttons === */
+    /* Brand: vibrant coral pink #E91E63 with white accents */
+
+    :root {
+      --farmasi-pink: #E91E63;
+      --farmasi-pink-light: #FF4081;
+      --farmasi-pink-dark: #AD1457;
+      --farmasi-pink-deep: #880E4F;
+    }
+
+    /* === RESERVE SEAT — outlined Farmasi pink === */
+    #reserveSeatBtn {
+      background: linear-gradient(180deg,
+        rgba(233, 30, 99, 0.10) 0%,
+        rgba(173, 20, 87, 0.06) 100%) !important;
+      border: 2px solid var(--farmasi-pink) !important;
+      color: #ffb3cc !important;
+      text-shadow: 0 0 10px rgba(233, 30, 99, 0.4);
+    }
+    #reserveSeatBtn:hover {
+      background: linear-gradient(180deg,
+        rgba(233, 30, 99, 0.20) 0%,
+        rgba(173, 20, 87, 0.12) 100%) !important;
+      border-color: var(--farmasi-pink-light) !important;
+      color: #ffe0ec !important;
+      box-shadow:
+        0 6px 0 rgba(136, 14, 79, 0.4),
+        0 10px 24px rgba(0, 0, 0, 0.4),
+        inset 0 1px 0 rgba(255, 200, 220, 0.3),
+        inset 0 -1px 0 rgba(136, 14, 79, 0.4),
+        0 0 40px rgba(233, 30, 99, 0.3) !important;
+      filter: brightness(1.1);
+    }
+
+    /* When seat is selected */
+    #reserveSeatBtn.has-seat {
+      background: linear-gradient(180deg,
+        rgba(233, 30, 99, 0.25) 0%,
+        rgba(173, 20, 87, 0.18) 100%) !important;
+      color: #ffe0ec !important;
+      border-color: var(--farmasi-pink-light) !important;
+    }
+
+    /* === REGISTER — solid Farmasi pink === */
+    #registerBtn:not(:disabled) {
+      background: linear-gradient(180deg,
+        var(--farmasi-pink-light) 0%,
+        var(--farmasi-pink) 60%,
+        var(--farmasi-pink-dark) 100%) !important;
+      border: none !important;
+      color: white !important;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      box-shadow:
+        0 6px 0 var(--farmasi-pink-deep),
+        0 10px 30px rgba(0, 0, 0, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.4),
+        inset 0 -2px 0 rgba(136, 14, 79, 0.5),
+        0 0 40px rgba(233, 30, 99, 0.2);
+      text-shadow: 0 1px 2px rgba(136, 14, 79, 0.5);
+    }
+    #registerBtn:not(:disabled):hover {
+      transform: translateY(-3px) scale(1.005);
+      box-shadow:
+        0 9px 0 var(--farmasi-pink-deep),
+        0 16px 42px rgba(0, 0, 0, 0.5),
+        inset 0 1px 0 rgba(255, 255, 255, 0.5),
+        inset 0 -2px 0 rgba(136, 14, 79, 0.5),
+        0 0 70px rgba(233, 30, 99, 0.5) !important;
+      filter: brightness(1.08);
+    }
+    #registerBtn:not(:disabled):active {
+      transform: translateY(3px) scale(0.99);
+      box-shadow:
+        0 2px 0 var(--farmasi-pink-deep),
+        0 4px 12px rgba(0, 0, 0, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3),
+        inset 0 -1px 0 rgba(136, 14, 79, 0.4) !important;
+    }
+    #registerBtn:disabled {
+      background: linear-gradient(180deg,
+        rgba(173, 20, 87, 0.3) 0%,
+        rgba(136, 14, 79, 0.4) 100%) !important;
+      color: rgba(255, 255, 255, 0.5) !important;
+      box-shadow:
+        0 3px 0 rgba(60, 5, 30, 0.4),
+        0 5px 12px rgba(0, 0, 0, 0.25) !important;
+      cursor: not-allowed !important;
+      filter: grayscale(0.3);
+    }
+
   </style>
 </head>
 <body>
