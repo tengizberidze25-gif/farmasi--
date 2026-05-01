@@ -4811,7 +4811,8 @@
 
     <div class="extra-info-buttons">
       <button class="btn btn-ghost" id="scheduleBtn" type="button">✦ სრული პროგრამის ნახვა ✦</button>
-      <button class="btn btn-ghost" id="moreInfoBtn" type="button">ℹ️ დამატებითი ინფორმაცია</button>
+      <!-- top duplicate "დამატებითი ინფორმაცია" removed; bottom toggleExtraBtn remains -->
+      <button id="moreInfoBtn" type="button" style="display:none;" aria-hidden="true"></button>
     </div>
 
     <!-- CTA SECTION: Opens register modal -->
@@ -4881,9 +4882,6 @@
     <!-- INLINE BUS SCHEMA (always visible) -->
     <section class="bus-modal" id="busModal">
       <div class="bus-modal-content">
-
-        <div class="bus-modal-subtitle">YOUR SEAT</div>
-        <div class="bus-modal-title">ავტობუსის <span class="accent">სქემა</span></div>
 
         <!-- Stats -->
         <div class="bus-stats">
@@ -7134,6 +7132,9 @@
       ticketBusGridBuilt = true;
       setupStickyBar();
       setupTicketBusModalHandlers();
+
+      // Render FAQ with default content immediately (don't wait for API)
+      renderFAQ({});
       els.registerForm.addEventListener("submit", submitRegisterForm);
       els.cancelForm.addEventListener("submit", submitCancelForm);
       els.showMyTicketBtn.addEventListener("click", reopenMyTicket);
