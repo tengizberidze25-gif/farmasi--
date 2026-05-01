@@ -7129,6 +7129,9 @@
       setupModal();
       setupToggles();
       buildSeatGrid();
+      // Build the inline bus schema grid immediately (always visible)
+      buildTicketBusGrid();
+      ticketBusGridBuilt = true;
       setupStickyBar();
       setupTicketBusModalHandlers();
       els.registerForm.addEventListener("submit", submitRegisterForm);
