@@ -4934,13 +4934,13 @@
           <!-- Hidden field that receives the seat number from the seat-picker modal -->
           <input type="hidden" id="seat_number" name="seat_number" required />
 
-          <!-- Single CTA: Reserve seat (opens seat picker modal). Save in modal triggers registration. -->
-          <button type="button" class="btn btn-primary submit-btn reserve-seat-btn" id="reserveSeatBtn" style="margin-top:6px;font-size:15px;letter-spacing:0.5px;">
+          <!-- Step 1: Reserve seat (opens seat picker modal) -->
+          <button type="button" class="btn btn-ghost reserve-seat-btn" id="reserveSeatBtn" style="margin-top:6px;width:100%;">
             🚌 დაჯავშნე ადგილი
           </button>
 
-          <!-- Hidden register submit button (used for form submission via JS) -->
-          <button class="btn btn-primary submit-btn" id="registerBtn" type="submit" style="display:none;" aria-hidden="true">
+          <!-- Step 2: Register (only enabled after a seat is chosen) -->
+          <button class="btn btn-primary submit-btn" id="registerBtn" type="submit" disabled style="margin-top:10px;opacity:0.5;cursor:not-allowed;">
             დარეგისტრირება
           </button>
         </form>
@@ -7323,10 +7323,18 @@
 
       const bar = els.stickyRegisterBar;
 
-      // Click forwards to the same flow as main CTA
+      // Click scrolls to the inline registration form (form is on main page, not in modal)
       els.srbCta.addEventListener("click", () => {
         hideMessages();
-        els.registerModal.classList.add("open");
+        const form = document.getElementById("registerForm");
+        if (form) {
+          form.scrollIntoView({ behavior: "smooth", block: "center" });
+          // Focus first empty field
+          setTimeout(() => {
+            const firstName = document.getElementById("first_name");
+            if (firstName && !firstName.value) firstName.focus();
+          }, 600);
+        }
       });
 
       // Show/hide based on scroll position — always visible after a tiny scroll
@@ -7398,12 +7406,14 @@
         });
       }
 
-      // Register modal
+      // Register modal — now the seat picker modal
+      // openRegisterBtn (hidden) scrolls to inline form for backward compat
       els.openRegisterBtn.addEventListener("click", () => {
         hideMessages();
-        els.registerModal.classList.add("open");
+        const form = document.getElementById("registerForm");
+        if (form) form.scrollIntoView({ behavior: "smooth", block: "center" });
       });
-      els.closeRegisterX.addEventListener("click", () => els.registerModal.classList.remove("open"));
+      // closeRegisterX is now bound by the seat picker handler — keep backdrop click only
       els.registerModal.addEventListener("click", (e) => {
         if (e.target === els.registerModal) els.registerModal.classList.remove("open");
       });
@@ -7460,7 +7470,7 @@
       if (selectedSeat) {
         saveBtn.disabled = false;
         saveBtn.style.opacity = "1";
-        saveBtn.textContent = "🎫 რეგისტრაცია — ადგილი #" + selectedSeat;
+        saveBtn.textContent = "✓ შენახვა (ადგილი #" + selectedSeat + ")";
       } else {
         saveBtn.disabled = true;
         saveBtn.style.opacity = "0.55";
@@ -7475,22 +7485,28 @@
     function saveSelectedSeat() {
       if (!selectedSeat) return;
 
-      // Validate inline form fields are all filled
-      const form = document.getElementById("registerForm");
-      if (!form) return;
-      if (!form.checkValidity()) {
-        // Highlight required fields and stop
-        closeSeatPickerModal();
-        form.reportValidity();
-        return;
+      // Update inline reserve button: show selected seat
+      const reserveBtn = document.getElementById("reserveSeatBtn");
+      if (reserveBtn) {
+        reserveBtn.textContent = "✓ ადგილი #" + selectedSeat + " — შეცვლა";
+        reserveBtn.classList.add("has-seat");
       }
 
-      // Close the seat picker modal
+      // Enable register button (visually + functionally)
+      const registerBtn = document.getElementById("registerBtn");
+      if (registerBtn) {
+        registerBtn.disabled = false;
+        registerBtn.style.opacity = "1";
+        registerBtn.style.cursor = "pointer";
+      }
+
+      // Close modal
       closeSeatPickerModal();
 
-      // Trigger registration immediately
-      const registerBtn = document.getElementById("registerBtn");
-      if (registerBtn) registerBtn.click();
+      // Scroll to register button so user sees it is now active
+      setTimeout(() => {
+        if (registerBtn) registerBtn.scrollIntoView({ behavior: "smooth", block: "center" });
+      }, 200);
     }
 
     // Hook into seat clicks: every time selection changes, update the save button
