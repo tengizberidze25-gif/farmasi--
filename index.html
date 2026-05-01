@@ -6185,6 +6185,27 @@
       const oldDynamics = wrap.querySelectorAll(".more-info-row.dynamic");
       oldDynamics.forEach(el => el.remove());
 
+      // Georgian label mapping for common info_* keys
+      const KNOWN_LABELS = {
+        "info_dress_code": "ჩაცმის კოდი",
+        "info_what_to_bring": "რა წავიღო თან",
+        "info_parking": "პარკინგი",
+        "info_food": "კვება",
+        "info_drinks": "სასმელი",
+        "info_lunch": "ლანჩი",
+        "info_coffee_break": "ყავის შესვენება",
+        "info_wifi": "Wi-Fi",
+        "info_contact": "კონტაქტი",
+        "info_languages": "ენები",
+        "info_certificate": "სერთიფიკატი",
+        "info_materials": "მასალები",
+        "info_gift": "საჩუქარი",
+        "info_photo": "ფოტო/ვიდეო გადაღება",
+        "info_pets": "შინაური ცხოველები",
+        "info_age": "ასაკობრივი ლიმიტი",
+        "info_extra": "დამატებითი"
+      };
+
       // Find all info_* keys
       const infoKeys = Object.keys(config || {})
         .filter(k => k.toLowerCase().startsWith("info_"))
@@ -6194,8 +6215,9 @@
         const value = safeText(config[key]);
         if (!value) return;
 
-        // Convert "info_dress_code" → "Dress Code"
-        const label = key
+        // Use Georgian label if known, otherwise prettify the key name
+        const lowerKey = key.toLowerCase();
+        const label = KNOWN_LABELS[lowerKey] || key
           .replace(/^info_/i, "")
           .replace(/_/g, " ")
           .replace(/\b\w/g, c => c.toUpperCase());
@@ -6205,7 +6227,8 @@
         if (isUrl(value)) {
           valueHtml = `<a href="${value}" target="_blank" rel="noopener" style="color:var(--gold-light); text-decoration:underline;">${value}</a>`;
         } else {
-          valueHtml = escapeHtml(value);
+          // Preserve line breaks if user enters multi-line text
+          valueHtml = escapeHtml(value).replace(/\n/g, "<br>");
         }
 
         const row = document.createElement("div");
@@ -6216,22 +6239,64 @@
     }
 
     function renderExtraFields(config) {
-      const extra = Object.keys(config || {}).filter(k => !isReservedKey(k));
+      // Georgian label mapping (same list as in moreInfo modal)
+      const KNOWN_LABELS = {
+        "info_dress_code": "ჩაცმის კოდი",
+        "info_what_to_bring": "რა წავიღო თან",
+        "info_parking": "პარკინგი",
+        "info_food": "კვება",
+        "info_drinks": "სასმელი",
+        "info_lunch": "ლანჩი",
+        "info_coffee_break": "ყავის შესვენება",
+        "info_wifi": "Wi-Fi",
+        "info_contact": "კონტაქტი",
+        "info_languages": "ენები",
+        "info_certificate": "სერთიფიკატი",
+        "info_materials": "მასალები",
+        "info_gift": "საჩუქარი",
+        "info_photo": "ფოტო/ვიდეო გადაღება",
+        "info_pets": "შინაური ცხოველები",
+        "info_age": "ასაკობრივი ლიმიტი",
+        "info_extra": "დამატებითი"
+      };
+
+      // Find all info_* keys and any other non-reserved keys
+      const allKeys = Object.keys(config || {});
+      const infoKeys = allKeys.filter(k => k.toLowerCase().startsWith("info_")).sort();
+      const otherKeys = allKeys.filter(k => !isReservedKey(k));
+      const combined = [...infoKeys, ...otherKeys];
+
       els.extraFields.innerHTML = "";
-      if (!extra.length) {
+
+      // Filter out empty values to check if anything is actually visible
+      const visibleEntries = combined
+        .map(key => ({ key, value: safeText(config[key]) }))
+        .filter(entry => entry.value);
+
+      if (!visibleEntries.length) {
         els.extraFields.innerHTML = `<div class="info-row"><div class="info-text">დამატებითი ინფორმაცია არ არის.</div></div>`;
         return;
       }
-      extra.forEach(key => {
-        const value = safeText(config[key]);
-        if (!value) return;
+
+      visibleEntries.forEach(({ key, value }) => {
         const row = document.createElement("div");
         row.className = "info-row";
-        const pretty = key.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase());
-        const inner = isUrl(value)
-          ? `<strong>${pretty}:</strong> <a href="${value}" target="_blank" rel="noopener">${value}</a>`
-          : `<strong>${pretty}:</strong> ${value}`;
-        row.innerHTML = `<div class="info-icon">◆</div><div class="info-text">${inner}</div>`;
+
+        // Use Georgian label if known, otherwise prettify
+        const lowerKey = key.toLowerCase();
+        const label = KNOWN_LABELS[lowerKey] || key
+          .replace(/^info_/i, "")
+          .replace(/_/g, " ")
+          .replace(/\b\w/g, c => c.toUpperCase());
+
+        let valueHtml;
+        if (isUrl(value)) {
+          valueHtml = `<a href="${value}" target="_blank" rel="noopener" style="color:var(--gold-light); text-decoration:underline;">${value}</a>`;
+        } else {
+          valueHtml = escapeHtml(value).replace(/\n/g, "<br>");
+        }
+
+        row.innerHTML = `<div class="info-icon">◆</div><div class="info-text"><strong>${escapeHtml(label)}:</strong> ${valueHtml}</div>`;
         els.extraFields.appendChild(row);
       });
     }
