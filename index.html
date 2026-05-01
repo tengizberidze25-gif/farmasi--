@@ -4822,26 +4822,8 @@
 
     <!-- CTA SECTION: Opens register modal -->
     <section class="cta-section">
-      <div class="cta-card">
-        <div class="cta-eyebrow">RSVP · INVITATION</div>
-        <h2 class="cta-title">დაიკავე <span class="accent">ადგილი</span></h2>
-        <p class="cta-sub">ექსკლუზიური მიწვევა — ადგილების რაოდენობა შეზღუდულია</p>
-
-        <div id="nextTierBadge" style="margin-bottom:14px;"></div>
-
-        <button class="cta-mega-btn" id="openRegisterBtn" type="button">
-          <span class="cta-mega-bg"></span>
-          <span class="cta-mega-content">
-            <span>დარეგისტრირება</span>
-            <span class="cta-mega-arrow">→</span>
-          </span>
-        </button>
-
-        <div class="cta-foot">
-          <span class="dot"></span>
-          <span>რეგისტრაცია სულ რაღაც 30 წამში</span>
-        </div>
-      </div>
+      <!-- Hidden register trigger (referenced by JS, click forwarded by sticky bar) -->
+      <button id="openRegisterBtn" type="button" style="display:none;" aria-hidden="true"></button>
 
       <!-- MY TICKET CARD — shows after successful registration -->
       <div class="my-ticket-card" id="myTicketCard" style="display:none;">
@@ -7047,30 +7029,14 @@
         els.registerModal.classList.add("open");
       });
 
-      // Show/hide based on scroll position
+      // Show/hide based on scroll position — always visible after a tiny scroll
       let ticking = false;
       const updateBarVisibility = () => {
         const scrollY = window.pageYOffset || document.documentElement.scrollTop;
 
-        // Show after scrolling past 200px
-        const shouldShow = scrollY > 200;
-
-        // Hide if the main register CTA is already visible on screen
-        // (so we don't have two CTAs visible at the same time)
-        const ctaSection = els.openRegisterBtn;
-        let mainCtaVisible = false;
-        if (ctaSection) {
-          const rect = ctaSection.getBoundingClientRect();
-          // Consider it "visible" when at least 70% is in viewport
-          const visibleTop = Math.max(0, rect.top);
-          const visibleBottom = Math.min(window.innerHeight, rect.bottom);
-          const visibleHeight = Math.max(0, visibleBottom - visibleTop);
-          if (visibleHeight > rect.height * 0.5) {
-            mainCtaVisible = true;
-          }
-        }
-
-        if (shouldShow && !mainCtaVisible) {
+        // Show after the user has scrolled even slightly past the hero
+        // (and stay visible — no main CTA exists anymore)
+        if (scrollY > 80) {
           bar.classList.add("visible");
         } else {
           bar.classList.remove("visible");
