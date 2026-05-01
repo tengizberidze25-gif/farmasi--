@@ -1879,13 +1879,16 @@
     }
     @keyframes coin-fall-spin {
       0% {
-        transform: translateY(-100px) rotateY(0deg) rotateZ(0deg);
+        transform: translateY(-150px) rotate(-15deg) scale(0.9);
         opacity: 0;
       }
       8% { opacity: 1; }
+      50% {
+        transform: translateY(50vh) rotate(180deg) scale(1.05);
+      }
       100% {
-        transform: translateY(105vh) rotateY(1440deg) rotateZ(180deg);
-        opacity: 0.8;
+        transform: translateY(105vh) rotate(360deg) scale(0.95);
+        opacity: 0.85;
       }
     }
 
@@ -6156,11 +6159,7 @@
     let musicPlaying = false;
     let firstInteractionMusicTried = false;
 
-    const fallImages = [
-      "data:image/svg+xml,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20viewBox=%220%200%20100%20100%22%3E%3Cdefs%3E%3CradialGradient%20id=%22g1%22%20cx=%2235%25%22%20cy=%2230%25%22%20r=%2270%25%22%3E%3Cstop%20offset=%220%25%22%20stop-color=%22#fff8d4%22/%3E%3Cstop%20offset=%2240%25%22%20stop-color=%22#f4d27a%22/%3E%3Cstop%20offset=%22100%25%22%20stop-color=%22#9a7028%22/%3E%3C/radialGradient%3E%3ClinearGradient%20id=%22g1r%22%20x1=%220%25%22%20y1=%220%25%22%20x2=%22100%25%22%20y2=%22100%25%22%3E%3Cstop%20offset=%220%25%22%20stop-color=%22#c9a956%22/%3E%3Cstop%20offset=%2250%25%22%20stop-color=%22#f4d27a%22/%3E%3Cstop%20offset=%22100%25%22%20stop-color=%22#7a5818%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Ccircle%20cx=%2250%22%20cy=%2250%22%20r=%2246%22%20fill=%22url(#g1r)%22/%3E%3Ccircle%20cx=%2250%22%20cy=%2250%22%20r=%2241%22%20fill=%22url(#g1)%22%20stroke=%22#7a5818%22%20stroke-width=%221.5%22/%3E%3Ccircle%20cx=%2250%22%20cy=%2250%22%20r=%2235%22%20fill=%22none%22%20stroke=%22#9a7028%22%20stroke-width=%220.8%22%20stroke-dasharray=%222%202%22/%3E%3Ctext%20x=%2250%22%20y=%2268%22%20text-anchor=%22middle%22%20font-family=%22Georgia,%20serif%22%20font-size=%2248%22%20font-weight=%22700%22%20fill=%22#5a3a14%22%3EF%3C/text%3E%3Cellipse%20cx=%2238%22%20cy=%2232%22%20rx=%2212%22%20ry=%226%22%20fill=%22#fff8d4%22%20opacity=%220.5%22/%3E%3C/svg%3E",
-      "data:image/svg+xml,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20viewBox=%220%200%20100%20100%22%3E%3Cdefs%3E%3CradialGradient%20id=%22g2%22%20cx=%2235%25%22%20cy=%2230%25%22%20r=%2270%25%22%3E%3Cstop%20offset=%220%25%22%20stop-color=%22#fff8d4%22/%3E%3Cstop%20offset=%2240%25%22%20stop-color=%22#f4d27a%22/%3E%3Cstop%20offset=%22100%25%22%20stop-color=%22#9a7028%22/%3E%3C/radialGradient%3E%3ClinearGradient%20id=%22g2r%22%20x1=%220%25%22%20y1=%220%25%22%20x2=%22100%25%22%20y2=%22100%25%22%3E%3Cstop%20offset=%220%25%22%20stop-color=%22#c9a956%22/%3E%3Cstop%20offset=%2250%25%22%20stop-color=%22#f4d27a%22/%3E%3Cstop%20offset=%22100%25%22%20stop-color=%22#7a5818%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Ccircle%20cx=%2250%22%20cy=%2250%22%20r=%2246%22%20fill=%22url(#g2r)%22/%3E%3Ccircle%20cx=%2250%22%20cy=%2250%22%20r=%2241%22%20fill=%22url(#g2)%22%20stroke=%22#7a5818%22%20stroke-width=%221.5%22/%3E%3Cpolygon%20points=%2250,22%2056,42%2078,42%2060,55%2067,76%2050,63%2033,76%2040,55%2022,42%2044,42%22%20fill=%22#5a3a14%22/%3E%3Cellipse%20cx=%2238%22%20cy=%2232%22%20rx=%2212%22%20ry=%226%22%20fill=%22#fff8d4%22%20opacity=%220.5%22/%3E%3C/svg%3E",
-      "data:image/svg+xml,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20viewBox=%220%200%20100%20100%22%3E%3Cdefs%3E%3CradialGradient%20id=%22g3%22%20cx=%2235%25%22%20cy=%2230%25%22%20r=%2270%25%22%3E%3Cstop%20offset=%220%25%22%20stop-color=%22#fff8d4%22/%3E%3Cstop%20offset=%2240%25%22%20stop-color=%22#f4d27a%22/%3E%3Cstop%20offset=%22100%25%22%20stop-color=%22#9a7028%22/%3E%3C/radialGradient%3E%3ClinearGradient%20id=%22g3r%22%20x1=%220%25%22%20y1=%220%25%22%20x2=%22100%25%22%20y2=%22100%25%22%3E%3Cstop%20offset=%220%25%22%20stop-color=%22#c9a956%22/%3E%3Cstop%20offset=%2250%25%22%20stop-color=%22#f4d27a%22/%3E%3Cstop%20offset=%22100%25%22%20stop-color=%22#7a5818%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Ccircle%20cx=%2250%22%20cy=%2250%22%20r=%2246%22%20fill=%22url(#g3r)%22/%3E%3Ccircle%20cx=%2250%22%20cy=%2250%22%20r=%2241%22%20fill=%22url(#g3)%22%20stroke=%22#7a5818%22%20stroke-width=%221.5%22/%3E%3Cpolygon%20points=%2250,28%2072,50%2050,72%2028,50%22%20fill=%22#5a3a14%22/%3E%3Cpolygon%20points=%2250,32%2068,50%2050,68%2032,50%22%20fill=%22none%22%20stroke=%22#fff8d4%22%20stroke-width=%220.8%22%20opacity=%220.6%22/%3E%3Cellipse%20cx=%2238%22%20cy=%2232%22%20rx=%2212%22%20ry=%226%22%20fill=%22#fff8d4%22%20opacity=%220.5%22/%3E%3C/svg%3E"
-    ];
+    const fallImages = ["gold-bar.png"];
 
     const simulatedPeople = [
       { name: "ანა მ.", phone: "599***211", area: "თბილისი" },
@@ -7250,18 +7249,17 @@
     }
 
     function createBurstStorm() {
-      const total = 36;
+      const total = 24;
       for (let i = 0; i < total; i++) {
         const img = document.createElement("img");
         img.src = fallImages[Math.floor(Math.random() * fallImages.length)];
         img.className = "fall-item";
         img.style.left = Math.random() * 100 + "vw";
-        img.style.animationDuration = (3.2 + Math.random() * 1.4) + "s";
-        img.style.animationDelay = (Math.random() * 0.6) + "s";
-        // Coins: round; sizes vary for 3D depth illusion
-        const size = 38 + Math.random() * 32;
-        img.style.width = size + "px";
-        img.style.height = size + "px";
+        img.style.animationDuration = (3.2 + Math.random() * 1.6) + "s";
+        img.style.animationDelay = (Math.random() * 0.7) + "s";
+        const w = 60 + Math.random() * 50;
+        img.style.width = w + "px";
+        img.style.height = "auto";
         els.stormLayer.appendChild(img);
         setTimeout(() => img.remove(), 5500);
       }
