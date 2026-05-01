@@ -5927,6 +5927,9 @@
 
     // ============= NEXT TIER BADGE =============
     function renderNextTier(data) {
+      // Guard: nextTierBadge was removed from page when CTA card was removed
+      if (!els.nextTierBadge) return;
+
       const tier = data.nextTier;
       if (!tier || data.spotsLeft === 0) {
         els.nextTierBadge.innerHTML = "";
@@ -6366,8 +6369,7 @@
         refreshOccupiedSeats(data.occupiedSeats || []);
         updateStickyBarStats(data);
       } catch (e) {
-        console.error("loadData error — ეს არის რომელი ფუნქცია ვარდება:", e);
-        console.error("Stack trace:", e.stack);
+        console.error("loadData error:", e);
         els.pageSubtitle.textContent = "მონაცემების ჩატვირთვა ვერ მოხერხდა";
       }
     }
