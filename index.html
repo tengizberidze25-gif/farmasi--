@@ -4769,6 +4769,23 @@
     }
     .reserve-seat-btn.has-seat::before { content: '✓ '; }
 
+  
+    /* === HIDE NON-BUS ELEMENTS IN SEAT PICKER MODAL === */
+    /* These rules guarantee the seat picker modal shows ONLY the bus */
+    #registerModal #modalTransportBanner,
+    #registerModal #modalTransportInfo,
+    #registerModal .modal-subtitle,
+    #registerModal .modal-title,
+    #registerModal .seat-picker-header,
+    #registerModal .seat-legend {
+      display: none !important;
+      visibility: hidden !important;
+      height: 0 !important;
+      overflow: hidden !important;
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+
   </style>
 </head>
 <body>
