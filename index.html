@@ -6627,6 +6627,119 @@
       if (!modal) return;
       modal.classList.remove("open");
       document.body.style.overflow = "";
+
+      // Restore original phone-input modal content for the next open
+      const modalContent = modal.querySelector(".modal-content");
+      if (modalContent) {
+        modalContent.innerHTML = `
+          <button class="modal-close" id="phoneVerifyClose" type="button" aria-label="Close">×</button>
+          <div class="phone-verify-icon">🎫</div>
+          <div class="phone-verify-title">ბილეთის ნახვა</div>
+          <div class="phone-verify-sub">შეიყვანე ტელეფონი, რომელიც რეგისტრაციისას გამოიყენე</div>
+          <input type="tel" id="phoneVerifyInput" class="phone-verify-input" placeholder="599 12 34 56" autocomplete="tel" inputmode="numeric" />
+          <button class="btn btn-primary submit-btn" id="phoneVerifyBtn" type="button" style="width:100%;">
+            ბილეთის ნახვა →
+          </button>
+          <div class="phone-verify-msg" id="phoneVerifyMsg"></div>
+        `;
+        // Re-bind handlers (since elements are recreated)
+        const cl = document.getElementById("phoneVerifyClose");
+        if (cl) cl.addEventListener("click", closePhoneVerifyModal);
+        const btn = document.getElementById("phoneVerifyBtn");
+        if (btn) btn.addEventListener("click", verifyPhoneAndOpenTicket);
+        const inp = document.getElementById("phoneVerifyInput");
+        if (inp) inp.addEventListener("keydown", (e) => {
+          if (e.key === "Enter") { e.preventDefault(); verifyPhoneAndOpenTicket(); }
+        });
+      }
+      window.__verifiedTicket = null;
+    }
+
+    /**
+     * After phone is verified, replace the modal content with a choice screen:
+     * - "View ticket" → opens the ticket modal
+     * - "Send SMS link" → sends SMS with the ticket link
+     */
+    function showVerifyChoiceScreen(ticket) {
+      const modalContent = document.querySelector("#phoneVerifyModal .modal-content");
+      if (!modalContent || !ticket) return;
+
+      // Save ticket data so the buttons can use it
+      window.__verifiedTicket = ticket;
+
+      modalContent.innerHTML = `
+        <button class="modal-close" id="phoneVerifyCloseChoice" type="button" aria-label="Close">×</button>
+        <div class="phone-verify-icon">✅</div>
+        <div class="phone-verify-title">ტელეფონი დადასტურდა</div>
+        <div class="phone-verify-sub">
+          <strong style="color:var(--gold)">${ticket.first_name || ""} ${ticket.last_name || ""}</strong><br>
+          <span style="font-family:var(--sans-font);letter-spacing:1px;">${ticket.ticket_id || ""}</span>
+        </div>
+
+        <button class="btn btn-primary submit-btn" id="choiceViewBtn" type="button" style="width:100%; margin-bottom:10px;">
+          🎫 ბილეთის ნახვა
+        </button>
+        <button class="btn btn-ghost" id="choiceSmsBtn" type="button" style="width:100%;">
+          📲 SMS-ით ლინკის გაგზავნა
+        </button>
+        <div class="phone-verify-msg" id="choiceMsg" style="margin-top:10px;"></div>
+      `;
+
+      // Wire up the buttons
+      const closeBtn = document.getElementById("phoneVerifyCloseChoice");
+      if (closeBtn) closeBtn.addEventListener("click", closePhoneVerifyModal);
+
+      const viewBtn = document.getElementById("choiceViewBtn");
+      if (viewBtn) viewBtn.addEventListener("click", () => {
+        closePhoneVerifyModal();
+        const t = window.__verifiedTicket;
+        if (!t) return;
+        showTicketModal(
+          { ticket_id: t.ticket_id, tier: t.tier, seat_number: t.seat_number },
+          {
+            first_name: t.first_name, last_name: t.last_name,
+            city_area_village: t.city, position: t.position, phone: t.phone
+          }
+        );
+      });
+
+      const smsBtn = document.getElementById("choiceSmsBtn");
+      const msg = document.getElementById("choiceMsg");
+      if (smsBtn) smsBtn.addEventListener("click", async () => {
+        const t = window.__verifiedTicket;
+        if (!t || !msg) return;
+
+        smsBtn.disabled = true;
+        smsBtn.textContent = "იგზავნება...";
+        msg.textContent = "";
+        msg.className = "phone-verify-msg loading";
+
+        try {
+          const url = API_URL +
+            "?action=sendTicketLink" +
+            "&phone=" + encodeURIComponent(t.phone) +
+            "&id=" + encodeURIComponent(t.ticket_id);
+          const res = await fetch(url);
+          const data = await res.json();
+
+          if (data && data.ok) {
+            msg.textContent = "✓ SMS გაიგზავნა — შეამოწმე ტელეფონი";
+            msg.style.color = "#6dd49a";
+            smsBtn.textContent = "✓ გაგზავნილია";
+            setTimeout(closePhoneVerifyModal, 2500);
+          } else {
+            msg.textContent = (data && data.error) || "ვერ გაიგზავნა";
+            msg.className = "phone-verify-msg error";
+            smsBtn.disabled = false;
+            smsBtn.textContent = "📲 SMS-ით ლინკის გაგზავნა";
+          }
+        } catch (e) {
+          msg.textContent = "ქსელის შეცდომა";
+          msg.className = "phone-verify-msg error";
+          smsBtn.disabled = false;
+          smsBtn.textContent = "📲 SMS-ით ლინკის გაგზავნა";
+        }
+      });
     }
 
     async function verifyPhoneAndOpenTicket() {
@@ -6657,22 +6770,8 @@
         const data = await res.json();
 
         if (data && data.ok && data.ticket) {
-          // Found! Close verify modal, show ticket
-          closePhoneVerifyModal();
-
-          const formData = {
-            first_name: data.ticket.first_name,
-            last_name: data.ticket.last_name,
-            city_area_village: data.ticket.city,
-            position: data.ticket.position,
-            phone: data.ticket.phone
-          };
-          const registrationData = {
-            ticket_id: data.ticket.ticket_id,
-            tier: data.ticket.tier,
-            seat_number: data.ticket.seat_number
-          };
-          showTicketModal(registrationData, formData);
+          // Verified — show choice screen with two options
+          showVerifyChoiceScreen(data.ticket);
         } else {
           msg.textContent = (data && data.error) || "ამ ტელეფონით ბილეთი ვერ მოიძებნა";
           msg.className = "phone-verify-msg error";
