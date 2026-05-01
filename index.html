@@ -6499,6 +6499,10 @@
         maybeShowLivePopup(data.lastRegistrations || []);
         refreshOccupiedSeats(data.occupiedSeats || []);
         updateStickyBarStats(data);
+
+        // Validate locally-saved ticket against fresh server data.
+        // If the saved seat is no longer occupied, the ticket was cancelled/deleted in Sheet.
+        validateMyTicketAgainstServer(data);
       } catch (e) {
         console.error("loadData error:", e);
         els.pageSubtitle.textContent = "მონაცემების ჩატვირთვა ვერ მოხერხდა";
@@ -6571,6 +6575,33 @@
       }
       els.myTicketIdLabel.textContent = t.ticket_id;
       els.myTicketCard.style.display = "flex";
+    }
+
+    /**
+     * Verify that the locally-saved ticket still exists on the server.
+     * If the ticket's seat is no longer occupied, OR there are zero registrations,
+     * the ticket was cancelled/deleted in the Sheet — clear localStorage and hide card.
+     */
+    function validateMyTicketAgainstServer(data) {
+      const t = loadMyTicket();
+      if (!t || !t.ticket_id) return;
+
+      const occupied = Array.isArray(data && data.occupiedSeats) ? data.occupiedSeats : [];
+      const totalReg = (data && typeof data.totalRegistrations === "number") ? data.totalRegistrations : null;
+
+      // Case 1: zero registrations — Sheet is empty
+      if (totalReg === 0) {
+        clearMyTicket();
+        refreshMyTicketCard();
+        return;
+      }
+
+      // Case 2: my saved seat is no longer in the occupied list — ticket was deleted
+      const mySeat = parseInt(t.seat_number);
+      if (!isNaN(mySeat) && mySeat > 0 && occupied.length > 0 && occupied.indexOf(mySeat) === -1) {
+        clearMyTicket();
+        refreshMyTicketCard();
+      }
     }
 
     function reopenMyTicket() {
