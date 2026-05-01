@@ -4110,46 +4110,39 @@
     /* ============================================ */
     /* BUS MODAL — full screen seat map             */
     /* ============================================ */
+    /* ============================================================================
+       TICKET.HTML — BUS MODAL (OPERA BURGUNDY)
+       Replaces lines 922-2042 in ticket.html (the entire bus modal CSS block)
+       ============================================================================ */
+
+    /* ===== MODAL OVERLAY ===== */
     .bus-modal {
       position: fixed;
       inset: 0;
-      background: rgba(10, 5, 6, 0.92);
+      background: rgba(10, 5, 8, 0.85);
       backdrop-filter: blur(8px);
       -webkit-backdrop-filter: blur(8px);
       display: none;
       align-items: flex-start;
       justify-content: center;
-      z-index: 100;
-      padding: 20px 14px;
+      z-index: 1000;
       overflow-y: auto;
-      animation: modalFadeIn 0.3s ease;
+      padding: 20px 12px;
     }
-
-    .bus-modal.show {
-      display: flex;
-    }
-
-    @keyframes modalFadeIn {
-      from { opacity: 0; }
-      to   { opacity: 1; }
-    }
+    .bus-modal.show { display: flex; }
 
     .bus-modal-content {
+      position: relative;
       width: 100%;
       max-width: 420px;
-      background: linear-gradient(180deg, var(--bg-card) 0%, var(--bg) 100%);
-      border: 1px solid var(--border-strong);
-      border-radius: 22px;
-      padding: 18px 14px;
-      position: relative;
-      animation: modalSlideUp 0.45s cubic-bezier(0.16, 1, 0.3, 1);
-      max-height: calc(100vh - 40px);
-      overflow-y: auto;
-    }
-
-    @keyframes modalSlideUp {
-      from { opacity: 0; transform: translateY(40px); }
-      to   { opacity: 1; transform: translateY(0); }
+      background: linear-gradient(180deg, #1f0e14, #15050a);
+      border: 1px solid rgba(232, 196, 104, 0.3);
+      border-radius: 20px;
+      padding: 22px 18px 26px;
+      box-shadow:
+        0 25px 80px rgba(0, 0, 0, 0.7),
+        0 0 0 1px rgba(232, 196, 104, 0.1);
+      margin: auto;
     }
 
     .bus-modal-close {
@@ -4158,872 +4151,398 @@
       right: 14px;
       width: 32px;
       height: 32px;
+      background: rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(232, 196, 104, 0.3);
       border-radius: 50%;
-      background: rgba(255, 255, 255, 0.06);
-      border: 1px solid var(--border);
-      color: var(--cream);
+      color: #ffe4a0;
       font-size: 18px;
-      line-height: 1;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 0;
       transition: all 0.2s;
-      z-index: 2;
+      z-index: 5;
     }
-
     .bus-modal-close:hover {
-      background: rgba(255, 96, 117, 0.15);
-      border-color: var(--pink);
-      color: var(--pink);
-      transform: rotate(90deg);
+      background: rgba(232, 196, 104, 0.15);
+      border-color: #ffe4a0;
     }
 
+    /* ===== TITLE ===== */
+    .bus-modal-subtitle {
+      font-family: var(--display-font);
+      font-size: 11px;
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+      color: rgba(232, 196, 104, 0.7);
+      text-align: center;
+      margin-bottom: 4px;
+    }
     .bus-modal-title {
       font-family: var(--display-font);
-      font-size: 22px;
+      font-size: 26px;
       font-weight: 500;
-      text-align: center;
       color: var(--cream);
-      margin-bottom: 4px;
-    }
-
-    .bus-modal-title .accent {
-      font-style: italic;
-      background: linear-gradient(135deg, var(--gold-light), var(--gold));
-      -webkit-background-clip: text;
-      background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    .bus-modal-subtitle {
-      font-family: var(--sans-font);
-      font-size: 9.5px;
-      letter-spacing: 1.6px;
-      text-transform: uppercase;
-      color: var(--gold);
       text-align: center;
-      margin-bottom: 14px;
+      margin-bottom: 16px;
+    }
+    .bus-modal-title .accent {
+      color: #ffe4a0;
+      font-style: italic;
     }
 
-    /* Stats row */
+    /* ===== STATS ===== */
     .bus-stats {
       display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 6px;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
       margin-bottom: 14px;
-      padding: 10px;
-      background: rgba(0, 0, 0, 0.3);
-      border: 1px solid rgba(232, 196, 104, 0.15);
-      border-radius: 12px;
     }
-
     .bus-stat {
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(232, 196, 104, 0.18);
+      border-radius: 10px;
+      padding: 10px 6px;
       text-align: center;
-      padding: 4px;
     }
-
     .bus-stat-value {
       font-family: var(--display-font);
-      font-size: 22px;
+      font-size: 20px;
       font-weight: 600;
-      line-height: 1;
-      margin-bottom: 4px;
+      margin-bottom: 2px;
     }
-
-    .bus-stat-value.taken { color: var(--pink); }
-    .bus-stat-value.free  { color: #6dd49a; }
-    .bus-stat-value.your  { color: var(--gold); }
+    .bus-stat-value.your  { color: #ffe4a0; }
+    .bus-stat-value.taken { color: #c4546a; }
+    .bus-stat-value.free  { color: #e8c468; }
 
     .bus-stat-label {
       font-family: var(--sans-font);
-      font-size: 8.5px;
-      letter-spacing: 1px;
-      text-transform: uppercase;
+      font-size: 9px;
+      letter-spacing: 0.6px;
       color: var(--cream-dim);
+      text-transform: uppercase;
     }
 
-    /* Legend */
+    /* ===== LEGEND ===== */
     .bus-legend {
       display: flex;
       justify-content: center;
-      gap: 14px;
+      gap: 12px;
       flex-wrap: wrap;
       margin-bottom: 14px;
-      padding: 8px;
-      background: rgba(0, 0, 0, 0.25);
+      padding: 8px 10px;
+      background: rgba(0, 0, 0, 0.45);
+      border: 1px solid rgba(232, 196, 104, 0.18);
       border-radius: 10px;
     }
-
     .bus-legend-item {
       display: flex;
       align-items: center;
       gap: 6px;
       font-family: var(--sans-font);
       font-size: 9.5px;
+      letter-spacing: 0.4px;
       color: var(--cream-dim);
     }
-
     .bus-legend-dot {
-      width: 13px;
-      height: 13px;
-      border-radius: 4px;
+      width: 14px;
+      height: 14px;
+      border-radius: 5px;
       flex-shrink: 0;
     }
-
     .bus-legend-free {
-      background: linear-gradient(135deg, #4caf73, #2d8854);
-      border: 1px solid #4caf73;
-      box-shadow: 0 0 4px rgba(76, 175, 115, 0.5);
+      background: linear-gradient(165deg, #6b1e2e, #2a0a12);
+      border: 1px solid #8a3344;
     }
-
     .bus-legend-taken {
-      background: rgba(255, 96, 117, 0.5);
-      border: 1px solid rgba(255, 96, 117, 0.5);
+      background: linear-gradient(165deg, #2a0d14, #15050a);
+      border: 1px solid #3a1320;
     }
-
     .bus-legend-yours {
-      background: linear-gradient(135deg, var(--gold-light), var(--gold));
-      border: 1px solid var(--gold);
+      background: linear-gradient(165deg, #ffe4a0, #c9a956);
+      border: 1px solid #ffe4a0;
       box-shadow: 0 0 6px rgba(232, 196, 104, 0.6);
     }
 
-    /* ============================================ */
-    /* LUXURY BUS SALON — realistic Maybach style    */
-    /* ============================================ */
+    /* ============================================================================
+       BUS INTERIOR — OUTER DARK STAGE
+       ============================================================================ */
     .bus-interior {
       position: relative;
-      background:
-        /* Floor texture - dark wood */
-        repeating-linear-gradient(90deg,
-          rgba(0, 0, 0, 0.3) 0px,
-          rgba(0, 0, 0, 0.3) 1px,
-          transparent 1px,
-          transparent 8px),
-        /* Center carpet runner */
-        linear-gradient(180deg,
-          rgba(232, 196, 104, 0.04) 0%,
-          rgba(232, 196, 104, 0.08) 50%,
-          rgba(232, 196, 104, 0.04) 100%),
-        /* Main floor color */
-        linear-gradient(180deg,
-          #1a1212 0%,
-          #261a1d 50%,
-          #1a1212 100%);
-      border: 2px solid rgba(232, 196, 104, 0.35);
-      border-radius: 38px 38px 22px 22px;
-      padding: 0;
-      max-width: 320px;
+      width: 100%;
       margin: 0 auto;
-      box-shadow:
-        /* Outer body shadow */
-        0 12px 30px rgba(0, 0, 0, 0.6),
-        /* Inner cabin glow */
-        inset 0 0 40px rgba(0, 0, 0, 0.7),
-        inset 0 2px 0 rgba(232, 196, 104, 0.2),
-        /* Side walls highlights */
-        inset 8px 0 16px rgba(0, 0, 0, 0.4),
-        inset -8px 0 16px rgba(0, 0, 0, 0.4);
+      padding: 100px 14px 24px;
+      background:
+        radial-gradient(ellipse at 50% 0%, rgba(220, 80, 80, 0.12), transparent 60%),
+        radial-gradient(ellipse at 50% 50%, #2a0a14, #15050a 70%);
+      border-radius: 18px;
       overflow: hidden;
+      isolation: isolate;
     }
-
-    /* Side window strips (luxurious chrome details) */
     .bus-interior::before {
       content: '';
       position: absolute;
-      top: 90px;
-      left: 4px;
-      bottom: 60px;
-      width: 3px;
-      background: linear-gradient(180deg,
-        transparent,
-        rgba(232, 196, 104, 0.3) 10%,
-        rgba(232, 196, 104, 0.3) 90%,
-        transparent);
-      border-radius: 2px;
-      box-shadow: 0 0 8px rgba(232, 196, 104, 0.2);
+      inset: 0;
+      background: radial-gradient(ellipse at 50% 50%, transparent 30%, rgba(0, 0, 0, 0.7) 100%);
+      pointer-events: none;
+      z-index: 10;
     }
 
-    .bus-interior::after {
-      content: '';
+    /* ===== LED AMBIENT STRIPS ===== */
+    .bus-led-strip {
       position: absolute;
-      top: 90px;
-      right: 4px;
-      bottom: 60px;
-      width: 3px;
+      top: 230px;
+      bottom: 50px;
+      width: 2px;
       background: linear-gradient(180deg,
         transparent,
-        rgba(232, 196, 104, 0.3) 10%,
-        rgba(232, 196, 104, 0.3) 90%,
+        rgba(232, 196, 104, 0.7) 20%,
+        rgba(232, 196, 104, 0.7) 80%,
         transparent);
-      border-radius: 2px;
-      box-shadow: 0 0 8px rgba(232, 196, 104, 0.2);
+      filter: blur(0.5px);
+      animation: busLedFlow 6s ease-in-out infinite;
+      z-index: 1;
+    }
+    .bus-led-l { left: 4px; }
+    .bus-led-r { right: 4px; animation-delay: 3s; }
+    @keyframes busLedFlow { 0%, 100% { opacity: 0.4; } 50% { opacity: 0.95; } }
+
+    /* ============================================================================
+       BUS SHELL — wine bus body
+       ============================================================================ */
+    .bus-shell {
+      position: relative;
+      width: 280px;
+      margin: 0 auto;
+      background:
+        repeating-linear-gradient(0deg,
+          transparent 0 20px,
+          rgba(0, 0, 0, 0.35) 20px 21px),
+        linear-gradient(180deg, #3d0f1a, #1a050a);
+      border: 1px solid rgba(232, 196, 104, 0.3);
+      border-radius: 80px 80px 30px 30px;
+      padding: 14px 18px;
+      box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.6);
     }
 
-    /* === DRIVER COCKPIT === */
+    /* ===== HEADLIGHT BEAMS ===== */
+    .bus-beam {
+      position: absolute;
+      top: -90px;
+      width: 96px;
+      height: 100px;
+      background: linear-gradient(180deg,
+        transparent 0%,
+        rgba(255, 240, 200, 0.05) 14%,
+        rgba(255, 240, 200, 0.15) 38%,
+        rgba(255, 220, 140, 0.4) 65%,
+        rgba(255, 240, 200, 0.55) 92%,
+        rgba(255, 230, 170, 0.8) 100%);
+      clip-path: polygon(46% 100%, 54% 100%, 100% 0%, 0% 0%);
+      filter: blur(3px);
+      pointer-events: none;
+      z-index: 4;
+      animation: busBeamPulse 2.4s ease-in-out infinite;
+    }
+    .bus-beam-l { left: 0; }
+    .bus-beam-r { right: 0; }
+    @keyframes busBeamPulse { 0%, 100% { opacity: 0.85; } 50% { opacity: 1; } }
+
+    /* ===== HEADLIGHT BULBS ===== */
+    .bus-headlight {
+      position: absolute;
+      top: 6px;
+      width: 20px;
+      height: 10px;
+      border-radius: 50%;
+      background: radial-gradient(ellipse at 50% 40%,
+        #fff0c0 0%,
+        #ffd870 30%,
+        #c9a956 60%,
+        rgba(232, 196, 104, 0.4) 85%,
+        transparent 100%);
+      box-shadow:
+        0 0 12px 2px rgba(255, 230, 160, 0.95),
+        0 0 28px 6px rgba(232, 196, 104, 0.7),
+        0 0 55px 12px rgba(200, 160, 80, 0.4);
+      z-index: 6;
+      animation: busHlPulse 2.4s ease-in-out infinite;
+      pointer-events: none;
+    }
+    .bus-headlight-l { left: 42px; }
+    .bus-headlight-r { right: 42px; }
+    @keyframes busHlPulse { 0%, 100% { filter: brightness(1); } 50% { filter: brightness(1.18); } }
+
+    /* ============================================================================
+       DRIVER COCKPIT — left steering, right dashboard
+       ============================================================================ */
     .bus-driver-cabin {
       position: relative;
-      padding: 16px 14px 14px;
-      background:
-        radial-gradient(ellipse at top center,
-          rgba(232, 196, 104, 0.08) 0%,
-          transparent 70%),
-        linear-gradient(180deg,
-          rgba(40, 26, 30, 0.9) 0%,
-          rgba(20, 12, 14, 0.7) 100%);
-      border-bottom: 1px solid rgba(232, 196, 104, 0.25);
+      height: 130px;
+      margin: 0 -8px 16px;
+      border-bottom: 1px solid rgba(232, 196, 104, 0.22);
     }
 
-    /* ============================================ */
-    /* FRONT DOOR — passenger entrance              */
-    /* ============================================ */
-    /* ============================================ */
-    /* FRONT ENTRANCE — cinematic boarding area     */
-    /* (positioned inside cockpit, like real bus)   */
-    /* ============================================ */
-    .bus-entrance-row {
-      display: grid;
-      grid-template-columns: 1fr auto;
-      gap: 10px;
-      align-items: center;
-      margin-top: 12px;
-      padding: 10px 4px 4px;
-      border-top: 1px dashed rgba(232, 196, 104, 0.2);
-      position: relative;
-    }
-
-    /* Driver cell wrapper (so we can label-pair vertically) */
-    .bus-driver-cell {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 3px;
-    }
-
-    /* Door frame holds 3 things: side wall | door | side wall */
-    .bus-door-frame {
-      display: grid;
-      grid-template-columns: 6px 1fr 6px;
-      align-items: stretch;
-      gap: 2px;
-      width: 70px;
-      height: 60px;
+    .bus-windshield {
+      position: absolute;
+      top: 4px;
+      left: 8px;
+      right: 8px;
+      height: 56px;
       background: linear-gradient(180deg,
-        rgba(40, 26, 30, 0.4),
-        rgba(20, 12, 14, 0.6));
-      padding: 3px;
-      border: 1px solid rgba(232, 196, 104, 0.25);
-      border-radius: 6px;
-      box-shadow:
-        inset 0 0 8px rgba(0, 0, 0, 0.5),
-        0 2px 6px rgba(0, 0, 0, 0.3);
-    }
-
-    /* Wall sides next to the door */
-    .bus-door-side {
-      background: linear-gradient(180deg,
-        rgba(232, 196, 104, 0.15) 0%,
-        rgba(232, 196, 104, 0.05) 50%,
-        rgba(232, 196, 104, 0.15) 100%);
-      border-radius: 2px;
-      box-shadow: inset 0 0 2px rgba(232, 196, 104, 0.3);
-    }
-
-    /* The actual luxury bus door */
-    .bus-door {
-      position: relative;
-      width: 100%;
-      height: 100%;
-      background:
-        /* Door frame metallic */
-        linear-gradient(180deg,
-          rgba(50, 32, 38, 0.95) 0%,
-          rgba(30, 18, 22, 0.95) 100%);
-      border: 1.5px solid var(--gold);
-      border-radius: 4px 4px 6px 6px;
-      box-shadow:
-        inset 0 1px 0 rgba(232, 196, 104, 0.4),
-        inset 0 -2px 4px rgba(0, 0, 0, 0.5),
-        0 2px 6px rgba(0, 0, 0, 0.4),
-        0 0 14px rgba(232, 196, 104, 0.2);
+        rgba(120, 30, 50, 0.3),
+        rgba(80, 15, 30, 0.4) 50%,
+        rgba(40, 5, 15, 0.5));
+      border: 1px solid rgba(232, 196, 104, 0.35);
+      border-radius: 60px 60px 8px 8px;
       overflow: hidden;
     }
-
-    /* Tinted glass window in upper part of door */
-    .bus-door::before {
-      content: '';
-      position: absolute;
-      top: 4px;
-      left: 4px;
-      right: 4px;
-      height: 28px;
-      background:
-        /* Reflection sheen */
-        linear-gradient(135deg,
-          rgba(232, 196, 104, 0.4) 0%,
-          rgba(232, 196, 104, 0.15) 35%,
-          transparent 70%),
-        /* Tinted blue/dark glass */
-        linear-gradient(180deg,
-          rgba(15, 25, 35, 0.95) 0%,
-          rgba(20, 30, 40, 0.85) 100%);
-      border: 1px solid rgba(232, 196, 104, 0.5);
-      border-radius: 3px;
-      box-shadow:
-        inset 0 0 6px rgba(0, 0, 0, 0.6),
-        inset 0 1px 0 rgba(255, 255, 255, 0.15);
-    }
-
-    /* Vertical chrome handle */
-    .bus-door::after {
-      content: '';
-      position: absolute;
-      top: 38px;
-      right: 4px;
-      width: 3px;
-      height: 14px;
-      background: linear-gradient(180deg,
-        var(--gold-light),
-        var(--gold) 40%,
-        var(--gold-dark) 100%);
-      border-radius: 2px;
-      box-shadow:
-        0 0 6px rgba(232, 196, 104, 0.8),
-        inset 0 1px 0 rgba(255, 255, 255, 0.5);
-    }
-
-    /* Center split for double-fold doors (animated open) */
-    .bus-door-split {
-      position: absolute;
-      top: 4px;
-      bottom: 4px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 1.5px;
-      background: linear-gradient(180deg,
-        rgba(232, 196, 104, 0.2),
-        rgba(232, 196, 104, 0.6) 30%,
-        rgba(232, 196, 104, 0.6) 70%,
-        rgba(232, 196, 104, 0.2));
-      pointer-events: none;
-      box-shadow: 0 0 3px rgba(232, 196, 104, 0.4);
-    }
-
-    /* Door label on right side */
-    .bus-entrance-text {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 3px;
-      font-family: var(--sans-font);
-      font-size: 8.5px;
-      letter-spacing: 1.6px;
-      text-transform: uppercase;
-      color: var(--gold);
-      opacity: 0.8;
-    }
-
-    .bus-entrance-arrow {
-      font-size: 14px;
-      animation: arrowBounce 1.8s ease-in-out infinite;
-      filter: drop-shadow(0 0 6px rgba(232, 196, 104, 0.6));
-    }
-
-    @keyframes arrowBounce {
-      0%, 100% { transform: translateY(0); opacity: 0.6; }
-      50%      { transform: translateY(-3px); opacity: 1; }
-    }
-
-    /* Old entrance styles (no longer used - keeping for safety) */
-    .bus-entrance,
-    .bus-entrance-step,
-    .bus-entrance-label {
-      display: none;
-    }
-
-    /* Front windshield illustration */
-    .bus-windshield {
-      position: relative;
-      height: 28px;
-      margin: -16px -14px 14px;
-      background:
-        /* Stars/lights through windshield */
-        radial-gradient(circle at 15% 40%, rgba(232, 196, 104, 0.4) 0%, transparent 12%),
-        radial-gradient(circle at 35% 60%, rgba(232, 196, 104, 0.3) 0%, transparent 10%),
-        radial-gradient(circle at 55% 30%, rgba(255, 96, 117, 0.3) 0%, transparent 10%),
-        radial-gradient(circle at 75% 50%, rgba(232, 196, 104, 0.25) 0%, transparent 12%),
-        radial-gradient(circle at 92% 35%, rgba(232, 196, 104, 0.35) 0%, transparent 10%),
-        /* Dark night sky */
-        linear-gradient(180deg, #0a0608 0%, #1a0e12 100%);
-      border-bottom: 2px solid rgba(232, 196, 104, 0.2);
-      box-shadow: inset 0 -4px 8px rgba(0, 0, 0, 0.6);
-    }
-
     .bus-windshield::before {
       content: '';
       position: absolute;
-      bottom: 0;
+      inset: 0;
+      background: linear-gradient(115deg,
+        transparent 30%,
+        rgba(255, 255, 255, 0.18) 50%,
+        transparent 70%);
+      background-size: 250% 100%;
+      animation: busGlassReflect 7s linear infinite;
+    }
+    @keyframes busGlassReflect {
+      0%   { background-position: -100% 0; }
+      100% { background-position: 200% 0; }
+    }
+
+    .bus-dashboard {
+      position: absolute;
+      bottom: 6px;
       left: 0;
       right: 0;
-      height: 8px;
-      background: linear-gradient(180deg,
-        transparent 0%,
-        rgba(232, 196, 104, 0.15) 100%);
-    }
-
-    /* Dashboard layout */
-    .bus-dashboard {
       display: grid;
-      grid-template-columns: 1fr auto 1fr;
-      gap: 12px;
-      align-items: center;
-      padding: 0 4px;
+      grid-template-columns: 56px 1fr;
+      gap: 10px;
+      align-items: end;
+      padding: 0 12px;
+      height: 64px;
     }
 
-    /* Steering wheel - left side (driver position) */
-    /* === REALISTIC MERCEDES-STYLE STEERING WHEEL === */
-    .bus-steering {
-      width: 56px;
-      height: 56px;
-      position: relative;
-      animation: steeringRotate 8s ease-in-out infinite;
-      filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.6));
-    }
-
-    .bus-steering svg {
-      display: block;
-      width: 100%;
-      height: 100%;
-    }
-
-    @keyframes steeringRotate {
-      0%   { transform: rotate(-15deg); }
-      50%  { transform: rotate(15deg); }
-      100% { transform: rotate(-15deg); }
-    }
-
-    /* Center console with FARMASI label */
-    .bus-console {
-      text-align: center;
-    }
-
-    .bus-console-label {
-      font-family: var(--display-font);
-      font-size: 9.5px;
-      letter-spacing: 2.5px;
-      text-transform: uppercase;
-      color: var(--gold);
-      font-weight: 600;
-      margin-bottom: 4px;
-      text-shadow: 0 0 8px rgba(232, 196, 104, 0.4);
-    }
-
-    .bus-console-screen {
-      width: 70px;
-      height: 22px;
-      margin: 0 auto;
-      background: linear-gradient(180deg, #0a1a2a, #051522);
-      border: 1px solid rgba(232, 196, 104, 0.3);
-      border-radius: 4px;
+    .bus-driver-area {
       display: flex;
+      flex-direction: column;
       align-items: center;
-      justify-content: center;
-      font-family: var(--sans-font);
-      font-size: 8px;
-      font-weight: 700;
-      letter-spacing: 1.2px;
-      color: #6dd49a;
-      box-shadow:
-        inset 0 0 8px rgba(109, 212, 154, 0.2),
-        0 0 6px rgba(109, 212, 154, 0.15);
-      animation: screenFlicker 3s ease-in-out infinite;
-    }
-
-    @keyframes screenFlicker {
-      0%, 100% { opacity: 1; }
-      50%      { opacity: 0.85; }
-    }
-
-    /* Driver seat indicator - right side */
-    .bus-driver-seat {
-      width: 38px;
-      height: 44px;
-      background: linear-gradient(180deg,
-        #2a1a1c 0%,
-        #1a1010 50%,
-        #15090b 100%);
-      border: 1.5px solid var(--gold-dark);
-      border-radius: 8px 8px 4px 4px;
+      gap: 2px;
       position: relative;
-      box-shadow:
-        inset 0 1px 0 rgba(232, 196, 104, 0.2),
-        inset 0 -2px 4px rgba(0, 0, 0, 0.5),
-        0 2px 6px rgba(0, 0, 0, 0.4);
     }
 
-    /* Driver seat headrest */
+    /* hide old labels */
+    .bus-driver-cell, .bus-driver-label, .bus-amenities, .bus-amenity,
+    .bus-entrance-row, .bus-door-frame, .bus-door, .bus-door-side,
+    .bus-door-split, .bus-entrance-text, .bus-entrance-arrow,
+    .bus-emergency, .bus-windows-left, .bus-windows-right, .bus-window {
+      display: none !important;
+    }
+
+    /* ===== STEERING WHEEL (SVG) ===== */
+    .bus-steering {
+      width: 42px;
+      height: 42px;
+      filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.6));
+      animation: busWheelSubtle 8s ease-in-out infinite;
+    }
+    @keyframes busWheelSubtle { 0%, 100% { transform: rotate(-2deg); } 50% { transform: rotate(2deg); } }
+    .bus-steering .rim       { stroke: #2a0a14; fill: none; }
+    .bus-steering .rim-glow  { stroke: rgba(232, 196, 104, 0.7); fill: none; opacity: 0.5; }
+    .bus-steering .rim-inner { stroke: #ffe4a0; fill: none; opacity: 0.6; }
+    .bus-steering .spoke     { stroke: #2a0a14; stroke-linecap: round; }
+    .bus-steering .hub       { fill: #15050a; stroke: #ffe4a0; }
+    .bus-steering .logo      { fill: #ffe4a0; font-family: var(--display-font); }
+
+    /* ===== DRIVER CHAIR ===== */
+    .bus-driver-seat {
+      width: 28px;
+      height: 14px;
+      background: linear-gradient(165deg, #4a1320, #1a050a);
+      border: 1px solid #8a3344;
+      border-radius: 5px 5px 3px 3px;
+      position: relative;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(232, 196, 104, 0.15);
+    }
     .bus-driver-seat::before {
       content: '';
       position: absolute;
-      top: -4px;
-      left: 4px;
-      right: 4px;
-      height: 8px;
-      background: linear-gradient(180deg, #3a262a, #2a1a1c);
-      border: 1px solid var(--gold-dark);
+      top: -2px;
+      left: 5px;
+      right: 5px;
+      height: 3px;
+      background: linear-gradient(165deg, #4a1320, #1a050a);
+      border: 1px solid #8a3344;
       border-bottom: none;
-      border-radius: 4px 4px 0 0;
+      border-radius: 3px 3px 0 0;
     }
 
-    /* Driver seat chauffeur icon */
-    .bus-driver-seat::after {
-      content: '👨‍✈️';
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      font-size: 18px;
-      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
-    }
-
-    .bus-driver-label {
-      display: block;
-      font-family: var(--sans-font);
-      font-size: 8px;
-      letter-spacing: 1.2px;
-      text-transform: uppercase;
-      color: var(--gold);
-      text-align: center;
-      margin-top: 4px;
-      opacity: 0.7;
-    }
-
-    /* === PASSENGER CABIN === */
-    .bus-cabin {
-      padding: 16px 14px 18px;
-      position: relative;
-    }
-
-    /* === CEILING LIGHTS (running strip with multiple LED dots) === */
-    .bus-cabin::before {
-      content: '';
-      position: absolute;
-      top: 6px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 70%;
-      height: 3px;
-      background:
-        linear-gradient(90deg,
-          transparent 0%,
-          rgba(232, 196, 104, 0.5) 8%,
-          transparent 12%,
-          transparent 18%,
-          rgba(232, 196, 104, 0.5) 22%,
-          transparent 26%,
-          transparent 32%,
-          rgba(232, 196, 104, 0.5) 36%,
-          transparent 40%,
-          transparent 46%,
-          rgba(232, 196, 104, 0.5) 50%,
-          transparent 54%,
-          transparent 60%,
-          rgba(232, 196, 104, 0.5) 64%,
-          transparent 68%,
-          transparent 74%,
-          rgba(232, 196, 104, 0.5) 78%,
-          transparent 82%,
-          transparent 88%,
-          rgba(232, 196, 104, 0.5) 92%,
-          transparent 100%);
-      border-radius: 2px;
-      box-shadow:
-        0 0 8px rgba(232, 196, 104, 0.4),
-        0 4px 14px rgba(232, 196, 104, 0.2);
-      animation: ceilingLightFlicker 4s ease-in-out infinite;
-    }
-
-    @keyframes ceilingLightFlicker {
-      0%, 100% { opacity: 0.85; }
-      50%      { opacity: 1; }
-    }
-
-    /* Center carpet runner — luxury detail */
-    .bus-cabin::after {
-      content: '';
-      position: absolute;
-      top: 14px;
-      bottom: 8px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 14px;
-      background: linear-gradient(180deg,
-        rgba(232, 196, 104, 0.06) 0%,
-        rgba(232, 196, 104, 0.1) 50%,
-        rgba(232, 196, 104, 0.06) 100%);
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    /* === FRONT DOOR (right side of cockpit) === */
-    .bus-door-front {
-      position: absolute;
-      top: 32px;
-      right: 8px;
-      width: 26px;
-      height: 60px;
-      background:
-        linear-gradient(135deg,
-          rgba(20, 14, 16, 0.9) 0%,
-          rgba(40, 28, 32, 0.85) 50%,
-          rgba(20, 14, 16, 0.9) 100%);
-      border: 1.5px solid rgba(232, 196, 104, 0.45);
-      border-radius: 4px 8px 8px 4px;
-      box-shadow:
-        inset 0 2px 8px rgba(0, 0, 0, 0.7),
-        inset 0 -1px 0 rgba(232, 196, 104, 0.2),
-        0 0 12px rgba(232, 196, 104, 0.15);
-      overflow: hidden;
-      z-index: 5;
-    }
-
-    /* Door window glass effect */
-    .bus-door-front::before {
-      content: '';
-      position: absolute;
-      top: 6px;
-      left: 4px;
-      right: 4px;
-      height: 28px;
-      background:
-        linear-gradient(135deg,
-          rgba(80, 120, 180, 0.4) 0%,
-          rgba(40, 60, 100, 0.5) 50%,
-          rgba(80, 120, 180, 0.3) 100%);
-      border: 1px solid rgba(232, 196, 104, 0.3);
-      border-radius: 3px;
-      box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.15),
-        inset 0 -2px 4px rgba(0, 0, 0, 0.4);
-    }
-
-    /* Door handle */
-    .bus-door-front::after {
-      content: '';
-      position: absolute;
-      bottom: 14px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 12px;
-      height: 3px;
-      background: linear-gradient(90deg,
-        var(--gold-dark),
-        var(--gold-light) 50%,
-        var(--gold-dark));
-      border-radius: 2px;
-      box-shadow: 0 0 4px rgba(232, 196, 104, 0.5);
-    }
-
-    /* "DOOR" label below */
-    .bus-door-label {
-      position: absolute;
-      top: 96px;
-      right: 0;
-      width: 42px;
-      text-align: center;
-      font-family: var(--sans-font);
-      font-size: 6.5px;
-      font-weight: 700;
-      letter-spacing: 1.4px;
-      text-transform: uppercase;
-      color: var(--gold);
-      opacity: 0.65;
-      z-index: 5;
-    }
-
-    /* === LATERAL WINDOWS (along passenger cabin) === */
-    .bus-windows-left,
-    .bus-windows-right {
-      position: absolute;
-      top: 22px;
-      bottom: 70px;
-      width: 8px;
-      pointer-events: none;
+    /* ===== DASHBOARD SCREEN ===== */
+    .bus-console {
+      height: 56px;
+      background: linear-gradient(180deg, #4a1320, #1a050a);
+      border: 1px solid #c9a956;
+      border-radius: 6px;
       display: flex;
       flex-direction: column;
-      gap: 7px;
-      padding: 4px 0;
-      z-index: 1;
-    }
-
-    .bus-windows-left  { left: 6px; }
-    .bus-windows-right { right: 6px; }
-
-    .bus-window {
-      flex: 1;
-      background:
-        linear-gradient(135deg,
-          rgba(80, 120, 180, 0.45) 0%,
-          rgba(40, 60, 100, 0.55) 40%,
-          rgba(20, 30, 60, 0.7) 100%);
-      border: 1px solid rgba(232, 196, 104, 0.35);
-      border-radius: 2px;
-      box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.15),
-        inset 0 -1px 2px rgba(0, 0, 0, 0.4),
-        0 0 6px rgba(232, 196, 104, 0.15);
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      padding: 4px 8px;
       position: relative;
       overflow: hidden;
     }
-
-    /* Animated reflection on window */
-    .bus-window::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 50%;
-      height: 100%;
-      background: linear-gradient(135deg,
-        transparent,
-        rgba(255, 255, 255, 0.2),
-        transparent);
-      animation: windowReflection 6s ease-in-out infinite;
+    .bus-console-label {
+      font-family: var(--display-font);
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      color: #ffe4a0;
+      animation: busScreenPulse 2.4s ease-in-out infinite;
     }
-
-    @keyframes windowReflection {
-      0%, 100% { left: -100%; }
-      50%      { left: 200%; }
-    }
-
-    /* Stagger window animations */
-    .bus-window:nth-child(2)::before { animation-delay: 0.5s; }
-    .bus-window:nth-child(3)::before { animation-delay: 1s; }
-    .bus-window:nth-child(4)::before { animation-delay: 1.5s; }
-    .bus-window:nth-child(5)::before { animation-delay: 2s; }
-    .bus-window:nth-child(6)::before { animation-delay: 2.5s; }
-
-    /* === EMERGENCY EXIT INDICATOR (rear-side) === */
-    /* === EMERGENCY EXIT (rear position - above last row, like real bus) === */
-    .bus-emergency {
-      position: absolute;
-      bottom: 78px;
-      right: 22px;
-      width: 36px;
-      height: 14px;
-      background:
-        linear-gradient(180deg,
-          #ff3344 0%,
-          #cc2233 100%);
-      border: 1.5px solid #ff5566;
-      border-radius: 2px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 7px;
-      color: white;
-      font-weight: 900;
-      letter-spacing: 1.5px;
+    .bus-console-screen {
       font-family: var(--sans-font);
-      box-shadow:
-        0 0 8px rgba(255, 50, 70, 0.5),
-        inset 0 1px 0 rgba(255, 255, 255, 0.2);
-      animation: emergencyPulse 2s ease-in-out infinite;
-      z-index: 6;
+      font-size: 8px;
+      letter-spacing: 0.1em;
+      color: rgba(255, 228, 160, 0.7);
+    }
+    @keyframes busScreenPulse {
+      0%, 100% { opacity: 0.6; text-shadow: none; }
+      50%      { opacity: 1; text-shadow: 0 0 8px rgba(255, 228, 160, 0.8); }
     }
 
-    .bus-emergency::before {
-      content: 'EXIT';
-    }
-
-    /* Small arrow indicating exit direction */
-    .bus-emergency::after {
-      content: '→';
-      position: absolute;
-      right: -12px;
-      top: 50%;
-      transform: translateY(-50%);
-      font-size: 9px;
-      color: #ff5566;
-      font-weight: 900;
-      filter: drop-shadow(0 0 4px rgba(255, 80, 100, 0.6));
-    }
-
-    @keyframes emergencyPulse {
-      0%, 100% {
-        opacity: 0.85;
-        box-shadow:
-          0 0 8px rgba(255, 50, 70, 0.5),
-          inset 0 1px 0 rgba(255, 255, 255, 0.2);
-      }
-      50% {
-        opacity: 1;
-        box-shadow:
-          0 0 14px rgba(255, 50, 70, 0.8),
-          0 0 24px rgba(255, 50, 70, 0.4),
-          inset 0 1px 0 rgba(255, 255, 255, 0.3);
-      }
-    }
-
-    /* === WIFI / AC ICONS (luxury amenities) === */
-    .bus-amenities {
-      position: absolute;
-      top: 12px;
-      right: 8px;
-      display: flex;
-      gap: 4px;
-      z-index: 5;
-    }
-
-    .bus-amenity {
-      width: 16px;
-      height: 16px;
-      border-radius: 50%;
-      background: rgba(0, 0, 0, 0.5);
-      border: 1px solid rgba(232, 196, 104, 0.4);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 7px;
-      color: var(--gold-light);
-      box-shadow: 0 0 4px rgba(232, 196, 104, 0.3);
+    /* ============================================================================
+       PASSENGER CABIN
+       ============================================================================ */
+    .bus-cabin {
+      position: relative;
+      padding: 4px 0;
     }
 
     .bus-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr 14px 1fr 1fr;
-      gap: 6px 5px;
-      margin-top: 4px;
+      grid-template-columns: 32px 32px 14px 32px 32px;
+      gap: 6px;
+      justify-content: center;
     }
 
-    .bus-grid::before {
-      content: '';
-      grid-column: 3;
-      grid-row: 1 / -1;
-      width: 2px;
-      background: linear-gradient(180deg,
-        transparent,
-        rgba(232, 196, 104, 0.25) 15%,
-        rgba(232, 196, 104, 0.25) 85%,
-        transparent);
-      justify-self: center;
-      pointer-events: none;
-      box-shadow: 0 0 6px rgba(232, 196, 104, 0.15);
+    .bus-aisle { display: block; }
+
+    .bus-rear-row {
+      display: grid;
+      grid-template-columns: repeat(6, 32px);
+      gap: 5px;
+      justify-content: center;
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 1px dashed rgba(232, 196, 104, 0.25);
     }
 
-    .bus-aisle {
-      grid-column: 3;
-      width: 18px;
-    }
-
-    /* Empty cell (where driver/door area is, no seat) */
-    .bus-empty-cell {
-      aspect-ratio: 1 / 1.15;
-      min-height: 38px;
-    }
-
-    /* === LUXURY MAYBACH-STYLE PASSENGER SEATS === */
+    /* ============================================================================
+       BUS SEAT — burgundy velvet with gold "yours"
+       ============================================================================ */
     .bus-seat {
       position: relative;
       aspect-ratio: 1 / 1.2;
@@ -5032,15 +4551,13 @@
       align-items: center;
       justify-content: center;
       font-family: var(--display-font);
-      font-size: 8px;
-      font-weight: 700;
+      font-size: 9px;
+      font-weight: 600;
       border-radius: 7px 7px 4px 4px;
-      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      overflow: hidden;
       user-select: none;
-      cursor: default;
+      z-index: 1;
     }
-
-    /* Quilted leather stitching pattern (cinematic) */
     .bus-seat::before {
       content: '';
       position: absolute;
@@ -5049,188 +4566,137 @@
       right: 3px;
       height: 5px;
       border-radius: 4px 4px 0 0;
-      box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.4);
-      z-index: 1;
+      z-index: 2;
     }
-
-    /* Quilted stitching pattern (Maybach diamond stitch) */
     .bus-seat::after {
       content: '';
       position: absolute;
-      inset: 2px 3px 4px 3px;
-      background:
-        repeating-linear-gradient(45deg,
-          transparent 0px,
-          transparent 4px,
-          rgba(0, 0, 0, 0.08) 4px,
-          rgba(0, 0, 0, 0.08) 5px),
-        repeating-linear-gradient(-45deg,
-          transparent 0px,
-          transparent 4px,
-          rgba(0, 0, 0, 0.08) 4px,
-          rgba(0, 0, 0, 0.08) 5px);
-      border-radius: 3px;
+      inset: 4px 5px 6px 5px;
+      border-radius: 4px;
       pointer-events: none;
-      z-index: 0;
+      z-index: 1;
     }
 
-    /* === FREE seat — luxurious cream/green leather === */
+    /* FREE */
     .bus-seat.free {
+      color: rgba(255, 220, 220, 0.75);
+      text-shadow: 0 1px 1px rgba(0, 0, 0, 0.6);
+      border: 1px solid #8a3344;
       background:
-        radial-gradient(ellipse at 30% 25%, rgba(255, 255, 255, 0.22) 0%, transparent 30%),
-        radial-gradient(ellipse at 70% 75%, rgba(0, 0, 0, 0.25) 0%, transparent 35%),
-        linear-gradient(165deg,
-          #5dc885 0%,
-          #4caf73 25%,
-          #3a9c64 60%,
-          #2d8854 100%);
-      border: 1px solid #6dd189;
-      color: #fff;
-      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
-      box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.4),
-        inset 0 -2px 3px rgba(0, 0, 0, 0.4),
-        inset 1px 0 1px rgba(255, 255, 255, 0.1),
-        inset -1px 0 1px rgba(0, 0, 0, 0.2),
-        0 2px 5px rgba(76, 175, 115, 0.45);
+        radial-gradient(ellipse at 30% 30%, rgba(255, 180, 180, 0.18), transparent 50%),
+        radial-gradient(ellipse at 70% 70%, rgba(0, 0, 0, 0.4), transparent 45%),
+        linear-gradient(165deg, #6b1e2e, #4a1320 50%, #2a0a12);
+      animation: busSeatBreathe 3.6s ease-in-out infinite;
     }
-
     .bus-seat.free::before {
-      background: linear-gradient(180deg, #6dd189, #4caf73 50%, #3a9c64 100%);
-      border: 1px solid #6dd189;
+      background: linear-gradient(180deg, #6b1e2e, #2a0a12);
+      border: 1px solid #8a3344;
       border-bottom: none;
     }
+    .bus-seat.free::after {
+      background:
+        repeating-linear-gradient(45deg, transparent 0 6px, rgba(0, 0, 0, 0.12) 6px 7px),
+        repeating-linear-gradient(-45deg, transparent 0 6px, rgba(0, 0, 0, 0.12) 6px 7px),
+        linear-gradient(115deg, transparent 38%, rgba(232, 196, 104, 0.4) 50%, transparent 62%);
+      background-size: auto, auto, 280% 100%;
+      background-position: 0 0, 0 0, -100% 0;
+      animation: busSeatShimmer 5.5s ease-in-out infinite;
+    }
+    @keyframes busSeatBreathe {
+      0%, 100% { box-shadow: inset 0 1px 0 rgba(232, 196, 104, 0.15), inset 0 -2px 4px rgba(0, 0, 0, 0.6), 0 2px 6px rgba(0, 0, 0, 0.5); }
+      50%      { box-shadow: inset 0 1px 0 rgba(232, 196, 104, 0.3),  inset 0 -2px 4px rgba(0, 0, 0, 0.6), 0 2px 10px rgba(232, 196, 104, 0.3); }
+    }
+    @keyframes busSeatShimmer {
+      0%, 65%, 100% { background-position: 0 0, 0 0, -100% 0; }
+      35%           { background-position: 0 0, 0 0,  200% 0; }
+    }
 
-    /* === TAKEN seat — luxurious burgundy leather === */
+    .bus-grid > .bus-seat:nth-child(5n+1) { animation-delay: 0s, 0s; }
+    .bus-grid > .bus-seat:nth-child(5n+2) { animation-delay: 0.4s, 0.4s; }
+    .bus-grid > .bus-seat:nth-child(5n+4) { animation-delay: 0.8s, 0.8s; }
+    .bus-grid > .bus-seat:nth-child(5n+5) { animation-delay: 1.2s, 1.2s; }
+
+    /* TAKEN */
     .bus-seat.taken {
-      background:
-        radial-gradient(ellipse at 30% 25%, rgba(255, 255, 255, 0.06) 0%, transparent 30%),
-        radial-gradient(ellipse at 70% 75%, rgba(0, 0, 0, 0.4) 0%, transparent 35%),
-        linear-gradient(165deg,
-          #7a3340 0%,
-          #6b2a35 25%,
-          #4a1c25 60%,
-          #2e1117 100%);
-      border: 1px solid #7a3340;
-      color: rgba(255, 255, 255, 0.35);
-      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
-      cursor: not-allowed;
-      box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.1),
-        inset 0 -3px 5px rgba(0, 0, 0, 0.6),
-        0 2px 5px rgba(0, 0, 0, 0.5);
+      background: linear-gradient(165deg, #2a0d14, #15050a);
+      border: 1px solid #3a1320;
+      color: rgba(255, 200, 200, 0.16);
+      opacity: 0.78;
+      box-shadow: inset 0 -2px 4px rgba(0, 0, 0, 0.7);
     }
-
     .bus-seat.taken::before {
-      background: linear-gradient(180deg, #7a3340, #4a1c25);
-      border: 1px solid #6b2a35;
+      background: linear-gradient(180deg, #2a0d14, #15050a);
+      border: 1px solid #3a1320;
       border-bottom: none;
     }
-
-    /* === YOUR seat — VIP gold quilted Maybach leather === */
-    .bus-seat.yours {
+    .bus-seat.taken::after {
       background:
-        radial-gradient(ellipse at 30% 25%, rgba(255, 255, 255, 0.55) 0%, transparent 35%),
-        radial-gradient(ellipse at 70% 75%, rgba(255, 255, 255, 0.25) 0%, transparent 35%),
-        linear-gradient(165deg,
-          #ffe4a0 0%,
-          #f5d98a 25%,
-          var(--gold) 60%,
-          #c9a956 100%);
-      border: 1.5px solid var(--gold);
-      color: #1a1212;
-      text-shadow: 0 1px 1px rgba(255, 255, 255, 0.5);
-      transform: scale(1.18);
-      z-index: 3;
-      font-weight: 800;
-      box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.6),
-        inset 0 -2px 4px rgba(0, 0, 0, 0.15),
-        0 8px 24px rgba(232, 196, 104, 0.7),
-        0 0 0 2px rgba(232, 196, 104, 0.35),
-        0 0 30px rgba(232, 196, 104, 0.4);
-      animation: yourSeatPulse 1.6s ease-in-out infinite;
+        repeating-linear-gradient(45deg, transparent 0 6px, rgba(0, 0, 0, 0.18) 6px 7px),
+        repeating-linear-gradient(-45deg, transparent 0 6px, rgba(0, 0, 0, 0.18) 6px 7px);
+      opacity: 0.5;
     }
 
+    /* YOURS — golden VIP with strong halo, distinct from selected */
+    .bus-seat.yours {
+      background: linear-gradient(165deg, #ffe4a0, #c9a956 60%, #8b6f2e);
+      border: 2px solid #ffe4a0;
+      color: #2a0a12;
+      text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+      transform: translateY(-2px) scale(1.08);
+      z-index: 5;
+      animation: busSeatYours 1.8s ease-in-out infinite;
+    }
     .bus-seat.yours::before {
-      background: linear-gradient(180deg, #ffe4a0, var(--gold-light) 50%, var(--gold) 100%);
-      border: 1px solid var(--gold);
+      background: linear-gradient(180deg, #ffe4a0, #c9a956);
+      border: 2px solid #ffe4a0;
       border-bottom: none;
     }
-
     .bus-seat.yours::after {
       background:
-        repeating-linear-gradient(45deg,
-          transparent 0px,
-          transparent 4px,
-          rgba(255, 255, 255, 0.2) 4px,
-          rgba(255, 255, 255, 0.2) 5px),
-        repeating-linear-gradient(-45deg,
-          transparent 0px,
-          transparent 4px,
-          rgba(255, 255, 255, 0.2) 4px,
-          rgba(255, 255, 255, 0.2) 5px);
+        repeating-linear-gradient(45deg, transparent 0 6px, rgba(255, 255, 255, 0.12) 6px 7px),
+        repeating-linear-gradient(-45deg, transparent 0 6px, rgba(255, 255, 255, 0.12) 6px 7px),
+        linear-gradient(115deg, transparent 25%, rgba(255, 255, 255, 0.7) 50%, transparent 75%);
+      background-size: auto, auto, 280% 100%;
+      animation: busSeatYoursShine 2s linear infinite;
     }
-
-    @keyframes yourSeatPulse {
+    @keyframes busSeatYours {
       0%, 100% {
+        transform: translateY(-2px) scale(1.08);
         box-shadow:
           inset 0 1px 0 rgba(255, 255, 255, 0.6),
-          inset 0 -2px 4px rgba(0, 0, 0, 0.15),
-          0 8px 24px rgba(232, 196, 104, 0.7),
-          0 0 0 2px rgba(232, 196, 104, 0.35),
-          0 0 30px rgba(232, 196, 104, 0.4);
+          0 4px 18px rgba(232, 196, 104, 0.8),
+          0 0 0 3px rgba(232, 196, 104, 0.5),
+          0 0 35px rgba(232, 196, 104, 0.7);
       }
       50% {
+        transform: translateY(-4px) scale(1.16);
         box-shadow:
-          inset 0 1px 0 rgba(255, 255, 255, 0.6),
-          inset 0 -3px 5px rgba(0, 0, 0, 0.15),
-          0 12px 32px rgba(232, 196, 104, 0.85),
-          0 0 0 5px rgba(232, 196, 104, 0.4),
-          0 0 40px rgba(232, 196, 104, 0.55);
+          inset 0 1px 0 rgba(255, 255, 255, 0.85),
+          0 8px 32px rgba(255, 228, 160, 1),
+          0 0 0 4px rgba(232, 196, 104, 0.65),
+          0 0 70px rgba(255, 228, 160, 1);
       }
     }
-
-    /* === REAR ROW (back bench) === */
-    .bus-rear-row {
-      display: grid;
-      grid-template-columns: repeat(6, 1fr);
-      gap: 5px;
-      grid-column: 1 / -1;
-      margin-top: 12px;
-      padding-top: 12px;
-      position: relative;
-      border-top: 2px solid rgba(232, 196, 104, 0.3);
+    @keyframes busSeatYoursShine {
+      0%   { background-position: 0 0, 0 0, -100% 0; }
+      100% { background-position: 0 0, 0 0,  200% 0; }
     }
 
-    .bus-rear-row::before {
-      content: 'უკანა რიგი';
-      position: absolute;
-      top: -8px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: var(--bg-card);
-      padding: 0 8px;
-      font-family: var(--sans-font);
-      font-size: 7.5px;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      color: var(--gold);
-      opacity: 0.7;
-    }
-
-    /* === Tiny phones === */
+    /* ============================================================================
+       RESPONSIVE
+       ============================================================================ */
     @media (max-width: 380px) {
-      .bus-modal-content { padding: 14px 10px; }
-      .bus-seat { min-height: 32px; font-size: 10px; }
-      .bus-grid { gap: 7px 5px; grid-template-columns: 1fr 1fr 14px 1fr 1fr; }
-      .bus-rear-row { gap: 4px; }
-      .bus-stat-value { font-size: 19px; }
-      .bus-driver-cabin { padding: 12px 10px 10px; }
-      .bus-cabin { padding: 14px 10px 16px; }
-      .bus-steering { width: 44px; height: 44px; }
-      .bus-driver-seat { width: 34px; height: 40px; }
+      .bus-modal-content { padding: 16px 12px 20px; }
+      .bus-interior { padding: 80px 10px 20px; }
+      .bus-shell { width: 250px; padding: 12px 14px; }
+      .bus-grid { grid-template-columns: 28px 28px 12px 28px 28px; gap: 5px; }
+      .bus-rear-row { grid-template-columns: repeat(6, 28px); gap: 4px; }
+      .bus-seat { min-height: 22px; font-size: 7.5px; }
+      .bus-headlight-l { left: 36px; }
+      .bus-headlight-r { right: 36px; }
+      .bus-stat-value { font-size: 17px; }
     }
+
 
   </style>
 </head>
@@ -5800,86 +5266,60 @@
       </div>
 
       <!-- Bus interior — luxury Maybach salon -->
+      <!-- Bus interior — Opera Burgundy luxury salon -->
       <div class="bus-interior">
 
-        <!-- Lateral windows (cinematic glass with reflection) -->
-        <div class="bus-windows-left">
-          <div class="bus-window"></div>
-          <div class="bus-window"></div>
-          <div class="bus-window"></div>
-          <div class="bus-window"></div>
-          <div class="bus-window"></div>
-          <div class="bus-window"></div>
-        </div>
-        <div class="bus-windows-right">
-          <div class="bus-window"></div>
-          <div class="bus-window"></div>
-          <div class="bus-window"></div>
-          <div class="bus-window"></div>
-          <div class="bus-window"></div>
-          <div class="bus-window"></div>
-        </div>
+        <!-- Side LED ambient strips -->
+        <div class="bus-led-strip bus-led-l"></div>
+        <div class="bus-led-strip bus-led-r"></div>
 
-        <!-- Driver cockpit -->
-        <div class="bus-driver-cabin">
-          <div class="bus-windshield"></div>
+        <!-- Bus shell with rounded gold-trimmed front -->
+        <div class="bus-shell">
 
-          <div class="bus-amenities">
-            <div class="bus-amenity">📶</div>
-            <div class="bus-amenity">❄</div>
-          </div>
+          <!-- Headlight beams (project upward into the night) -->
+          <div class="bus-beam bus-beam-l"></div>
+          <div class="bus-beam bus-beam-r"></div>
 
-          <div class="bus-dashboard">
-            <div class="bus-steering">
-              <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                <defs>
-                  <radialGradient id="rimGradientIdx" cx="50%" cy="40%" r="55%">
-                    <stop offset="0%" stop-color="#3a262a" />
-                    <stop offset="60%" stop-color="#1a0e10" />
-                    <stop offset="100%" stop-color="#0a0608" />
-                  </radialGradient>
-                  <radialGradient id="hubGradientIdx" cx="35%" cy="35%" r="65%">
-                    <stop offset="0%" stop-color="#f5d98a" />
-                    <stop offset="50%" stop-color="#e8c468" />
-                    <stop offset="100%" stop-color="#a8854a" />
-                  </radialGradient>
-                  <linearGradient id="spokeGradientIdx" x1="0%" y1="0%" x2="100%" y2="0%">
-                    <stop offset="0%" stop-color="#1a0e10" />
-                    <stop offset="50%" stop-color="#3a262a" />
-                    <stop offset="100%" stop-color="#1a0e10" />
-                  </linearGradient>
-                </defs>
-                <circle cx="50" cy="50" r="46" fill="none" stroke="url(#rimGradientIdx)" stroke-width="11" />
-                <circle cx="50" cy="50" r="40" fill="none" stroke="rgba(0,0,0,0.5)" stroke-width="1" />
-                <path d="M 18 30 A 38 38 0 0 1 82 30" fill="none" stroke="rgba(232,196,104,0.25)" stroke-width="1.5" stroke-linecap="round" />
-                <rect x="10" y="47" width="30" height="6" rx="2" fill="url(#spokeGradientIdx)" />
-                <rect x="60" y="47" width="30" height="6" rx="2" fill="url(#spokeGradientIdx)" />
-                <rect x="47" y="60" width="6" height="30" rx="2" fill="url(#spokeGradientIdx)" />
-                <circle cx="50" cy="50" r="13" fill="url(#hubGradientIdx)" stroke="#a8854a" stroke-width="0.5" />
-                <ellipse cx="46" cy="46" rx="6" ry="4" fill="rgba(255,255,255,0.3)" />
-                <text x="50" y="55" text-anchor="middle" font-size="11" fill="#1a1212" font-weight="700" font-family="serif">✦</text>
-              </svg>
-            </div>
-            <div class="bus-console">
-              <div class="bus-console-label">Farmasi Express</div>
-              <div class="bus-console-screen">12:00 ✦ TBS</div>
-            </div>
-            <div class="bus-driver-cell">
-              <div class="bus-driver-seat"></div>
-              <div class="bus-driver-label">მძღოლი</div>
+          <!-- Headlight bulbs (on bus front grille) -->
+          <div class="bus-headlight bus-headlight-l"></div>
+          <div class="bus-headlight bus-headlight-r"></div>
+
+          <!-- Driver cockpit with windshield + dashboard -->
+          <div class="bus-driver-cabin">
+            <div class="bus-windshield"></div>
+
+            <div class="bus-dashboard">
+              <!-- LEFT: steering wheel + driver chair -->
+              <div class="bus-driver-area">
+                <svg class="bus-steering" viewBox="0 0 50 50">
+                  <circle cx="25" cy="25" r="22.5" class="rim-glow" stroke-width="1.5"/>
+                  <circle cx="25" cy="25" r="20" class="rim" stroke-width="5.5"/>
+                  <circle cx="25" cy="25" r="17.2" class="rim-inner" stroke-width="0.6"/>
+                  <line x1="25" y1="25" x2="9" y2="25" class="spoke" stroke-width="3.5"/>
+                  <line x1="25" y1="25" x2="41" y2="25" class="spoke" stroke-width="3.5"/>
+                  <line x1="25" y1="25" x2="25" y2="41" class="spoke" stroke-width="3.5"/>
+                  <circle cx="25" cy="25" r="6.8" class="hub" stroke-width="0.6"/>
+                  <text x="25" y="28.5" text-anchor="middle" font-size="8" font-weight="700" class="logo">F</text>
+                </svg>
+                <div class="bus-driver-seat"></div>
+              </div>
+
+              <!-- RIGHT: FARMASI dashboard screen -->
+              <div class="bus-console">
+                <div class="bus-console-label">FARMASI</div>
+                <div class="bus-console-screen">12:00 ✦ TBS</div>
+              </div>
             </div>
           </div>
+
+          <!-- Passenger cabin (54 seats inserted by buildBusGrid()) -->
+          <div class="bus-cabin">
+            <div class="bus-grid" id="busGridIdx"></div>
+          </div>
+
         </div>
-
-        <!-- Emergency exit -->
-        <div class="bus-emergency"></div>
-
-        <!-- Passenger cabin -->
-        <div class="bus-cabin">
-          <div class="bus-grid" id="busGridIdx"></div>
-        </div>
-
       </div>
+
 
     </div>
   </div>
