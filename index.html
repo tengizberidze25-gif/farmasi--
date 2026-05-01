@@ -5731,6 +5731,9 @@
     }
 
     function onSeatClick(num) {
+      // VIEW MODE: don't allow seat changes — user is just looking
+      if (window.__busViewMode) return;
+
       // Check if taken (defensive — shouldn't be clickable, but just in case)
       if (occupiedSeats.includes(num)) return;
 
@@ -6631,6 +6634,30 @@
     }
 
     /**
+     * Open the bus salon (seat picker modal) in VIEW mode — to show the user
+     * where their seat is, not for registration.
+     * The user's seat is highlighted gold; the save button becomes a close button.
+     */
+    function openBusSalonForViewing(ticket) {
+      if (!ticket || !ticket.seat_number) return;
+
+      // Set view mode flag so saveSelectedSeat / updateSaveSeatButton behave differently
+      window.__busViewMode = true;
+      window.__viewingTicket = ticket;
+
+      // Pre-select the user's seat (visualize it as gold)
+      selectedSeat = parseInt(ticket.seat_number);
+      updateSeatVisuals();
+
+      // Open the seat picker modal
+      const modal = document.getElementById("registerModal");
+      if (modal) {
+        modal.classList.add("open");
+        document.body.style.overflow = "hidden";
+      }
+    }
+
+    /**
      * After phone is verified, replace the modal content with a choice screen:
      * - "View ticket" → opens the ticket modal
      * - "Send SMS link" → sends SMS with the ticket link
@@ -6666,16 +6693,12 @@
 
       const viewBtn = document.getElementById("choiceViewBtn");
       if (viewBtn) viewBtn.addEventListener("click", () => {
-        closePhoneVerifyModal();
         const t = window.__verifiedTicket;
         if (!t) return;
-        showTicketModal(
-          { ticket_id: t.ticket_id, tier: t.tier, seat_number: t.seat_number },
-          {
-            first_name: t.first_name, last_name: t.last_name,
-            city_area_village: t.city, position: t.position, phone: t.phone
-          }
-        );
+        closePhoneVerifyModal();
+
+        // Open the bus salon and highlight this user's seat
+        openBusSalonForViewing(t);
       });
 
       const smsBtn = document.getElementById("choiceSmsBtn");
@@ -7476,6 +7499,14 @@
       if (!modal) return;
       modal.classList.remove("open");
       document.body.style.overflow = "";
+
+      // Reset view mode flag — modal closes either way
+      if (window.__busViewMode) {
+        window.__busViewMode = false;
+        window.__viewingTicket = null;
+        selectedSeat = null;
+        if (typeof updateSeatVisuals === "function") updateSeatVisuals();
+      }
     }
 
     /**
@@ -7484,6 +7515,16 @@
     function updateSaveSeatButton() {
       const saveBtn = document.getElementById("saveSeatBtn");
       if (!saveBtn) return;
+
+      // VIEW MODE: show seat info + close button
+      if (window.__busViewMode) {
+        saveBtn.disabled = false;
+        saveBtn.style.opacity = "1";
+        saveBtn.textContent = "✓ შენი ადგილი #" + (selectedSeat || "") + " — დახურვა";
+        return;
+      }
+
+      // REGISTRATION MODE
       if (selectedSeat) {
         saveBtn.disabled = false;
         saveBtn.style.opacity = "1";
@@ -7500,6 +7541,12 @@
      * and enable the main register button.
      */
     function saveSelectedSeat() {
+      // VIEW MODE: just close — user is only looking at where their seat is
+      if (window.__busViewMode) {
+        closeSeatPickerModal();
+        return;
+      }
+
       if (!selectedSeat) return;
 
       // Update inline reserve button: show selected seat
@@ -7509,7 +7556,7 @@
         reserveBtn.classList.add("has-seat");
       }
 
-      // Enable register button (visually + functionally)
+      // Enable register button
       const registerBtn = document.getElementById("registerBtn");
       if (registerBtn) {
         registerBtn.disabled = false;
@@ -7520,7 +7567,6 @@
       // Close modal
       closeSeatPickerModal();
 
-      // Scroll to register button so user sees it is now active
       setTimeout(() => {
         if (registerBtn) registerBtn.scrollIntoView({ behavior: "smooth", block: "center" });
       }, 200);
