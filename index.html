@@ -6366,6 +6366,8 @@
         refreshOccupiedSeats(data.occupiedSeats || []);
         updateStickyBarStats(data);
       } catch (e) {
+        console.error("loadData error — ეს არის რომელი ფუნქცია ვარდება:", e);
+        console.error("Stack trace:", e.stack);
         els.pageSubtitle.textContent = "მონაცემების ჩატვირთვა ვერ მოხერხდა";
       }
     }
