@@ -4744,6 +4744,31 @@
     .phone-verify-msg.error  { color: #ff8090; }
     .phone-verify-msg.loading { color: var(--gold); }
 
+  
+    /* === INLINE REGISTRATION CARD === */
+    .inline-register-card {
+      max-width: 420px;
+      margin: 14px auto 0;
+      padding: 22px 18px 18px;
+      background:
+        radial-gradient(ellipse at top, rgba(255, 96, 117, 0.10) 0%, transparent 60%),
+        var(--bg-card);
+      border: 1px solid var(--border-strong);
+      border-radius: 18px;
+      box-shadow: var(--shadow-soft), 0 0 60px rgba(232, 196, 104, 0.06);
+    }
+    .reserve-seat-btn {
+      width: 100%;
+      letter-spacing: 0.5px;
+      transition: all 0.25s ease;
+    }
+    .reserve-seat-btn.has-seat {
+      background: linear-gradient(135deg, rgba(232, 196, 104, 0.18), rgba(232, 196, 104, 0.08));
+      border-color: var(--gold);
+      color: var(--gold-light);
+    }
+    .reserve-seat-btn.has-seat::before { content: '✓ '; }
+
   </style>
 </head>
 <body>
@@ -4865,10 +4890,64 @@
       <button id="moreInfoBtn" type="button" style="display:none;" aria-hidden="true"></button>
     </div>
 
-    <!-- CTA SECTION: Opens register modal -->
+    <!-- INLINE REGISTRATION FORM -->
     <section class="cta-section">
-      <!-- Hidden register trigger (referenced by JS, click forwarded by sticky bar) -->
+      <!-- Hidden register trigger (referenced by JS, kept for compatibility) -->
       <button id="openRegisterBtn" type="button" style="display:none;" aria-hidden="true"></button>
+
+      <div class="inline-register-card">
+        <div class="modal-subtitle" style="text-align:center;">RSVP</div>
+        <div class="modal-title" style="text-align:center;margin-bottom:14px;">დაიკავე <span class="accent">ადგილი</span></div>
+
+        <form id="registerForm" class="form-compact">
+          <div class="form-row">
+            <div class="input-group">
+              <input class="input-field" type="text" id="first_name" name="first_name" placeholder="სახელი" required />
+            </div>
+            <div class="input-group">
+              <input class="input-field" type="text" id="last_name" name="last_name" placeholder="გვარი" required />
+            </div>
+          </div>
+          <div class="input-group">
+            <input class="input-field" type="text" id="city_area_village" name="city_area_village" placeholder="ქალაქი / რაიონი / სოფელი" />
+          </div>
+          <div class="input-group">
+            <select class="input-field" id="position" name="position" required>
+              <option value="" disabled selected>აირჩიე წოდება</option>
+              <option value="ინფლუენსერი">ინფლუენსერი</option>
+              <option value="მენეჯერი">მენეჯერი</option>
+              <option value="ბრინჯაოს მენეჯერი">ბრინჯაოს მენეჯერი</option>
+              <option value="ოქროს მენეჯერი">ოქროს მენეჯერი</option>
+              <option value="პლატინის მენეჯერი">პლატინის მენეჯერი</option>
+              <option value="ზურმუხტის მენეჯერი">ზურმუხტის მენეჯერი</option>
+              <option value="ბრილიანტის მენეჯერი">ბრილიანტის მენეჯერი</option>
+              <option value="ვიცე-პრეზიდენტი მენეჯერი">ვიცე-პრეზიდენტი მენეჯერი</option>
+              <option value="პრეზიდენტი მენეჯერი">პრეზიდენტი მენეჯერი</option>
+              <option value="ბოს მენეჯერი">ბოს მენეჯერი</option>
+              <option value="აღმასრულებელი ბოს-მენეჯერი">აღმასრულებელი ბოს-მენეჯერი</option>
+            </select>
+          </div>
+          <div class="input-group">
+            <input class="input-field" type="tel" id="phone" name="phone" placeholder="ტელეფონის ნომერი" required />
+          </div>
+
+          <!-- Hidden field that receives the seat number from the seat-picker modal -->
+          <input type="hidden" id="seat_number" name="seat_number" required />
+
+          <!-- Single CTA: Reserve seat (opens seat picker modal). Save in modal triggers registration. -->
+          <button type="button" class="btn btn-primary submit-btn reserve-seat-btn" id="reserveSeatBtn" style="margin-top:6px;font-size:15px;letter-spacing:0.5px;">
+            🚌 დაჯავშნე ადგილი
+          </button>
+
+          <!-- Hidden register submit button (used for form submission via JS) -->
+          <button class="btn btn-primary submit-btn" id="registerBtn" type="submit" style="display:none;" aria-hidden="true">
+            დარეგისტრირება
+          </button>
+        </form>
+
+        <div id="registerSuccess" class="msg success">რეგისტრაცია წარმატებით დასრულდა ✦</div>
+        <div id="registerError" class="msg error">დაფიქსირდა შეცდომა ⚠</div>
+      </div>
 
       <!-- MY TICKET CARD — shows after successful registration -->
       <div class="my-ticket-card" id="myTicketCard" style="display:none;">
@@ -4922,95 +5001,6 @@
       <div class="phone-verify-msg" id="phoneVerifyMsg"></div>
     </div>
   </div>
-
-    <!-- INLINE BUS SCHEMA (always visible) -->
-    <section class="bus-modal" id="busModal">
-      <div class="bus-modal-content">
-
-        <!-- Stats -->
-        <div class="bus-stats">
-          <div class="bus-stat">
-            <div class="bus-stat-value your" id="busYourSeat">#--</div>
-            <div class="bus-stat-label">შენი ადგილი</div>
-          </div>
-          <div class="bus-stat">
-            <div class="bus-stat-value taken" id="busTakenCount">0</div>
-            <div class="bus-stat-label">დაკავებული</div>
-          </div>
-          <div class="bus-stat">
-            <div class="bus-stat-value free" id="busFreeCount">54</div>
-            <div class="bus-stat-label">თავისუფალი</div>
-          </div>
-        </div>
-
-        <!-- Legend -->
-        <div class="bus-legend">
-          <div class="bus-legend-item">
-            <div class="bus-legend-dot bus-legend-free"></div>
-            <span>თავისუფალი</span>
-          </div>
-          <div class="bus-legend-item">
-            <div class="bus-legend-dot bus-legend-taken"></div>
-            <span>დაკავებული</span>
-          </div>
-          <div class="bus-legend-item">
-            <div class="bus-legend-dot bus-legend-yours"></div>
-            <span>შენი ადგილი</span>
-          </div>
-        </div>
-
-        <!-- Bus interior — Opera Burgundy luxury salon -->
-        <div class="bus-interior">
-
-          <!-- Side LED ambient strips -->
-          <div class="bus-led-strip bus-led-l"></div>
-          <div class="bus-led-strip bus-led-r"></div>
-
-          <!-- Bus shell with rounded gold-trimmed front -->
-          <div class="bus-shell">
-
-            <!-- Headlight beams -->
-            <div class="bus-beam bus-beam-l"></div>
-            <div class="bus-beam bus-beam-r"></div>
-
-            <!-- Headlight bulbs -->
-            <div class="bus-headlight bus-headlight-l"></div>
-            <div class="bus-headlight bus-headlight-r"></div>
-
-            <!-- Driver cockpit -->
-            <div class="bus-driver-cabin">
-              <div class="bus-windshield"></div>
-              <div class="bus-dashboard">
-                <div class="bus-driver-area">
-                  <svg class="bus-steering" viewBox="0 0 50 50">
-                    <circle cx="25" cy="25" r="22.5" class="rim-glow" stroke-width="1.5"/>
-                    <circle cx="25" cy="25" r="20" class="rim" stroke-width="5.5"/>
-                    <circle cx="25" cy="25" r="17.2" class="rim-inner" stroke-width="0.6"/>
-                    <line x1="25" y1="25" x2="9" y2="25" class="spoke" stroke-width="3.5"/>
-                    <line x1="25" y1="25" x2="41" y2="25" class="spoke" stroke-width="3.5"/>
-                    <line x1="25" y1="25" x2="25" y2="41" class="spoke" stroke-width="3.5"/>
-                    <circle cx="25" cy="25" r="6.8" class="hub" stroke-width="0.6"/>
-                    <text x="25" y="28.5" text-anchor="middle" font-size="8" font-weight="700" class="logo">F</text>
-                  </svg>
-                  <div class="bus-driver-seat"></div>
-                </div>
-                <div class="bus-console">
-                  <div class="bus-console-label">FARMASI</div>
-                  <div class="bus-console-screen">12:00 ✦ TBS</div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Passenger cabin -->
-            <div class="bus-cabin">
-              <div class="bus-grid" id="busGridIdx"></div>
-            </div>
-
-          </div>
-        </div>
-
-      </div>
-    </section>
     <!-- FAQ -->
     <div class="glass-card" id="faqCard">
       <div class="card-eyebrow">ხშირი კითხვები</div>
@@ -5091,6 +5081,7 @@
   </div>
 
   <!-- REGISTER MODAL -->
+  <!-- SEAT PICKER MODAL — opens on "🚌 დაჯავშნე ადგილი" click -->
   <div class="modal" id="registerModal">
     <div class="modal-content modal-compact">
       <button class="modal-close-x" id="closeRegisterX" type="button" aria-label="Close">×</button>
@@ -5106,43 +5097,8 @@
         <div class="modal-transport-dots" id="modalTransportDots"></div>
       </div>
 
-      <div class="modal-subtitle">RSVP</div>
-      <div class="modal-title">დაიკავე <span class="accent">ადგილი</span></div>
-
-      <form id="registerForm" class="form-compact">
-        <div class="form-row">
-          <div class="input-group">
-            <input class="input-field" type="text" id="first_name" name="first_name" placeholder="სახელი" required />
-          </div>
-          <div class="input-group">
-            <input class="input-field" type="text" id="last_name" name="last_name" placeholder="გვარი" required />
-          </div>
-        </div>
-
-        <div class="input-group">
-          <input class="input-field" type="text" id="city_area_village" name="city_area_village" placeholder="ქალაქი / რაიონი / სოფელი" />
-        </div>
-
-        <div class="input-group">
-          <select class="input-field" id="position" name="position" required>
-            <option value="" disabled selected>აირჩიე წოდება</option>
-            <option value="ინფლუენსერი">ინფლუენსერი</option>
-            <option value="მენეჯერი">მენეჯერი</option>
-            <option value="ბრინჯაოს მენეჯერი">ბრინჯაოს მენეჯერი</option>
-            <option value="ოქროს მენეჯერი">ოქროს მენეჯერი</option>
-            <option value="პლატინის მენეჯერი">პლატინის მენეჯერი</option>
-            <option value="ზურმუხტის მენეჯერი">ზურმუხტის მენეჯერი</option>
-            <option value="ბრილიანტის მენეჯერი">ბრილიანტის მენეჯერი</option>
-            <option value="ვიცე-პრეზიდენტი მენეჯერი">ვიცე-პრეზიდენტი მენეჯერი</option>
-            <option value="პრეზიდენტი მენეჯერი">პრეზიდენტი მენეჯერი</option>
-            <option value="ბოს მენეჯერი">ბოს მენეჯერი</option>
-            <option value="აღმასრულებელი ბოს-მენეჯერი">აღმასრულებელი ბოს-მენეჯერი</option>
-          </select>
-        </div>
-
-        <div class="input-group">
-          <input class="input-field" type="tel" id="phone" name="phone" placeholder="ტელეფონის ნომერი" required />
-        </div>
+      <div class="modal-subtitle">SEAT</div>
+      <div class="modal-title">აირჩიე <span class="accent">ადგილი</span></div>
 
         <!-- TRANSPORT INFO (inside register modal) -->
         <div class="modal-transport-info" id="modalTransportInfo" style="display:none;">
@@ -5240,15 +5196,12 @@
             </div>
           </div>
 
-          <input type="hidden" id="seat_number" name="seat_number" required />
         </div>
 
-
-        <button class="btn btn-primary submit-btn" id="registerBtn" type="submit">დარეგისტრირება</button>
-      </form>
-
-      <div id="registerSuccess" class="msg success">რეგისტრაცია წარმატებით დასრულდა ✦</div>
-      <div id="registerError" class="msg error">დაფიქსირდა შეცდომა ⚠</div>
+        <!-- Save seat button — closes modal and saves selection to inline form -->
+        <button type="button" class="btn btn-primary submit-btn" id="saveSeatBtn" disabled style="opacity:0.55;">
+          ✓ შენახვა
+        </button>
     </div>
   </div>
 
@@ -5797,6 +5750,11 @@
         els.seatNumberInput.value = "";
         els.seatSelectedDisplay.innerHTML =
           `<span class="seat-no-pick">აირჩიე ადგილი ⬇</span>`;
+      }
+
+      // Also update the save-seat button (in modal) if it exists
+      if (typeof updateSaveSeatButton === "function") {
+        updateSaveSeatButton();
       }
     }
 
@@ -7471,6 +7429,74 @@
       });
     }
 
+
+    // ============= SEAT PICKER MODAL FLOW =============
+    /**
+     * Open the seat picker modal (formerly the register modal).
+     */
+    function openSeatPickerModal() {
+      const modal = document.getElementById("registerModal");
+      if (!modal) return;
+      modal.classList.add("open");
+      document.body.style.overflow = "hidden";
+
+      // Enable/disable save button based on whether a seat is currently selected
+      updateSaveSeatButton();
+    }
+
+    function closeSeatPickerModal() {
+      const modal = document.getElementById("registerModal");
+      if (!modal) return;
+      modal.classList.remove("open");
+      document.body.style.overflow = "";
+    }
+
+    /**
+     * Update the "Save seat" button state — enabled only when a seat is selected.
+     */
+    function updateSaveSeatButton() {
+      const saveBtn = document.getElementById("saveSeatBtn");
+      if (!saveBtn) return;
+      if (selectedSeat) {
+        saveBtn.disabled = false;
+        saveBtn.style.opacity = "1";
+        saveBtn.textContent = "🎫 რეგისტრაცია — ადგილი #" + selectedSeat;
+      } else {
+        saveBtn.disabled = true;
+        saveBtn.style.opacity = "0.55";
+        saveBtn.textContent = "ჯერ აირჩიე ადგილი ⬆";
+      }
+    }
+
+    /**
+     * When user confirms their seat — close modal, update inline form button,
+     * and enable the main register button.
+     */
+    function saveSelectedSeat() {
+      if (!selectedSeat) return;
+
+      // Validate inline form fields are all filled
+      const form = document.getElementById("registerForm");
+      if (!form) return;
+      if (!form.checkValidity()) {
+        // Highlight required fields and stop
+        closeSeatPickerModal();
+        form.reportValidity();
+        return;
+      }
+
+      // Close the seat picker modal
+      closeSeatPickerModal();
+
+      // Trigger registration immediately
+      const registerBtn = document.getElementById("registerBtn");
+      if (registerBtn) registerBtn.click();
+    }
+
+    // Hook into seat clicks: every time selection changes, update the save button
+    // (We patch updateSeatVisuals to also call updateSaveSeatButton)
+    const __originalUpdateSeatVisuals = typeof updateSeatVisuals === "function" ? updateSeatVisuals : null;
+
     async function init() {
       spawnParticles(28);
       setupMusic();
@@ -7487,6 +7513,18 @@
       renderFAQ({});
       els.registerForm.addEventListener("submit", submitRegisterForm);
       els.cancelForm.addEventListener("submit", submitCancelForm);
+
+      // Inline form: "🚌 დაჯავშნე ადგილი" → opens seat picker modal
+      const reserveBtn = document.getElementById("reserveSeatBtn");
+      if (reserveBtn) reserveBtn.addEventListener("click", openSeatPickerModal);
+
+      // Modal: "✓ შენახვა" → saves seat and closes modal
+      const saveBtn = document.getElementById("saveSeatBtn");
+      if (saveBtn) saveBtn.addEventListener("click", saveSelectedSeat);
+
+      // Modal close (X) — uses existing closeRegisterX, but needs to close THIS modal
+      const closeRegX = document.getElementById("closeRegisterX");
+      if (closeRegX) closeRegX.addEventListener("click", closeSeatPickerModal);
       els.showMyTicketBtn.addEventListener("click", reopenMyTicket);
 
       // SMS link button (inside ticket modal)
