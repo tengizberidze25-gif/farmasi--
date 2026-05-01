@@ -6645,8 +6645,17 @@
       // Update state with current data
       updateTicketBusModalState();
 
-      // Scroll smoothly to the inline bus section
-      busModal.scrollIntoView({ behavior: "smooth", block: "start" });
+      // Close the ticket modal first (so user actually sees the bus)
+      const ticketModal = document.getElementById("ticketModal");
+      if (ticketModal) {
+        ticketModal.classList.remove("open");
+        document.body.style.overflow = "";
+      }
+
+      // Then scroll to the inline bus section after a short delay
+      setTimeout(() => {
+        busModal.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 100);
     }
 
     function closeTicketBusModal() {
