@@ -4692,6 +4692,58 @@
     }
 
 
+  
+    /* === PHONE VERIFICATION MODAL === */
+    .phone-verify-modal-content {
+      max-width: 400px;
+      padding: 28px 24px 22px;
+      text-align: center;
+    }
+    .phone-verify-icon {
+      font-size: 36px;
+      margin-bottom: 8px;
+    }
+    .phone-verify-title {
+      font-family: var(--display-font);
+      font-size: 22px;
+      color: var(--cream);
+      margin-bottom: 6px;
+    }
+    .phone-verify-sub {
+      font-family: var(--sans-font);
+      font-size: 12px;
+      color: var(--cream-dim);
+      margin-bottom: 18px;
+    }
+    .phone-verify-input {
+      width: 100%;
+      padding: 12px 14px;
+      background: rgba(0, 0, 0, 0.4);
+      border: 1.5px solid var(--border-strong);
+      border-radius: 10px;
+      color: var(--cream);
+      font-family: var(--sans-font);
+      font-size: 14px;
+      letter-spacing: 0.5px;
+      text-align: center;
+      margin-bottom: 12px;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .phone-verify-input:focus {
+      outline: none;
+      border-color: var(--gold);
+      background: rgba(0, 0, 0, 0.6);
+    }
+    .phone-verify-msg {
+      font-family: var(--sans-font);
+      font-size: 11.5px;
+      letter-spacing: 0.3px;
+      margin-top: 10px;
+      min-height: 16px;
+    }
+    .phone-verify-msg.error  { color: #ff8090; }
+    .phone-verify-msg.loading { color: var(--gold); }
+
   </style>
 </head>
 <body>
@@ -4843,6 +4895,33 @@
       <div class="card-eyebrow">სპიკერები</div>
       <div class="speakers-grid" id="speakersGrid"></div>
     </div>
+
+    
+  <!-- PHONE VERIFICATION MODAL — opens when user clicks "ნახვა" -->
+  <div class="modal" id="phoneVerifyModal">
+    <div class="modal-content phone-verify-modal-content">
+      <button class="modal-close" id="phoneVerifyClose" type="button" aria-label="Close">×</button>
+
+      <div class="phone-verify-icon">🎫</div>
+      <div class="phone-verify-title">ბილეთის ნახვა</div>
+      <div class="phone-verify-sub">შეიყვანე ტელეფონი, რომელიც რეგისტრაციისას გამოიყენე</div>
+
+      <input
+        type="tel"
+        id="phoneVerifyInput"
+        class="phone-verify-input"
+        placeholder="599 12 34 56"
+        autocomplete="tel"
+        inputmode="numeric"
+      />
+
+      <button class="btn btn-primary submit-btn" id="phoneVerifyBtn" type="button" style="width:100%;">
+        ბილეთის ნახვა →
+      </button>
+
+      <div class="phone-verify-msg" id="phoneVerifyMsg"></div>
+    </div>
+  </div>
 
     <!-- INLINE BUS SCHEMA (always visible) -->
     <section class="bus-modal" id="busModal">
@@ -5253,7 +5332,13 @@
         <button class="share-btn" id="shareCopy" type="button" title="Copy link">🔗</button>
       </div>
 
-      <button class="btn btn-ghost" id="closeTicketBtn" type="button" style="margin-top:16px;">დახურვა</button>
+      <!-- Send link to your own phone via SMS -->
+      <button class="btn btn-ghost" id="sendLinkSmsBtn" type="button" style="margin-top:16px;">
+        📲 გამომიგზავნე SMS-ით ლინკი
+      </button>
+      <div class="phone-verify-msg" id="sendLinkSmsMsg" style="margin-top:6px;"></div>
+
+      <button class="btn btn-ghost" id="closeTicketBtn" type="button" style="margin-top:10px;">დახურვა</button>
 
       <!-- CANCEL REGISTRATION (cinematic, at bottom) -->
       <div class="ticket-cancel-section">
@@ -5956,6 +6041,61 @@
         `<span class="tier-pill ${cls}">${icon} ${text}</span>`;
     }
 
+    /**
+     * Send the ticket link to the user's own phone via SMS.
+     * The phone is taken from the currently displayed ticket (which was just verified).
+     */
+    async function sendTicketLinkSMS() {
+      const btn = document.getElementById("sendLinkSmsBtn");
+      const msg = document.getElementById("sendLinkSmsMsg");
+      if (!btn || !msg || !currentDisplayedTicket) return;
+
+      const phone = currentDisplayedTicket.phone;
+      const ticketId = currentDisplayedTicket.ticket_id;
+      if (!phone || !ticketId) {
+        msg.textContent = "ბილეთის ინფორმაცია არასრულია";
+        msg.className = "phone-verify-msg error";
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = "იგზავნება...";
+      msg.textContent = "";
+      msg.className = "phone-verify-msg loading";
+
+      try {
+        const url = API_URL +
+          "?action=sendTicketLink" +
+          "&phone=" + encodeURIComponent(phone) +
+          "&id=" + encodeURIComponent(ticketId);
+        const res = await fetch(url);
+        const data = await res.json();
+
+        if (data && data.ok) {
+          msg.textContent = "✓ SMS გაიგზავნა — შეამოწმე ტელეფონი";
+          msg.className = "phone-verify-msg loading";
+          msg.style.color = "#6dd49a";
+          btn.textContent = "✓ გაგზავნილია";
+          setTimeout(() => {
+            btn.textContent = "📲 გამომიგზავნე SMS-ით ლინკი";
+            btn.disabled = false;
+            msg.textContent = "";
+            msg.style.color = "";
+          }, 5000);
+        } else {
+          msg.textContent = (data && data.error) || "ვერ გაიგზავნა — სცადე თავიდან";
+          msg.className = "phone-verify-msg error";
+          btn.disabled = false;
+          btn.textContent = "📲 გამომიგზავნე SMS-ით ლინკი";
+        }
+      } catch (e) {
+        msg.textContent = "ქსელის შეცდომა";
+        msg.className = "phone-verify-msg error";
+        btn.disabled = false;
+        btn.textContent = "📲 გამომიგზავნე SMS-ით ლინკი";
+      }
+    }
+
     function animateNumber(el, target) {
       const current = parseInt(el.textContent) || 0;
       if (current === target) return;
@@ -6434,25 +6574,97 @@
     }
 
     function reopenMyTicket() {
-      const t = loadMyTicket();
-      if (!t) return;
-      const formData = {
-        first_name: t.first_name,
-        last_name: t.last_name,
-        city_area_village: t.city,
-        position: t.position,
-        phone: t.phone
-      };
-      const registrationData = {
-        ticket_id: t.ticket_id,
-        tier: t.tier,
-        seat_number: t.seat_number
-      };
-      showTicketModal(registrationData, formData);
+      // Open phone verification modal first — user must enter phone to view ticket
+      const modal = document.getElementById("phoneVerifyModal");
+      const input = document.getElementById("phoneVerifyInput");
+      const msg = document.getElementById("phoneVerifyMsg");
+      if (!modal) return;
+
+      // Reset modal state
+      if (input) input.value = "";
+      if (msg) { msg.textContent = ""; msg.className = "phone-verify-msg"; }
+
+      modal.classList.add("open");
+      document.body.style.overflow = "hidden";
+
+      // Focus input after small delay
+      setTimeout(() => { if (input) input.focus(); }, 200);
+    }
+
+    function closePhoneVerifyModal() {
+      const modal = document.getElementById("phoneVerifyModal");
+      if (!modal) return;
+      modal.classList.remove("open");
+      document.body.style.overflow = "";
+    }
+
+    async function verifyPhoneAndOpenTicket() {
+      const input = document.getElementById("phoneVerifyInput");
+      const msg = document.getElementById("phoneVerifyMsg");
+      const btn = document.getElementById("phoneVerifyBtn");
+      if (!input || !msg || !btn) return;
+
+      const phone = input.value.trim();
+
+      // Basic validation
+      const digits = phone.replace(/\D/g, "");
+      if (digits.length < 9) {
+        msg.textContent = "შეიყვანე სრული ტელეფონის ნომერი";
+        msg.className = "phone-verify-msg error";
+        return;
+      }
+
+      // Show loading
+      msg.textContent = "ვამოწმებ...";
+      msg.className = "phone-verify-msg loading";
+      btn.disabled = true;
+      btn.textContent = "ვამოწმებ...";
+
+      try {
+        const url = API_URL + "?action=verifyTicketByPhone&phone=" + encodeURIComponent(phone);
+        const res = await fetch(url);
+        const data = await res.json();
+
+        if (data && data.ok && data.ticket) {
+          // Found! Close verify modal, show ticket
+          closePhoneVerifyModal();
+
+          const formData = {
+            first_name: data.ticket.first_name,
+            last_name: data.ticket.last_name,
+            city_area_village: data.ticket.city,
+            position: data.ticket.position,
+            phone: data.ticket.phone
+          };
+          const registrationData = {
+            ticket_id: data.ticket.ticket_id,
+            tier: data.ticket.tier,
+            seat_number: data.ticket.seat_number
+          };
+          showTicketModal(registrationData, formData);
+        } else {
+          msg.textContent = (data && data.error) || "ამ ტელეფონით ბილეთი ვერ მოიძებნა";
+          msg.className = "phone-verify-msg error";
+        }
+      } catch (e) {
+        msg.textContent = "ქსელის შეცდომა — სცადე თავიდან";
+        msg.className = "phone-verify-msg error";
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "ბილეთის ნახვა →";
+      }
     }
 
     // ============= TICKET MODAL =============
+    let currentDisplayedTicket = null;
+
     function showTicketModal(registrationData, formData) {
+      // Track currently displayed ticket so SMS-link button can access it
+      currentDisplayedTicket = {
+        ticket_id: (registrationData && registrationData.ticket_id) || "",
+        phone: (formData && formData.phone) || ""
+      };
+
       // Determine tier display
       const tier = (registrationData && registrationData.tier) || "Standard";
       const ticketIdStr = (registrationData && registrationData.ticket_id) ||
@@ -7140,6 +7352,34 @@
       els.registerForm.addEventListener("submit", submitRegisterForm);
       els.cancelForm.addEventListener("submit", submitCancelForm);
       els.showMyTicketBtn.addEventListener("click", reopenMyTicket);
+
+      // SMS link button (inside ticket modal)
+      const sendLinkSmsBtn = document.getElementById("sendLinkSmsBtn");
+      if (sendLinkSmsBtn) {
+        sendLinkSmsBtn.addEventListener("click", sendTicketLinkSMS);
+      }
+
+      // Phone verification modal handlers
+      const phoneVerifyClose = document.getElementById("phoneVerifyClose");
+      const phoneVerifyBtn = document.getElementById("phoneVerifyBtn");
+      const phoneVerifyInput = document.getElementById("phoneVerifyInput");
+      const phoneVerifyModal = document.getElementById("phoneVerifyModal");
+
+      if (phoneVerifyClose) phoneVerifyClose.addEventListener("click", closePhoneVerifyModal);
+      if (phoneVerifyBtn) phoneVerifyBtn.addEventListener("click", verifyPhoneAndOpenTicket);
+      if (phoneVerifyInput) {
+        phoneVerifyInput.addEventListener("keydown", (e) => {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            verifyPhoneAndOpenTicket();
+          }
+        });
+      }
+      if (phoneVerifyModal) {
+        phoneVerifyModal.addEventListener("click", (e) => {
+          if (e.target === phoneVerifyModal) closePhoneVerifyModal();
+        });
+      }
       if (els.clearMyTicketBtn) {
         els.clearMyTicketBtn.addEventListener("click", () => {
           if (confirm("გნებავს ბილეთის ლოკალური წაშლა?\n(ეს მხოლოდ ამ ბრაუზერიდან წაშლის ნახვის შესაძლებლობას — Sheet-ში მონაცემი დარჩება)")) {
