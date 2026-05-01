@@ -6894,13 +6894,18 @@
         grid.appendChild(createTicketBusSeat(seatNum++));
       }
 
-      // Rear bench — 6 seats
+      // Rear bench — 6 seats — appended to bus-cabin (NOT to grid, which would clip it)
       const rear = document.createElement("div");
       rear.className = "bus-rear-row";
       for (let i = 0; i < 6; i++) {
         rear.appendChild(createTicketBusSeat(seatNum++));
       }
-      grid.appendChild(rear);
+      // Append outside the grid so it gets full width of bus-cabin
+      const cabin = grid.parentElement;
+      // Remove any previous rear-row to avoid duplicates on re-build
+      const oldRear = cabin.querySelector(".bus-rear-row");
+      if (oldRear) oldRear.remove();
+      cabin.appendChild(rear);
     }
 
     function createTicketBusSeat(num) {
@@ -6918,11 +6923,12 @@
       // Use occupied seats from latest loaded data
       const occupied = Array.isArray(occupiedSeats) ? occupiedSeats : [];
 
-      // Update each seat
+      // Update each seat (both main grid AND rear bench, which is sibling now)
       const grid = document.getElementById("busGridIdx");
       if (!grid) return;
+      const cabin = grid.parentElement;
 
-      const seats = grid.querySelectorAll(".bus-seat");
+      const seats = cabin.querySelectorAll(".bus-seat");
       let takenCount = 0;
       seats.forEach(seat => {
         const num = parseInt(seat.dataset.seat);
