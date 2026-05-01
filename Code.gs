@@ -18,7 +18,9 @@ const SHEET_NAME = 'Registrations';
 const CONFIG_SHEET_NAME = 'Config';
 
 // 🤖 Telegram Bot (არჩევითი)
-const TELEGRAM_BOT_TOKEN = '';
+// ⚠️ Token-ი Script Properties-ში დააყენე გასაღებით: TELEGRAM_BOT_TOKEN
+// (Project Settings → Script Properties → Add → TELEGRAM_BOT_TOKEN = 1234567890:AAEhBO...)
+// const TELEGRAM_BOT_TOKEN-ს ღია კოდში აღარ ვიყენებთ — GitHub-ზე ატვირთვისას არ გაჟონავს.
 
 // 📲 SMS settings (bulksms.ge / POSTA GUVERCINI)
 // PRIVATE_KEY and PUBLIC_KEY must be set in Apps Script → Project Settings → Script Properties
@@ -367,14 +369,22 @@ function getNextTier(currentCount) {
 }
 
 function notifyTelegram(config, data) {
-  if (!TELEGRAM_BOT_TOKEN) return;
+  // Read token from Script Properties (secure — won't leak via GitHub)
+  const token = PropertiesService.getScriptProperties().getProperty('TELEGRAM_BOT_TOKEN');
+  if (!token) {
+    Logger.log('TELEGRAM_BOT_TOKEN not set in Script Properties — Telegram skipped');
+    return;
+  }
 
   const chatIds = String(config.admin_chat_ids || '')
     .split(',')
     .map(s => s.trim())
     .filter(Boolean);
 
-  if (!chatIds.length) return;
+  if (!chatIds.length) {
+    Logger.log('No admin_chat_ids in Config — Telegram skipped');
+    return;
+  }
 
   const tierEmoji = data.tier === 'Early Bird' ? '🥇' : data.tier === 'VIP' ? '✨' : '🎫';
 
@@ -388,18 +398,29 @@ function notifyTelegram(config, data) {
     '💼 ' + (data.position || '-') + '\n' +
     '📱 ' + (data.phone || '');
 
+  let sentCount = 0;
   chatIds.forEach(chatId => {
     try {
-      UrlFetchApp.fetch(
-        'https://api.telegram.org/bot' + TELEGRAM_BOT_TOKEN + '/sendMessage',
+      const response = UrlFetchApp.fetch(
+        'https://api.telegram.org/bot' + token + '/sendMessage',
         {
           method: 'post',
           payload: { chat_id: chatId, text: text },
           muteHttpExceptions: true
         }
       );
-    } catch (e) {}
+      const code = response.getResponseCode();
+      if (code === 200) {
+        sentCount++;
+      } else {
+        Logger.log('Telegram error for chat ' + chatId + ': HTTP ' + code + ' — ' + response.getContentText());
+      }
+    } catch (e) {
+      Logger.log('Telegram exception for chat ' + chatId + ': ' + e);
+    }
   });
+
+  Logger.log('Telegram sent to ' + sentCount + '/' + chatIds.length + ' admins');
 }
 
 // =================== GET TICKET BY ID ===================
@@ -507,8 +528,11 @@ function composeTicketSMS(data) {
                   : data.tier === 'VIP' ? '💎'
                   : '✦';
 
+  // Build full name: "First Last" or just "First" if last_name is empty
+  const fullName = String((data.first_name || '') + ' ' + (data.last_name || '')).trim();
+
   let text = 'Farmasi Masterclass 2026\n';
-  text += tierEmoji + ' ' + (data.first_name || '') + '\n';
+  text += tierEmoji + ' ' + fullName + '\n';
   text += '🎫 ' + (data.ticket_id || '') + '\n';
   text += '🪑 ადგილი #' + (data.seat || '-') + '\n';
 
@@ -828,7 +852,7 @@ function sendReminderDayBefore() {
   try {
     const ss = SpreadsheetApp.getActiveSpreadsheet();
     const regSheet = ss.getSheetByName(SHEET_NAME);
-    const configSheet = ss.getSheetByName(CONFIG_SHEET);
+    const configSheet = ss.getSheetByName(CONFIG_SHEET_NAME);
 
     if (!regSheet || !configSheet) {
       Logger.log('Sheets not found');
@@ -920,7 +944,7 @@ function sendReminderBusDeparture() {
   try {
     const ss = SpreadsheetApp.getActiveSpreadsheet();
     const regSheet = ss.getSheetByName(SHEET_NAME);
-    const configSheet = ss.getSheetByName(CONFIG_SHEET);
+    const configSheet = ss.getSheetByName(CONFIG_SHEET_NAME);
 
     if (!regSheet || !configSheet) {
       Logger.log('Sheets not found');
@@ -1013,7 +1037,7 @@ function sendReminderBusDeparture() {
 // =================================================================
 function testAdminNotification() {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
-  const config = readConfig(ss.getSheetByName(CONFIG_SHEET));
+  const config = readConfig(ss.getSheetByName(CONFIG_SHEET_NAME));
 
   notifyAdmins(config, {
     first_name: 'ტესტ',
@@ -1027,6 +1051,35 @@ function testAdminNotification() {
     registration_number: 1
   });
   Logger.log('Test admin notification sent');
+}
+
+/**
+ * Test Telegram notification.
+ * Run this after setting TELEGRAM_BOT_TOKEN in Script Properties
+ * and admin_chat_ids in Config sheet.
+ *
+ * Apps Script Editor → ფუნქცია dropdown → testTelegram → ▶ Run
+ * შემდეგ ნახე Executions ან Logs შედეგი.
+ */
+function testTelegram() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const config = readConfig(ss.getSheetByName(CONFIG_SHEET_NAME));
+
+  Logger.log('admin_chat_ids from Config: ' + (config.admin_chat_ids || '(empty)'));
+  const token = PropertiesService.getScriptProperties().getProperty('TELEGRAM_BOT_TOKEN');
+  Logger.log('TELEGRAM_BOT_TOKEN in Script Properties: ' + (token ? '✅ set (' + token.length + ' chars)' : '❌ MISSING'));
+
+  notifyTelegram(config, {
+    first_name: 'ტესტ',
+    last_name: 'ტესტიძე',
+    phone: '599123456',
+    city: 'თბილისი',
+    position: 'ინფლუენსერი',
+    ticket_id: 'FM-2026-99999',
+    tier: 'Early Bird',
+    seat: 1
+  });
+  Logger.log('Test Telegram notification finished — check your Telegram chat');
 }
 
 function testDayReminder() {
