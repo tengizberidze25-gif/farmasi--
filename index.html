@@ -5167,6 +5167,66 @@
     /* === STICKY BAR DISABLED — user requested removal === */
     .sticky-register-bar { display: none !important; }
 
+  
+    /* === ANIMATED ARROWS ON RESERVE + REGISTER BUTTONS === */
+    /* Bus icon does a gentle bounce; arrow nudges right */
+
+    @keyframes nudge-arrow-right {
+      0%, 75%, 100% { transform: translateX(0); opacity: 1; }
+      40% { transform: translateX(6px); opacity: 0.85; }
+    }
+
+    @keyframes bus-bounce {
+      0%, 70%, 100% { transform: translateY(0); }
+      35% { transform: translateY(-3px); }
+    }
+
+    /* Reserve seat button — flex layout to align icon + text + arrow */
+    #reserveSeatBtn {
+      display: inline-flex !important;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+    #reserveSeatBtn .rsb-icon {
+      display: inline-block;
+      animation: bus-bounce 2.2s ease-in-out infinite;
+    }
+    #reserveSeatBtn .rsb-arrow {
+      display: inline-block;
+      animation: nudge-arrow-right 1.8s ease-in-out infinite;
+      font-weight: 600;
+    }
+
+    /* Register button — text + arrow */
+    #registerBtn {
+      display: inline-flex !important;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+    #registerBtn .rgb-arrow {
+      display: inline-block;
+      animation: nudge-arrow-right 1.5s ease-in-out infinite;
+      font-weight: 700;
+    }
+    /* When register is disabled, no point animating */
+    #registerBtn:disabled .rgb-arrow {
+      animation: none;
+      opacity: 0.6;
+    }
+
+    /* When user has selected a seat, swap reserve button label entirely */
+    #reserveSeatBtn.has-seat .rsb-icon { display: none; }
+    #reserveSeatBtn.has-seat .rsb-arrow { animation: none; }
+
+    /* Reduce motion: respect users who prefer no animations */
+    @media (prefers-reduced-motion: reduce) {
+      #reserveSeatBtn .rsb-icon,
+      #reserveSeatBtn .rsb-arrow,
+      #registerBtn .rgb-arrow { animation: none !important; }
+    }
+
   </style>
 </head>
 <body>
@@ -5339,12 +5399,15 @@
 
           <!-- Step 1: Reserve seat (opens seat picker modal) -->
           <button type="button" class="btn btn-ghost reserve-seat-btn" id="reserveSeatBtn" style="margin-top:6px;width:100%;">
-            🚌 დაჯავშნე ადგილი
+            <span class="rsb-icon">🚌</span>
+            <span class="rsb-label">დაჯავშნე ადგილი</span>
+            <span class="rsb-arrow">→</span>
           </button>
 
           <!-- Step 2: Register (only enabled after a seat is chosen) -->
           <button class="btn btn-primary submit-btn" id="registerBtn" type="submit" disabled style="margin-top:10px;opacity:0.5;cursor:not-allowed;">
-            დარეგისტრირება
+            <span class="rgb-label">დარეგისტრირება</span>
+            <span class="rgb-arrow">→</span>
           </button>
         </form>
 
@@ -8025,7 +8088,8 @@
       // Update inline reserve button: show selected seat
       const reserveBtn = document.getElementById("reserveSeatBtn");
       if (reserveBtn) {
-        reserveBtn.textContent = "✓ ადგილი #" + selectedSeat + " — შეცვლა";
+        reserveBtn.innerHTML =
+          '<span class="rsb-label">✓ ადგილი #' + selectedSeat + ' — შეცვლა</span>';
         reserveBtn.classList.add("has-seat");
       }
 
