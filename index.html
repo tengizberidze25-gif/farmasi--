@@ -4519,7 +4519,8 @@
       display: grid;
       grid-template-columns: 44px 44px 20px 44px 44px;
       gap: 8px;
-      justify-content: center;
+      width: fit-content;
+      margin: 0 auto;
     }
 
     .bus-aisle { display: block; }
@@ -4528,8 +4529,8 @@
       display: grid;
       grid-template-columns: repeat(6, 44px);
       gap: 6px;
-      justify-content: center;
-      margin-top: 10px;
+      width: fit-content;
+      margin: 10px auto 0 auto;
       padding-top: 10px;
       border-top: 1px dashed rgba(232, 196, 104, 0.25);
     }
@@ -4683,8 +4684,8 @@
       .bus-modal-content { padding: 16px 12px 20px; }
       .bus-interior { padding: 80px 10px 20px; }
       .bus-shell { width: 320px; padding: 12px 14px; }
-      .bus-grid { grid-template-columns: 38px 38px 18px 38px 38px; gap: 6px; }
-      .bus-rear-row { grid-template-columns: repeat(6, 38px); gap: 5px; }
+      .bus-grid { grid-template-columns: 38px 38px 18px 38px 38px; gap: 6px; width: fit-content; margin: 0 auto; }
+      .bus-rear-row { grid-template-columns: repeat(6, 38px); gap: 5px; width: fit-content; margin: 10px auto 0 auto; }
       .bus-seat { min-height: 32px; font-size: 10px; }
       .bus-headlight-l { left: 36px; }
       .bus-headlight-r { right: 36px; }
