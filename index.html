@@ -4786,6 +4786,33 @@
       padding: 0 !important;
     }
 
+  
+    /* === STICKY SAVE BUTTON IN SEAT PICKER MODAL === */
+    /* Make modal content a flex column so save button can stick to bottom */
+    #registerModal .modal-content {
+      display: flex !important;
+      flex-direction: column !important;
+      max-height: 92vh !important;
+      padding-bottom: 0 !important;
+    }
+    /* The bus area scrolls if too tall */
+    #registerModal .seat-picker-section {
+      flex: 1 1 auto !important;
+      overflow-y: auto !important;
+      overflow-x: hidden !important;
+      -webkit-overflow-scrolling: touch !important;
+      padding-bottom: 12px !important;
+    }
+    /* Save button is always pinned to the bottom of the modal */
+    #registerModal #saveSeatBtn {
+      flex-shrink: 0 !important;
+      margin: 12px 0 0 0 !important;
+      position: sticky !important;
+      bottom: 0 !important;
+      z-index: 5 !important;
+      box-shadow: 0 -8px 20px rgba(0, 0, 0, 0.6) !important;
+    }
+
   </style>
 </head>
 <body>
