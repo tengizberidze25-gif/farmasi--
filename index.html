@@ -4306,7 +4306,7 @@
        ============================================================================ */
     .bus-shell {
       position: relative;
-      width: 280px;
+      width: 360px;
       margin: 0 auto;
       background:
         repeating-linear-gradient(0deg,
@@ -4517,8 +4517,8 @@
 
     .bus-grid {
       display: grid;
-      grid-template-columns: 32px 32px 14px 32px 32px;
-      gap: 6px;
+      grid-template-columns: 44px 44px 20px 44px 44px;
+      gap: 8px;
       justify-content: center;
     }
 
@@ -4526,11 +4526,11 @@
 
     .bus-rear-row {
       display: grid;
-      grid-template-columns: repeat(6, 32px);
-      gap: 5px;
+      grid-template-columns: repeat(6, 44px);
+      gap: 6px;
       justify-content: center;
-      margin-top: 8px;
-      padding-top: 8px;
+      margin-top: 10px;
+      padding-top: 10px;
       border-top: 1px dashed rgba(232, 196, 104, 0.25);
     }
 
@@ -4539,13 +4539,13 @@
        ============================================================================ */
     .bus-seat {
       position: relative;
-      aspect-ratio: 1 / 1.2;
-      min-height: 26px;
+      aspect-ratio: 1 / 1.15;
+      min-height: 36px;
       display: flex;
       align-items: center;
       justify-content: center;
       font-family: var(--display-font);
-      font-size: 9px;
+      font-size: 11px;
       font-weight: 600;
       border-radius: 7px 7px 4px 4px;
       overflow: hidden;
@@ -4682,10 +4682,10 @@
     @media (max-width: 380px) {
       .bus-modal-content { padding: 16px 12px 20px; }
       .bus-interior { padding: 80px 10px 20px; }
-      .bus-shell { width: 250px; padding: 12px 14px; }
-      .bus-grid { grid-template-columns: 28px 28px 12px 28px 28px; gap: 5px; }
-      .bus-rear-row { grid-template-columns: repeat(6, 28px); gap: 4px; }
-      .bus-seat { min-height: 22px; font-size: 7.5px; }
+      .bus-shell { width: 320px; padding: 12px 14px; }
+      .bus-grid { grid-template-columns: 38px 38px 18px 38px 38px; gap: 6px; }
+      .bus-rear-row { grid-template-columns: repeat(6, 38px); gap: 5px; }
+      .bus-seat { min-height: 32px; font-size: 10px; }
       .bus-headlight-l { left: 36px; }
       .bus-headlight-r { right: 36px; }
       .bus-stat-value { font-size: 17px; }
