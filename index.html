@@ -7283,14 +7283,36 @@
         els.scheduleList.innerHTML = `<div class="schedule-item"><div class="schedule-text">პროგრამა მალე დაემატება.</div></div>`;
         return;
       }
-      const lines = raw.split("\n").map(x => x.trim()).filter(Boolean);
+
+      // Split by either:
+      //   - newlines (Alt+Enter inside Google Sheets cell)
+      //   - "|" character (when user separates entries inline with pipes)
+      // Both work transparently — pick whichever is easier to type.
+      const lines = raw
+        .split(/[\n|]/)
+        .map(x => x.trim())
+        .filter(Boolean);
+
       lines.forEach(line => {
+        // Try to extract a leading time. Supported formats:
+        //   "12:30 - text"       (dash separator)
+        //   "12:30: text"        (colon separator)
+        //   "12:30 text"         (just space)
+        //   "12:30-14:00 text"   (time range, dash or colon after)
+        //   "12:30-14:00: text"
+        const match = line.match(/^(\d{1,2}:\d{2}(?:\s*-\s*\d{1,2}:\d{2})?)\s*[-:]?\s*(.+)$/);
+
         const item = document.createElement("div");
         item.className = "schedule-item";
-        const match = line.match(/^(\d{1,2}:\d{2})\s*-\s*(.+)$/);
-        if (match) {
-          item.innerHTML = `<div class="schedule-time">${match[1]}</div><div class="schedule-text">${match[2]}</div>`;
+
+        if (match && match[2] && match[2].trim()) {
+          item.innerHTML = `<div class="schedule-time">${match[1]}</div><div class="schedule-text">${match[2].trim()}</div>`;
+        } else if (/^\d{1,2}:\d{2}(\s*-\s*\d{1,2}:\d{2})?$/.test(line)) {
+          // Line is JUST a time with no description (like "11:00") — skip it,
+          // probably a typo or stray entry in the Sheet
+          return;
         } else {
+          // Plain text line, no time
           item.innerHTML = `<div class="schedule-text">${line}</div>`;
         }
         els.scheduleList.appendChild(item);
