@@ -1890,9 +1890,17 @@
       els.tierPill.textContent = tierIcon + " " + tier;
 
       // QR code
-      const qrText = ticket.ticket_id + "|" +
-        (ticket.first_name || "") + " " + (ticket.last_name || "") + "|" +
-        (ticket.phone || "");
+      // Build QR text — always include ticket ID as primary identifier.
+      // Add name + phone only if they're present.
+      const fn = String(ticket.first_name || "").trim();
+      const ln = String(ticket.last_name || "").trim();
+      const ph = String(ticket.phone || "").trim();
+      const fullName = (fn + " " + ln).trim();
+
+      let qrText = ticket.ticket_id;
+      if (fullName) qrText += "|" + fullName;
+      if (ph) qrText += "|" + ph;
+
       els.qrWrap.innerHTML = "";
       try {
         if (typeof QRCode !== "undefined") {
@@ -1904,9 +1912,12 @@
             colorLight: "#ffffff",
             correctLevel: QRCode.CorrectLevel.H
           });
+        } else {
+          // QRCode library failed to load — show ticket ID as plain text fallback
+          els.qrWrap.innerHTML = '<div style="font-family:monospace; padding:30px; color:#1a1212; font-weight:700; font-size:18px;">' + ticket.ticket_id + '</div>';
         }
       } catch (e) {
-        els.qrWrap.innerHTML = '<div style="font-family:monospace; padding:30px; color:#1a1212;">' + ticket.ticket_id + '</div>';
+        els.qrWrap.innerHTML = '<div style="font-family:monospace; padding:30px; color:#1a1212; font-weight:700; font-size:18px;">' + ticket.ticket_id + '</div>';
       }
 
       // ID + name + meta

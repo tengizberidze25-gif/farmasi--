@@ -8027,17 +8027,33 @@
       els.qrWrap.innerHTML = "";
       try {
         if (typeof QRCode !== "undefined") {
+          // Build QR text — always include ticket ID as primary identifier.
+          // Add name + phone only if they're present (may be missing when modal
+          // is opened via "ნახვა" → phone lookup before formData is fully populated).
+          const fn = (formData && formData.first_name) ? String(formData.first_name).trim() : "";
+          const ln = (formData && formData.last_name) ? String(formData.last_name).trim() : "";
+          const ph = (formData && formData.phone) ? String(formData.phone).trim() : "";
+          const fullName = (fn + " " + ln).trim();
+
+          let qrText = ticketIdStr;
+          if (fullName) qrText += "|" + fullName;
+          if (ph) qrText += "|" + ph;
+
           new QRCode(els.qrWrap, {
-            text: ticketIdStr + "|" + formData.first_name + " " + formData.last_name + "|" + formData.phone,
+            text: qrText,
             width: 140,
             height: 140,
             colorDark: "#1a1212",
             colorLight: "#ffffff",
             correctLevel: QRCode.CorrectLevel.H
           });
+        } else {
+          // QRCode library failed to load — show ticket ID as plain text fallback
+          els.qrWrap.innerHTML = `<div style="font-family:monospace; padding:30px; color:#1a1212; font-weight:700; font-size:18px;">${ticketIdStr}</div>`;
         }
       } catch (e) {
-        els.qrWrap.innerHTML = `<div style="font-family:monospace; padding:30px; color:#1a1212;">${ticketIdStr}</div>`;
+        // Any error — show ticket ID as plain text fallback
+        els.qrWrap.innerHTML = `<div style="font-family:monospace; padding:30px; color:#1a1212; font-weight:700; font-size:18px;">${ticketIdStr}</div>`;
       }
 
       // Build calendar URLs
