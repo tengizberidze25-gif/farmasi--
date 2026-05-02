@@ -255,22 +255,12 @@
       position: relative;
       z-index: 1;
       /*
-        This filter recipe converts dark Farmasi logo to luxe cream/white
-        on cinematic dark backgrounds — the "Apple Event" treatment.
-        - brightness(0): collapses the dark text to pure black
-        - invert(1): black → white
-        - sepia(0.25): adds warm cream undertone (luxury, not sterile)
-        - saturate(2.2) + hue-rotate(-10deg): nudges toward gold
-        - drop-shadow: refined ambient glow
+        Logo already has correct colors (pink F + white FARMASI on transparent/dark bg).
+        We only add a subtle ambient glow — no color manipulation.
       */
       filter:
-        brightness(0)
-        invert(1)
-        sepia(0.35)
-        saturate(2.4)
-        hue-rotate(-12deg)
-        drop-shadow(0 4px 20px rgba(232, 196, 104, 0.4))
-        drop-shadow(0 0 32px rgba(255, 245, 214, 0.15));
+        drop-shadow(0 4px 20px rgba(232, 196, 104, 0.35))
+        drop-shadow(0 0 32px rgba(255, 245, 214, 0.12));
       transform-style: preserve-3d;
       animation: logoFloat 6s ease-in-out infinite;
     }
@@ -2513,13 +2503,15 @@
       height: auto;
       max-height: 50px;
       object-fit: contain;
-      /* Blend mode hides white background, keeps logo visible */
+      /*
+        Logo already has correct colors (pink F + white FARMASI on black bg).
+        Use 'screen' blend so the black background blends out cleanly on dark surfaces.
+        No color/brightness manipulation — keep the original brand colors intact.
+      */
       mix-blend-mode: screen;
       filter:
-        brightness(1.4)
-        contrast(1.2)
-        drop-shadow(0 0 18px rgba(232, 196, 104, 0.5))
-        drop-shadow(0 4px 10px rgba(255, 96, 117, 0.3));
+        drop-shadow(0 0 18px rgba(232, 196, 104, 0.4))
+        drop-shadow(0 4px 10px rgba(255, 96, 117, 0.25));
     }
 
     /* Hide fallback if image loaded */
