@@ -6316,6 +6316,47 @@
   </div>
 
   <script>
+    // 🧹 Clean tracking parameters from URL (fbclid, gclid, utm_*, etc.)
+    // Runs immediately on page load — strips noisy tracking params from the address bar
+    // without reloading the page. The page still works exactly the same — we just
+    // hide the ugly long URL from the user.
+    (function cleanUrlTrackingParams() {
+      try {
+        const url = new URL(window.location.href);
+        const TRACKING_PARAMS = [
+          'fbclid',     // Facebook click ID
+          'gclid',      // Google Ads click ID
+          'msclkid',    // Microsoft Ads click ID
+          'mc_cid',     // Mailchimp campaign
+          'mc_eid',     // Mailchimp email
+          '_ga',        // Google Analytics
+          'igshid',     // Instagram share ID
+          'twclid',     // Twitter click ID
+          'yclid'       // Yandex click ID
+        ];
+        let changed = false;
+        TRACKING_PARAMS.forEach(p => {
+          if (url.searchParams.has(p)) {
+            url.searchParams.delete(p);
+            changed = true;
+          }
+        });
+        // Also strip any param starting with utm_ (utm_source, utm_medium, etc.)
+        const toDelete = [];
+        url.searchParams.forEach((_, key) => {
+          if (key.toLowerCase().startsWith('utm_')) toDelete.push(key);
+        });
+        toDelete.forEach(k => { url.searchParams.delete(k); changed = true; });
+
+        if (changed) {
+          // Replace history entry without reloading the page
+          window.history.replaceState({}, document.title, url.pathname + url.search + url.hash);
+        }
+      } catch (e) {
+        // If URL API fails for any reason — silently ignore, page still works
+      }
+    })();
+
     // ⚠️ შენი Apps Script Web App URL
     const API_URL = "https://script.google.com/macros/s/AKfycbz40UE4b9og1Yjs0rPPfDe1H-yRi90hKbK2WOXej4CAWPCnncDFcetadMEdQSYJO7nf/exec";
 
