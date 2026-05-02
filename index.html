@@ -998,12 +998,19 @@
       margin-bottom: 4px;
     }
 
-    /* Time chip — bigger and brighter than the type label so users notice it first */
+    /* "When" row — date + time combined visually */
+    .tp-info .tp-when-row {
+      margin-bottom: 6px;
+      gap: 8px;
+    }
+
+    /* Date and time chips — bigger and brighter so users notice them first */
+    .tp-info #tpDate,
     .tp-info #tpTime {
-      font-size: 18px;
+      font-size: 16px;
       font-weight: 700;
       color: var(--gold-light);
-      letter-spacing: 0.5px;
+      letter-spacing: 0.4px;
     }
 
     .tp-info .event-pill-location {
@@ -1031,8 +1038,9 @@
       .tp-info .ep-item {
         font-size: 13px;
       }
+      .tp-info #tpDate,
       .tp-info #tpTime {
-        font-size: 16px;
+        font-size: 14px;
       }
       .tp-info .event-pill-location {
         font-size: 11px;
@@ -5775,6 +5783,9 @@
       <div class="tp-info">
         <div class="event-pill-top">
           <span class="ep-item">🚌 <span id="tpType">ავტობუსის გასვლა</span></span>
+        </div>
+        <div class="event-pill-top tp-when-row">
+          <span class="ep-item" id="tpDate"></span>
           <span class="ep-divider" id="tpTimeDivider">✦</span>
           <span class="ep-item" id="tpTime"></span>
         </div>
@@ -6323,7 +6334,7 @@
       "speaker_5_name","speaker_5_role","speaker_5_photo",
       "speaker_6_name","speaker_6_role","speaker_6_photo",
       // Transport (bus/sprinter from Tbilisi)
-      "transport_address","transport_map","transport_time","transport_note","transport_type",
+      "transport_address","transport_map","bus_pickup_map","transport_date","transport_time","transport_note","transport_type",
       "transport_photo","transport_photo_2","transport_photo_3","transport_photo_4","transport_photo_5"
     ]);
 
@@ -6358,6 +6369,7 @@
       transportPill: document.getElementById("transportPill"),
       tpPhoto: document.getElementById("tpPhoto"),
       tpType: document.getElementById("tpType"),
+      tpDate: document.getElementById("tpDate"),
       tpTime: document.getElementById("tpTime"),
       tpTimeDivider: document.getElementById("tpTimeDivider"),
       tpAddress: document.getElementById("tpAddress"),
@@ -7075,19 +7087,29 @@
         ? `<div class="info-icon">◆</div><div class="info-text"><strong>სათაო ოფისი:</strong> ${safeText(config.hotel_location)}</div>`
         : "";
 
-      // === Set the event-pill link to Google Maps (EVENT location, NOT bus departure) ===
+      // === Set the event-pill link to Google Maps (EVENT location / ოფისი — ნატახტარი) ===
       const pill = document.getElementById("eventPill");
       if (pill) {
-        // Build a Google Maps search URL from event_location + event_city.
-        // (Bus departure has its OWN pill below — different button, different link.)
-        const query = [
-          safeText(config.event_location),
-          safeText(config.event_city)
-        ].filter(Boolean).join(", ");
+        // Priority order:
+        //   1. transport_map  (B28 — full Google Maps URL the user pasted, e.g. ნატახტრის ოფისი)
+        //   2. event_map      (alternative explicit field if used)
+        //   3. fallback: built from event_location + event_city (search query)
+        let mapUrl = safeText(config.transport_map);
+        if (!mapUrl || mapUrl === "https://maps.app.goo.gl/..." || !isUrl(mapUrl)) {
+          mapUrl = safeText(config.event_map);
+        }
+        if (!mapUrl || mapUrl === "https://maps.app.goo.gl/..." || !isUrl(mapUrl)) {
+          // Fallback to search query
+          const query = [
+            safeText(config.event_location),
+            safeText(config.event_city)
+          ].filter(Boolean).join(", ");
+          mapUrl = query
+            ? "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(query)
+            : "";
+        }
 
-        if (query) {
-          const mapUrl = "https://www.google.com/maps/search/?api=1&query=" +
-            encodeURIComponent(query);
+        if (mapUrl) {
           pill.setAttribute("href", mapUrl);
           pill.style.display = "";
         } else {
@@ -7097,13 +7119,26 @@
         }
       }
 
-      // === Set the TRANSPORT pill (bus departure location) ===
-      // Reads from Config: transport_address (text) + transport_map (Google Maps URL)
-      // Both managed from Sheet — change them and the button updates after page reload.
+      // === Set the TRANSPORT pill (bus departure / pickup location) ===
+      // Reads from Config:
+      //   transport_address  (text — what the bus pickup point is called)
+      //   bus_pickup_map     (Google Maps URL for the BUS PICKUP — e.g. რესპუბლიკის მოედანი)
+      //   transport_time     (departure time)
+      //   transport_photo    (photo for the left side)
+      //   transport_type     (button title, e.g. "ბრენდირებული ავტობუსი")
+      //
+      // NOTE: We deliberately use a separate `bus_pickup_map` (not transport_map),
+      // because `transport_map` historically holds the EVENT location (ნატახტარი),
+      // not the bus pickup point.
       if (els.transportPill) {
         const tAddress = safeText(config.transport_address);
-        const tMap = safeText(config.transport_map);
+        // Read bus pickup map URL — fallback to transport_map if bus_pickup_map is empty (old setup)
+        let tMap = safeText(config.bus_pickup_map);
+        if (!tMap) tMap = safeText(config.transport_map);
         const tTime = safeText(config.transport_time);
+        // Read transport date — fallback to event_date if not set (typical: bus leaves on event day)
+        let tDate = safeText(config.transport_date);
+        if (!tDate) tDate = safeText(config.event_date);
         const tType = safeText(config.transport_type);
         const tPhoto = safeText(config.transport_photo);
         const tMapValid = tMap && tMap !== "https://maps.app.goo.gl/..." && isUrl(tMap);
@@ -7126,9 +7161,20 @@
             els.tpPhoto.style.backgroundImage = "url('bus1.jpg')";
           }
 
+          // Date — show if set
+          if (els.tpDate) {
+            if (tDate) {
+              els.tpDate.textContent = "📅 " + tDate;
+              els.tpDate.style.display = "";
+            } else {
+              els.tpDate.style.display = "none";
+            }
+          }
+
           if (tTime) {
             els.tpTime.textContent = "🕒 " + tTime;
-            els.tpTimeDivider.style.display = "";
+            // Only show divider if BOTH date and time are present
+            els.tpTimeDivider.style.display = tDate ? "" : "none";
             els.tpTime.style.display = "";
           } else {
             els.tpTimeDivider.style.display = "none";
