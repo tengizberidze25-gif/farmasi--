@@ -935,6 +935,91 @@
       opacity: 0.85;
     }
 
+    /* Split layout: photo on left, info on right */
+    .transport-pill-split {
+      display: flex;
+      align-items: stretch;
+      gap: 0;
+      padding: 0;
+      overflow: hidden;
+      min-height: 110px;
+    }
+
+    .tp-photo {
+      flex: 0 0 42%;
+      background-image: url('bus1.jpg'); /* fallback default — overridden by JS if Sheet has transport_photo */
+      background-size: cover;
+      background-position: center;
+      background-color: rgba(0, 0, 0, 0.3);
+      position: relative;
+    }
+
+    .tp-photo::after {
+      /* subtle gradient fade toward the divider so photo blends with the dark info side */
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: 30%;
+      background: linear-gradient(90deg, transparent, rgba(20, 8, 8, 0.55));
+      pointer-events: none;
+    }
+
+    .tp-divider {
+      width: 1px;
+      background: linear-gradient(180deg,
+        transparent 0%,
+        rgba(232, 196, 104, 0.35) 30%,
+        rgba(232, 196, 104, 0.35) 70%,
+        transparent 100%);
+      flex-shrink: 0;
+    }
+
+    .tp-info {
+      flex: 1 1 58%;
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 4px;
+      min-width: 0; /* allows text to wrap properly */
+    }
+
+    .tp-info .event-pill-top {
+      margin-bottom: 4px;
+    }
+
+    .tp-info .event-pill-location {
+      padding-top: 4px;
+      border-top: 1px solid rgba(232, 196, 104, 0.12);
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+
+    .tp-info .event-pill-map-hint {
+      margin-top: 4px;
+    }
+
+    /* Mobile: keep split but tighten padding/sizing */
+    @media (max-width: 480px) {
+      .transport-pill-split {
+        min-height: 92px;
+      }
+      .tp-photo {
+        flex-basis: 38%;
+      }
+      .tp-info {
+        padding: 10px 12px;
+      }
+      .tp-info .ep-item {
+        font-size: 12px;
+      }
+      .tp-info .event-pill-location {
+        font-size: 10.5px;
+      }
+    }
+
     .extra-info-buttons {
       display: flex;
       flex-direction: column;
@@ -5664,6 +5749,25 @@
     </div>
 
     <!-- INFO -->
+    <!-- TRANSPORT/BUS DEPARTURE PILL — split layout: photo (left) + info (right) -->
+    <a class="event-pill event-pill-link transport-pill transport-pill-split" id="transportPill" href="#" target="_blank" rel="noopener" aria-label="ავტობუსის გასვლის ადგილი" style="display:none;">
+      <div class="tp-photo" id="tpPhoto"></div>
+      <div class="tp-divider"></div>
+      <div class="tp-info">
+        <div class="event-pill-top">
+          <span class="ep-item">🚌 <span id="tpType">ავტობუსის გასვლა</span></span>
+          <span class="ep-divider" id="tpTimeDivider">✦</span>
+          <span class="ep-item" id="tpTime"></span>
+        </div>
+        <div class="event-pill-location" id="tpAddress"></div>
+        <div class="event-pill-map-hint">
+          <span class="ep-map-icon">📍</span>
+          <span>რუკაზე ჩვენება</span>
+          <span class="ep-arrow">↗</span>
+        </div>
+      </div>
+    </a>
+
     <!-- COMPACT EVENT PILL (replaced bulky info card) -->
     <a class="event-pill event-pill-link" id="eventPill" href="#" target="_blank" rel="noopener" aria-label="რუკაზე ჩვენება">
       <div class="event-pill-top">
@@ -5676,21 +5780,6 @@
       <div class="event-pill-location" id="epLocation"></div>
       <div class="event-pill-map-hint">
         <span class="ep-map-icon">🗺️</span>
-        <span>რუკაზე ჩვენება</span>
-        <span class="ep-arrow">↗</span>
-      </div>
-    </a>
-
-    <!-- TRANSPORT/BUS DEPARTURE PILL (configurable from Sheet: transport_address + transport_map) -->
-    <a class="event-pill event-pill-link transport-pill" id="transportPill" href="#" target="_blank" rel="noopener" aria-label="ავტობუსის გასვლის ადგილი" style="display:none;">
-      <div class="event-pill-top">
-        <span class="ep-item">🚌 <span id="tpType">ავტობუსის გასვლის ადგილი</span></span>
-        <span class="ep-divider" id="tpTimeDivider">✦</span>
-        <span class="ep-item" id="tpTime"></span>
-      </div>
-      <div class="event-pill-location" id="tpAddress"></div>
-      <div class="event-pill-map-hint">
-        <span class="ep-map-icon">📍</span>
         <span>რუკაზე ჩვენება</span>
         <span class="ep-arrow">↗</span>
       </div>
@@ -6248,6 +6337,7 @@
 
       // Transport pill — bus/sprinter departure location (configurable from Sheet)
       transportPill: document.getElementById("transportPill"),
+      tpPhoto: document.getElementById("tpPhoto"),
       tpType: document.getElementById("tpType"),
       tpTime: document.getElementById("tpTime"),
       tpTimeDivider: document.getElementById("tpTimeDivider"),
@@ -6996,14 +7086,20 @@
         const tMap = safeText(config.transport_map);
         const tTime = safeText(config.transport_time);
         const tType = safeText(config.transport_type);
+        const tPhoto = safeText(config.transport_photo);
         const tMapValid = tMap && tMap !== "https://maps.app.goo.gl/..." && isUrl(tMap);
 
         // Show the pill only if we have an address AND a working map link
         if (tAddress && tMapValid) {
           els.transportPill.setAttribute("href", tMap);
           els.transportPill.style.display = "";
-          els.tpType.textContent = tType || "ავტობუსის გასვლის ადგილი";
+          els.tpType.textContent = tType || "ავტობუსის გასვლა";
           els.tpAddress.textContent = tAddress;
+
+          // Apply photo from Sheet if provided (otherwise CSS fallback bus1.jpg is used)
+          if (els.tpPhoto && tPhoto && isUrl(tPhoto)) {
+            els.tpPhoto.style.backgroundImage = "url('" + tPhoto + "')";
+          }
 
           if (tTime) {
             els.tpTime.textContent = "🕒 " + tTime;
