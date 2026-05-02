@@ -7164,7 +7164,10 @@
           // Date — show if set
           if (els.tpDate) {
             if (tDate) {
-              els.tpDate.textContent = "📅 " + tDate;
+              // Strip stray '00:00' or '0:00' suffix that can leak through if Sheet
+              // formats the cell as datetime instead of date
+              const cleanDate = String(tDate).replace(/\s+0?0:00$/, '').trim();
+              els.tpDate.textContent = "📅 " + cleanDate;
               els.tpDate.style.display = "";
             } else {
               els.tpDate.style.display = "none";
