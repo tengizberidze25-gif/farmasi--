@@ -935,14 +935,21 @@
       opacity: 0.85;
     }
 
-    /* Split layout: photo on left, info on right */
-    .transport-pill-split {
-      display: flex;
+    /* Split layout: photo on left, info on right
+       NOTE: !important needed because .event-pill-link below sets display:block */
+    .transport-pill.transport-pill-split {
+      display: flex !important;
       align-items: stretch;
       gap: 0;
-      padding: 0;
+      padding: 0 !important;
       overflow: hidden;
       min-height: 110px;
+      text-align: left;
+    }
+
+    .transport-pill.transport-pill-split::before {
+      /* hide the gold top accent line in split mode — would cut across the photo */
+      display: none;
     }
 
     .tp-photo {
@@ -952,6 +959,7 @@
       background-position: center;
       background-color: rgba(0, 0, 0, 0.3);
       position: relative;
+      min-height: 110px;
     }
 
     .tp-photo::after {
@@ -7096,9 +7104,15 @@
           els.tpType.textContent = tType || "ავტობუსის გასვლა";
           els.tpAddress.textContent = tAddress;
 
-          // Apply photo from Sheet if provided (otherwise CSS fallback bus1.jpg is used)
-          if (els.tpPhoto && tPhoto && isUrl(tPhoto)) {
-            els.tpPhoto.style.backgroundImage = "url('" + tPhoto + "')";
+          // Apply photo from Sheet if provided (otherwise CSS fallback bus1.jpg is used).
+          // Accept both full URLs (https://...) and relative file names (bus1.jpg, bus2.jpg).
+          if (els.tpPhoto && tPhoto) {
+            // If it looks like a URL or a path/filename — use it
+            const photoUrl = isUrl(tPhoto) ? tPhoto : tPhoto.trim();
+            els.tpPhoto.style.backgroundImage = "url('" + photoUrl + "')";
+          } else if (els.tpPhoto) {
+            // Force the fallback so it definitely loads (CSS background may be ignored if browser cached the wrong path)
+            els.tpPhoto.style.backgroundImage = "url('bus1.jpg')";
           }
 
           if (tTime) {
