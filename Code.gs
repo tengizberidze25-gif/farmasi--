@@ -147,147 +147,193 @@ function doPost(e) {
 
 // =================== REGISTER ===================
 function handleRegister(params) {
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
-  const regSheet = ss.getSheetByName(SHEET_NAME);
-  const configSheet = ss.getSheetByName(CONFIG_SHEET_NAME);
-
-  const config = readConfig(configSheet);
-
-  if (String(config.registration_status || 'open').toLowerCase() !== 'open') {
-    return jsonResponse({ ok: false, error: 'Registration is closed' });
+  // 🔒 Acquire script-level lock to prevent race conditions.
+  // Without this, two simultaneous registrations could:
+  //   - Both pass the seat availability check
+  //   - Both pass the max_registrations check
+  //   - Both write rows → same seat assigned twice OR over-capacity
+  // The lock serializes registrations: each one waits for the previous to finish.
+  const lock = LockService.getScriptLock();
+  try {
+    // Wait up to 10 seconds for any other registration in progress
+    lock.waitLock(10000);
+  } catch (e) {
+    return jsonResponse({ ok: false, error: 'სერვერი დაკავებულია, სცადეთ ხელახლა' });
   }
 
-  const phone = normalizePhone(params.phone);
-  const firstName = String(params.first_name || '').trim();
-  const lastName = String(params.last_name || '').trim();
-  const seatRaw = String(params.seat_number || '').trim();
-  const seatNumber = seatRaw ? parseInt(seatRaw) : null;
+  try {
+    const ss = SpreadsheetApp.getActiveSpreadsheet();
+    const regSheet = ss.getSheetByName(SHEET_NAME);
+    const configSheet = ss.getSheetByName(CONFIG_SHEET_NAME);
 
-  if (!phone) return jsonResponse({ ok: false, error: 'Phone required' });
-  if (!firstName) return jsonResponse({ ok: false, error: 'First name required' });
-  if (!lastName) return jsonResponse({ ok: false, error: 'Last name required' });
-  if (!seatNumber || isNaN(seatNumber) || seatNumber < 1 || seatNumber > 54) {
-    return jsonResponse({ ok: false, error: 'Invalid seat' });
-  }
+    const config = readConfig(configSheet);
 
-  const data = regSheet.getDataRange().getValues();
-  const rowCount = data.slice(1).filter(r => r[0]).length;
-
-  const maxReg = parseInt(config.max_registrations);
-  if (!isNaN(maxReg) && maxReg > 0 && rowCount >= maxReg) {
-    return jsonResponse({ ok: false, error: 'No spots left' });
-  }
-
-  // Duplicate phone check + seat availability check
-  for (let i = 1; i < data.length; i++) {
-    if (normalizePhone(data[i][4]) === phone) {
-      return jsonResponse({ ok: false, error: 'Already registered' });
+    if (String(config.registration_status || 'open').toLowerCase() !== 'open') {
+      return jsonResponse({ ok: false, error: 'Registration is closed' });
     }
-    const existingSeat = parseInt(data[i][8]);
-    if (!isNaN(existingSeat) && existingSeat === seatNumber) {
-      return jsonResponse({ ok: false, error: 'Seat taken' });
+
+    const phone = normalizePhone(params.phone);
+    const firstName = String(params.first_name || '').trim();
+    const lastName = String(params.last_name || '').trim();
+    const seatRaw = String(params.seat_number || '').trim();
+    const seatNumber = seatRaw ? parseInt(seatRaw) : null;
+
+    if (!phone) return jsonResponse({ ok: false, error: 'Phone required' });
+    if (!firstName) return jsonResponse({ ok: false, error: 'First name required' });
+    if (!lastName) return jsonResponse({ ok: false, error: 'Last name required' });
+    if (!seatNumber || isNaN(seatNumber) || seatNumber < 1 || seatNumber > 54) {
+      return jsonResponse({ ok: false, error: 'Invalid seat' });
     }
+
+    const data = regSheet.getDataRange().getValues();
+    const rowCount = data.slice(1).filter(r => r[0]).length;
+
+    const maxReg = parseInt(config.max_registrations);
+    if (!isNaN(maxReg) && maxReg > 0 && rowCount >= maxReg) {
+      return jsonResponse({ ok: false, error: 'No spots left' });
+    }
+
+    // Find max existing ticket ID number — to prevent collisions after cancellations.
+    // E.g. if FM-2026-00003 was cancelled, the next ticket should still be 00006 (not 00005),
+    // because 00005 is already issued. We never reuse ticket IDs.
+    let maxTicketNum = 0;
+    for (let i = 1; i < data.length; i++) {
+      const tid = String(data[i][6] || '');
+      const m = tid.match(/FM-\d{4}-(\d+)/);
+      if (m) {
+        const n = parseInt(m[1], 10);
+        if (n > maxTicketNum) maxTicketNum = n;
+      }
+    }
+
+    // Duplicate phone check + seat availability check
+    for (let i = 1; i < data.length; i++) {
+      if (normalizePhone(data[i][4]) === phone) {
+        return jsonResponse({ ok: false, error: 'Already registered' });
+      }
+      const existingSeat = parseInt(data[i][8]);
+      if (!isNaN(existingSeat) && existingSeat === seatNumber) {
+        return jsonResponse({ ok: false, error: 'Seat taken' });
+      }
+    }
+
+    // Generate ticket ID using max+1 (collision-safe) and assign tier based on actual row count
+    const ticketId = generateTicketId(maxTicketNum + 1);
+    const tier = getNextTier(rowCount);
+
+    regSheet.appendRow([
+      new Date(),
+      firstName,
+      lastName,
+      String(params.city_area_village || '').trim(),
+      phone,
+      String(params.position || '').trim(),
+      ticketId,
+      tier,
+      seatNumber
+    ]);
+
+    // Telegram notification
+    notifyTelegram(config, {
+      first_name: firstName,
+      last_name: lastName,
+      city: params.city_area_village,
+      phone: phone,
+      position: params.position,
+      ticket_id: ticketId,
+      tier: tier,
+      seat: seatNumber
+    });
+
+    // 📲 SMS notification with ticket info — to the participant
+    sendTicketSMS(phone, {
+      first_name: firstName,
+      last_name: lastName,
+      ticket_id: ticketId,
+      tier: tier,
+      seat: seatNumber,
+      event_time: config.event_time || '14:00',
+      event_date: config.event_date || '',
+      transport_time: config.transport_time || '',
+      transport_address: config.transport_address || ''
+    });
+
+    // 📨 ADMIN NOTIFICATIONS: SMS to all admin phones
+    notifyAdmins(config, {
+      first_name: firstName,
+      last_name: lastName,
+      phone: phone,
+      city: params.city_area_village,
+      position: params.position,
+      ticket_id: ticketId,
+      tier: tier,
+      seat: seatNumber,
+      registration_number: rowCount + 1
+    });
+
+    return jsonResponse({
+      ok: true,
+      ticket_id: ticketId,
+      tier: tier,
+      seat_number: seatNumber,
+      registration_number: rowCount + 1
+    });
+
+  } finally {
+    // Always release the lock — even if an error happened above —
+    // so the next registration can proceed.
+    lock.releaseLock();
   }
-
-  // Generate ticket ID and assign tier
-  const ticketId = generateTicketId(rowCount + 1);
-  const tier = getNextTier(rowCount);
-
-  regSheet.appendRow([
-    new Date(),
-    firstName,
-    lastName,
-    String(params.city_area_village || '').trim(),
-    phone,
-    String(params.position || '').trim(),
-    ticketId,
-    tier,
-    seatNumber
-  ]);
-
-  // Telegram notification
-  notifyTelegram(config, {
-    first_name: firstName,
-    last_name: lastName,
-    city: params.city_area_village,
-    phone: phone,
-    position: params.position,
-    ticket_id: ticketId,
-    tier: tier,
-    seat: seatNumber
-  });
-
-  // 📲 SMS notification with ticket info — to the participant
-  sendTicketSMS(phone, {
-    first_name: firstName,
-    last_name: lastName,
-    ticket_id: ticketId,
-    tier: tier,
-    seat: seatNumber,
-    event_time: config.event_time || '14:00',
-    event_date: config.event_date || '',
-    transport_time: config.transport_time || '',
-    transport_address: config.transport_address || ''
-  });
-
-  // 📨 ADMIN NOTIFICATIONS: SMS to all admin phones
-  notifyAdmins(config, {
-    first_name: firstName,
-    last_name: lastName,
-    phone: phone,
-    city: params.city_area_village,
-    position: params.position,
-    ticket_id: ticketId,
-    tier: tier,
-    seat: seatNumber,
-    registration_number: rowCount + 1
-  });
-
-  return jsonResponse({
-    ok: true,
-    ticket_id: ticketId,
-    tier: tier,
-    seat_number: seatNumber,
-    registration_number: rowCount + 1
-  });
 }
 
 // =================== CANCEL ===================
 function handleCancel(params) {
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
-  const regSheet = ss.getSheetByName(SHEET_NAME);
-
-  const phone = normalizePhone(params.phone);
-  const ticketId = String(params.ticket_id || '').trim();
-
-  // Either phone OR ticket_id must be provided
-  if (!phone && !ticketId) {
-    return jsonResponse({ ok: false, error: 'Phone or ticket_id required' });
+  // 🔒 Acquire lock for the same reason as handleRegister
+  const lock = LockService.getScriptLock();
+  try {
+    lock.waitLock(10000);
+  } catch (e) {
+    return jsonResponse({ ok: false, error: 'სერვერი დაკავებულია, სცადეთ ხელახლა' });
   }
 
-  const data = regSheet.getDataRange().getValues();
+  try {
+    const ss = SpreadsheetApp.getActiveSpreadsheet();
+    const regSheet = ss.getSheetByName(SHEET_NAME);
 
-  for (let i = data.length - 1; i >= 1; i--) {
-    const rowPhone = normalizePhone(data[i][4]);
-    const rowTicketId = String(data[i][6] || '').trim();
+    const phone = normalizePhone(params.phone);
+    const ticketId = String(params.ticket_id || '').trim();
 
-    // Match by phone OR ticket_id
-    const matchesPhone = phone && rowPhone === phone;
-    const matchesTicketId = ticketId && rowTicketId === ticketId;
-
-    if (matchesPhone || matchesTicketId) {
-      regSheet.deleteRow(i + 1);
-      return jsonResponse({
-        ok: true,
-        cancelled: {
-          ticket_id: rowTicketId,
-          seat_number: data[i][8] || null
-        }
-      });
+    // Either phone OR ticket_id must be provided
+    if (!phone && !ticketId) {
+      return jsonResponse({ ok: false, error: 'Phone or ticket_id required' });
     }
-  }
 
-  return jsonResponse({ ok: false, error: 'Not found' });
+    const data = regSheet.getDataRange().getValues();
+
+    for (let i = data.length - 1; i >= 1; i--) {
+      const rowPhone = normalizePhone(data[i][4]);
+      const rowTicketId = String(data[i][6] || '').trim();
+
+      // Match by phone OR ticket_id
+      const matchesPhone = phone && rowPhone === phone;
+      const matchesTicketId = ticketId && rowTicketId === ticketId;
+
+      if (matchesPhone || matchesTicketId) {
+        regSheet.deleteRow(i + 1);
+        return jsonResponse({
+          ok: true,
+          cancelled: {
+            ticket_id: rowTicketId,
+            seat_number: data[i][8] || null
+          }
+        });
+      }
+    }
+
+    return jsonResponse({ ok: false, error: 'Not found' });
+  } finally {
+    lock.releaseLock();
+  }
 }
 
 // =================== HELPERS ===================
@@ -306,6 +352,7 @@ function readConfig(sheet) {
   // Keys that should be formatted as date (yyyy-MM-dd) when they are Date objects
   const DATE_KEYS = [
     'event_date',
+    'transport_date',
     'reminder_day'
   ];
 
@@ -880,14 +927,21 @@ function sendReminderDayBefore() {
       return;
     }
 
-    // Compose reminder text
+    // Compose reminder text — adapts to reminder_days_before value
     const eventCity = config.event_city || '';
     const eventTime = config.event_time || '14:00';
     const transportTime = config.transport_time || '';
     const transportAddress = config.transport_address || '';
 
+    // Build "when" phrase based on actual days-before value
+    let whenPhrase;
+    if (daysBefore === 1) whenPhrase = 'ხვალ';
+    else if (daysBefore === 2) whenPhrase = 'ზეგ';
+    else if (daysBefore === 3) whenPhrase = 'მაზეგ';
+    else whenPhrase = daysBefore + ' დღეში';
+
     let text = '🔔 შეხსენება!\n' +
-      'ხვალ Farmasi-ის მასტერკლასია 🎓\n' +
+      whenPhrase + ' Farmasi-ის მასტერკლასია 🎓\n' +
       '📅 ' + eventDateStr + ' · ' + eventTime + '\n' +
       '📍 ' + eventCity;
 
@@ -994,9 +1048,17 @@ function sendReminderBusDeparture() {
       return;
     }
 
-    // Compose reminder text
+    // Compose reminder text — uses actual reminder_hours_before value
     const transportAddress = config.transport_address || '';
-    let text = '🚌 ავტობუსი 3 საათში!\n' +
+
+    // Build "how soon" phrase that matches the actual hours value (e.g. "1.5", "0.5")
+    let hoursLabel;
+    if (hoursBefore === 0.5) hoursLabel = '30 წუთში';
+    else if (hoursBefore === 1) hoursLabel = '1 საათში';
+    else if (Number.isInteger(hoursBefore)) hoursLabel = hoursBefore + ' საათში';
+    else hoursLabel = hoursBefore + ' საათში';
+
+    let text = '🚌 ავტობუსი ' + hoursLabel + '!\n' +
       'Farmasi მასტერკლასი 🎓\n' +
       '⏰ გასვლა: ' + transportTime;
 
