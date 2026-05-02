@@ -917,6 +917,24 @@
       border-top: 1px solid rgba(232, 196, 104, 0.12);
     }
 
+    /* Transport pill — slight visual differentiation (cooler tint) so users see it as a separate action */
+    .transport-pill {
+      background: linear-gradient(135deg,
+        rgba(232, 196, 104, 0.05) 0%,
+        rgba(91, 15, 26, 0.10) 100%),
+        var(--bg-card);
+      border-color: rgba(232, 196, 104, 0.18);
+    }
+
+    .transport-pill .event-pill-location {
+      text-transform: none;
+      letter-spacing: 0.4px;
+      font-size: 11.5px;
+      font-weight: 500;
+      color: var(--cream);
+      opacity: 0.85;
+    }
+
     .extra-info-buttons {
       display: flex;
       flex-direction: column;
@@ -5663,6 +5681,21 @@
       </div>
     </a>
 
+    <!-- TRANSPORT/BUS DEPARTURE PILL (configurable from Sheet: transport_address + transport_map) -->
+    <a class="event-pill event-pill-link transport-pill" id="transportPill" href="#" target="_blank" rel="noopener" aria-label="ავტობუსის გასვლის ადგილი" style="display:none;">
+      <div class="event-pill-top">
+        <span class="ep-item">🚌 <span id="tpType">ავტობუსის გასვლის ადგილი</span></span>
+        <span class="ep-divider" id="tpTimeDivider">✦</span>
+        <span class="ep-item" id="tpTime"></span>
+      </div>
+      <div class="event-pill-location" id="tpAddress"></div>
+      <div class="event-pill-map-hint">
+        <span class="ep-map-icon">📍</span>
+        <span>რუკაზე ჩვენება</span>
+        <span class="ep-arrow">↗</span>
+      </div>
+    </a>
+
     <div class="extra-info-buttons">
       <button class="btn btn-ghost" id="scheduleBtn" type="button">✦ სრული პროგრამის ნახვა ✦</button>
       <!-- top duplicate "დამატებითი ინფორმაცია" removed; bottom toggleExtraBtn remains -->
@@ -6212,6 +6245,13 @@
       epDate: document.getElementById("epDate"),
       epTime: document.getElementById("epTime"),
       epLocation: document.getElementById("epLocation"),
+
+      // Transport pill — bus/sprinter departure location (configurable from Sheet)
+      transportPill: document.getElementById("transportPill"),
+      tpType: document.getElementById("tpType"),
+      tpTime: document.getElementById("tpTime"),
+      tpTimeDivider: document.getElementById("tpTimeDivider"),
+      tpAddress: document.getElementById("tpAddress"),
 
       // Sticky register bar (floating CTA at bottom)
       stickyRegisterBar: document.getElementById("stickyRegisterBar"),
@@ -6926,34 +6966,56 @@
         ? `<div class="info-icon">◆</div><div class="info-text"><strong>სათაო ოფისი:</strong> ${safeText(config.hotel_location)}</div>`
         : "";
 
-      // === Set the event-pill link to Google Maps ===
+      // === Set the event-pill link to Google Maps (EVENT location, NOT bus departure) ===
       const pill = document.getElementById("eventPill");
       if (pill) {
-        // Priority: 1) transport_map (full Google Maps URL from Sheet)
-        //           2) Search query built from event_location + event_city
-        let mapUrl = safeText(config.transport_map);
+        // Build a Google Maps search URL from event_location + event_city.
+        // (Bus departure has its OWN pill below — different button, different link.)
+        const query = [
+          safeText(config.event_location),
+          safeText(config.event_city)
+        ].filter(Boolean).join(", ");
 
-        // If transport_map is invalid placeholder or empty — build search URL
-        if (!mapUrl || mapUrl === "https://maps.app.goo.gl/..." || !isUrl(mapUrl)) {
-          const query = [
-            safeText(config.event_location),
-            safeText(config.event_city)
-          ].filter(Boolean).join(", ");
-          if (query) {
-            mapUrl = "https://www.google.com/maps/search/?api=1&query=" +
-              encodeURIComponent(query);
-          } else {
-            mapUrl = "";
-          }
-        }
-
-        if (mapUrl) {
+        if (query) {
+          const mapUrl = "https://www.google.com/maps/search/?api=1&query=" +
+            encodeURIComponent(query);
           pill.setAttribute("href", mapUrl);
           pill.style.display = "";
         } else {
-          // No location info → hide pill entirely
+          // No event location info → hide pill entirely
           pill.removeAttribute("href");
           pill.style.cursor = "default";
+        }
+      }
+
+      // === Set the TRANSPORT pill (bus departure location) ===
+      // Reads from Config: transport_address (text) + transport_map (Google Maps URL)
+      // Both managed from Sheet — change them and the button updates after page reload.
+      if (els.transportPill) {
+        const tAddress = safeText(config.transport_address);
+        const tMap = safeText(config.transport_map);
+        const tTime = safeText(config.transport_time);
+        const tType = safeText(config.transport_type);
+        const tMapValid = tMap && tMap !== "https://maps.app.goo.gl/..." && isUrl(tMap);
+
+        // Show the pill only if we have an address AND a working map link
+        if (tAddress && tMapValid) {
+          els.transportPill.setAttribute("href", tMap);
+          els.transportPill.style.display = "";
+          els.tpType.textContent = tType || "ავტობუსის გასვლის ადგილი";
+          els.tpAddress.textContent = tAddress;
+
+          if (tTime) {
+            els.tpTime.textContent = "🕒 " + tTime;
+            els.tpTimeDivider.style.display = "";
+            els.tpTime.style.display = "";
+          } else {
+            els.tpTimeDivider.style.display = "none";
+            els.tpTime.style.display = "none";
+          }
+        } else {
+          // Either no address or no map URL → hide entirely
+          els.transportPill.style.display = "none";
         }
       }
 
