@@ -16,6 +16,7 @@
 
 const SHEET_NAME = 'Registrations';
 const CONFIG_SHEET_NAME = 'Config';
+const CANCELLATIONS_SHEET_NAME = 'Cancellations';  // archive sheet — auto-created on first cancellation
 
 // 🤖 Telegram Bot (არჩევითი)
 // ⚠️ Token-ი Script Properties-ში დააყენე გასაღებით: TELEGRAM_BOT_TOKEN
@@ -299,6 +300,8 @@ function handleCancel(params) {
   try {
     const ss = SpreadsheetApp.getActiveSpreadsheet();
     const regSheet = ss.getSheetByName(SHEET_NAME);
+    const configSheet = ss.getSheetByName(CONFIG_SHEET_NAME);
+    const config = readConfig(configSheet);
 
     const phone = normalizePhone(params.phone);
     const ticketId = String(params.ticket_id || '').trim();
@@ -319,12 +322,50 @@ function handleCancel(params) {
       const matchesTicketId = ticketId && rowTicketId === ticketId;
 
       if (matchesPhone || matchesTicketId) {
+        // Capture the row before deleting — needed for archive + SMS
+        const cancelledRow = data[i];
+        const cancelledData = {
+          original_timestamp: cancelledRow[0],
+          first_name:  String(cancelledRow[1] || '').trim(),
+          last_name:   String(cancelledRow[2] || '').trim(),
+          city:        String(cancelledRow[3] || '').trim(),
+          phone:       String(cancelledRow[4] || '').trim(),
+          position:    String(cancelledRow[5] || '').trim(),
+          ticket_id:   String(cancelledRow[6] || '').trim(),
+          tier:        String(cancelledRow[7] || '').trim(),
+          seat_number: cancelledRow[8] || null
+        };
+
+        // 1️⃣ Archive the cancelled row — moves it to Cancellations sheet, never deletes data
+        try {
+          archiveCancellation(ss, cancelledData);
+        } catch (e) {
+          Logger.log('Archive failed (non-fatal): ' + e);
+          // Don't block the cancellation — archive failure should not prevent the user from cancelling
+        }
+
+        // 2️⃣ Delete row from Registrations
         regSheet.deleteRow(i + 1);
+
+        // 3️⃣ Send a kind goodbye SMS to the user (best-effort, non-blocking)
+        try {
+          sendCancellationSMS(cancelledData.phone, cancelledData);
+        } catch (e) {
+          Logger.log('Cancellation SMS failed (non-fatal): ' + e);
+        }
+
+        // 4️⃣ Notify admins about the cancellation
+        try {
+          notifyAdminsCancellation(config, cancelledData);
+        } catch (e) {
+          Logger.log('Admin cancellation notification failed (non-fatal): ' + e);
+        }
+
         return jsonResponse({
           ok: true,
           cancelled: {
-            ticket_id: rowTicketId,
-            seat_number: data[i][8] || null
+            ticket_id: cancelledData.ticket_id,
+            seat_number: cancelledData.seat_number
           }
         });
       }
@@ -334,6 +375,172 @@ function handleCancel(params) {
   } finally {
     lock.releaseLock();
   }
+}
+
+/**
+ * Archive a cancelled registration to the Cancellations sheet.
+ * Creates the sheet on first use (with proper headers).
+ *
+ * Columns: cancelled_at, original_timestamp, first_name, last_name, city,
+ *          phone, position, ticket_id, tier, seat_number
+ */
+function archiveCancellation(ss, data) {
+  let cancelSheet = ss.getSheetByName(CANCELLATIONS_SHEET_NAME);
+
+  // First-time setup: create sheet with header row
+  if (!cancelSheet) {
+    cancelSheet = ss.insertSheet(CANCELLATIONS_SHEET_NAME);
+    cancelSheet.appendRow([
+      'cancelled_at',
+      'original_timestamp',
+      'first_name',
+      'last_name',
+      'city',
+      'phone',
+      'position',
+      'ticket_id',
+      'tier',
+      'seat_number'
+    ]);
+    // Bold the header row
+    cancelSheet.getRange(1, 1, 1, 10).setFontWeight('bold');
+    cancelSheet.setFrozenRows(1);
+  }
+
+  cancelSheet.appendRow([
+    new Date(),                    // cancelled_at — when this cancellation happened
+    data.original_timestamp || '', // original_timestamp — when they originally registered
+    data.first_name || '',
+    data.last_name || '',
+    data.city || '',
+    data.phone || '',
+    data.position || '',
+    data.ticket_id || '',
+    data.tier || '',
+    data.seat_number || ''
+  ]);
+}
+
+/**
+ * Send a kind, encouraging SMS to the user when they cancel.
+ * Acknowledges the cancellation, expresses understanding, and gently invites them to return.
+ */
+function sendCancellationSMS(phone, data) {
+  if (!phone) return;
+
+  const firstName = String(data.first_name || '').trim();
+  const greeting = firstName ? firstName + ', ' : '';
+
+  // Warm, brief, non-pushy. ~140-150 chars (1-2 SMS segments in unicode).
+  const text =
+    '💔 ' + greeting + 'რეგისტრაცია გაუქმდა.\n\n' +
+    'ვწუხვართ, რომ ვერ შეუერთდები მასტერკლასს.\n' +
+    'შენი ადგილი თავისუფლდება სხვისთვის.\n\n' +
+    'ჩვენ მაინც დაგელოდებით — ხელახლა რეგისტრაცია ნებისმიერ დროს შეგიძლია.\n' +
+    '🌟 Farmasi';
+
+  try {
+    const props = PropertiesService.getScriptProperties();
+    const privateKey = props.getProperty('PRIVATE_KEY');
+    const publicKey = props.getProperty('PUBLIC_KEY');
+    if (!privateKey || !publicKey) {
+      Logger.log('SMS keys missing — cancellation SMS skipped');
+      return;
+    }
+
+    const intlPhone = toInternationalPhone(phone);
+    if (!intlPhone) return;
+
+    const payload = {
+      Text: text,
+      Purpose: 'INF',
+      Options: {
+        Originator: SMS_DEFAULT_SENDER,
+        Encoding: 'UNICODE',
+        SmsType: 'SMS',
+        ReportLabel: 'Farmasi Cancellation'
+      },
+      Receivers: [{ Receiver: intlPhone }]
+    };
+
+    const url = SMS_API_URL + '?publicKey=' + encodeURIComponent(publicKey);
+    UrlFetchApp.fetch(url, {
+      method: 'post',
+      contentType: 'application/json',
+      headers: { 'Authorization': 'Bearer ' + privateKey },
+      payload: JSON.stringify(payload),
+      muteHttpExceptions: true
+    });
+    Logger.log('Cancellation SMS sent to ' + maskPhone(phone));
+  } catch (e) {
+    Logger.log('Cancellation SMS error: ' + e);
+  }
+}
+
+/**
+ * Notify admins (SMS + Telegram) that a registration was cancelled.
+ * Helps the team keep an eye on no-shows and capacity.
+ */
+function notifyAdminsCancellation(config, data) {
+  const fullName = (String(data.first_name || '') + ' ' + String(data.last_name || '')).trim();
+
+  // Admin SMS
+  const adminPhones = String(config.admin_phones || '')
+    .split(/[,;\n]/)
+    .map(s => s.trim())
+    .filter(Boolean);
+
+  if (adminPhones.length) {
+    const text =
+      '❌ რეგისტრაცია გაუქმდა\n' +
+      '👤 ' + fullName + '\n' +
+      '📞 ' + (data.phone || '') + '\n' +
+      '🪑 ადგილი #' + (data.seat_number || '-') + ' · ' + (data.tier || '-') + '\n' +
+      '🎫 ' + (data.ticket_id || '');
+
+    adminPhones.forEach(p => {
+      try {
+        sendBulkSMS(p, text, 'Cancellation Alert');
+      } catch (e) {
+        Logger.log('Admin cancellation SMS failed for ' + maskPhone(p) + ': ' + e);
+      }
+    });
+  }
+
+  // Telegram notification
+  const token = PropertiesService.getScriptProperties().getProperty('TELEGRAM_BOT_TOKEN');
+  if (!token) return;
+
+  const chatIds = String(config.admin_chat_ids || '')
+    .split(',')
+    .map(s => s.trim())
+    .filter(Boolean);
+  if (!chatIds.length) return;
+
+  const tgText =
+    '❌ რეგისტრაცია გაუქმდა\n\n' +
+    '👤 ' + fullName + '\n' +
+    '📞 ' + (data.phone || '') + '\n' +
+    '📍 ' + (data.city || '-') + '\n' +
+    '💼 ' + (data.position || '-') + '\n\n' +
+    '🪑 ადგილი #' + (data.seat_number || '-') + '\n' +
+    '🥇 ' + (data.tier || '-') + '\n' +
+    '🎫 ' + (data.ticket_id || '');
+
+  chatIds.forEach(chatId => {
+    try {
+      UrlFetchApp.fetch(
+        'https://api.telegram.org/bot' + token + '/sendMessage',
+        {
+          method: 'post',
+          payload: { chat_id: chatId, text: tgText },
+          muteHttpExceptions: true
+        }
+      );
+    } catch (e) {
+      Logger.log('Telegram cancellation alert failed: ' + e);
+    }
+  });
 }
 
 // =================== HELPERS ===================
