@@ -305,6 +305,9 @@ function handleCancel(params) {
 
     const phone = normalizePhone(params.phone);
     const ticketId = String(params.ticket_id || '').trim();
+    // Optional cancellation reason — captured from the user, helps the team understand
+    // why people drop out. Length capped at 500 chars to keep Sheet rows manageable.
+    const reason = String(params.reason || '').trim().slice(0, 500);
 
     // Either phone OR ticket_id must be provided
     if (!phone && !ticketId) {
@@ -333,7 +336,8 @@ function handleCancel(params) {
           position:    String(cancelledRow[5] || '').trim(),
           ticket_id:   String(cancelledRow[6] || '').trim(),
           tier:        String(cancelledRow[7] || '').trim(),
-          seat_number: cancelledRow[8] || null
+          seat_number: cancelledRow[8] || null,
+          reason:      reason  // optional user-provided cancellation reason
         };
 
         // 1️⃣ Archive the cancelled row — moves it to Cancellations sheet, never deletes data
@@ -400,11 +404,23 @@ function archiveCancellation(ss, data) {
       'position',
       'ticket_id',
       'tier',
-      'seat_number'
+      'seat_number',
+      'reason'
     ]);
     // Bold the header row
-    cancelSheet.getRange(1, 1, 1, 10).setFontWeight('bold');
+    cancelSheet.getRange(1, 1, 1, 11).setFontWeight('bold');
     cancelSheet.setFrozenRows(1);
+    // Make 'reason' column wider (500 chars allowed) so it's readable at a glance
+    cancelSheet.setColumnWidth(11, 280);
+  } else {
+    // Sheet already exists from before reason was added — check if 'reason' column exists
+    const headers = cancelSheet.getRange(1, 1, 1, cancelSheet.getLastColumn()).getValues()[0];
+    if (headers.indexOf('reason') === -1) {
+      // Add the missing column to old sheets — backward compatibility
+      const newCol = cancelSheet.getLastColumn() + 1;
+      cancelSheet.getRange(1, newCol).setValue('reason').setFontWeight('bold');
+      cancelSheet.setColumnWidth(newCol, 280);
+    }
   }
 
   cancelSheet.appendRow([
@@ -417,7 +433,8 @@ function archiveCancellation(ss, data) {
     data.position || '',
     data.ticket_id || '',
     data.tier || '',
-    data.seat_number || ''
+    data.seat_number || '',
+    data.reason || ''               // cancellation reason (may be empty)
   ]);
 }
 
@@ -483,6 +500,7 @@ function sendCancellationSMS(phone, data) {
  */
 function notifyAdminsCancellation(config, data) {
   const fullName = (String(data.first_name || '') + ' ' + String(data.last_name || '')).trim();
+  const reason = String(data.reason || '').trim();
 
   // Admin SMS
   const adminPhones = String(config.admin_phones || '')
@@ -491,12 +509,16 @@ function notifyAdminsCancellation(config, data) {
     .filter(Boolean);
 
   if (adminPhones.length) {
-    const text =
+    let text =
       '❌ რეგისტრაცია გაუქმდა\n' +
       '👤 ' + fullName + '\n' +
       '📞 ' + (data.phone || '') + '\n' +
       '🪑 ადგილი #' + (data.seat_number || '-') + ' · ' + (data.tier || '-') + '\n' +
       '🎫 ' + (data.ticket_id || '');
+    // Append reason if user provided one — keeps SMS short when no reason given
+    if (reason) {
+      text += '\n💬 ' + reason;
+    }
 
     adminPhones.forEach(p => {
       try {
@@ -517,7 +539,7 @@ function notifyAdminsCancellation(config, data) {
     .filter(Boolean);
   if (!chatIds.length) return;
 
-  const tgText =
+  let tgText =
     '❌ რეგისტრაცია გაუქმდა\n\n' +
     '👤 ' + fullName + '\n' +
     '📞 ' + (data.phone || '') + '\n' +
@@ -526,6 +548,10 @@ function notifyAdminsCancellation(config, data) {
     '🪑 ადგილი #' + (data.seat_number || '-') + '\n' +
     '🥇 ' + (data.tier || '-') + '\n' +
     '🎫 ' + (data.ticket_id || '');
+  // Append reason as a separate paragraph (more readable than admin SMS)
+  if (reason) {
+    tgText += '\n\n💬 მიზეზი:\n' + reason;
+  }
 
   chatIds.forEach(chatId => {
     try {

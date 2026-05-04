@@ -3872,6 +3872,68 @@
       font-weight: 700;
     }
 
+    /* Cancellation reason textarea — feedback collection from cancelling users */
+    .ticket-cancel-reason-wrap {
+      margin: 0 0 14px;
+      padding: 12px 14px;
+      background: rgba(232, 196, 104, 0.04);
+      border: 1px solid rgba(232, 196, 104, 0.18);
+      border-radius: 10px;
+    }
+
+    .ticket-cancel-reason-label {
+      display: block;
+      margin-bottom: 8px;
+      font-family: var(--sans-font);
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--gold-light);
+      letter-spacing: 0.3px;
+    }
+
+    .ticket-cancel-reason-optional {
+      font-weight: 400;
+      color: var(--cream-dim);
+      font-size: 11px;
+    }
+
+    .ticket-cancel-reason-input {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 10px 12px;
+      background: rgba(20, 8, 8, 0.5);
+      border: 1px solid rgba(232, 196, 104, 0.2);
+      border-radius: 8px;
+      color: var(--cream);
+      font-family: var(--sans-font);
+      font-size: 12.5px;
+      line-height: 1.5;
+      resize: vertical;
+      min-height: 60px;
+      max-height: 160px;
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    .ticket-cancel-reason-input:focus {
+      outline: none;
+      border-color: rgba(232, 196, 104, 0.5);
+      background: rgba(20, 8, 8, 0.7);
+    }
+
+    .ticket-cancel-reason-input::placeholder {
+      color: rgba(232, 200, 178, 0.35);
+      font-style: italic;
+    }
+
+    .ticket-cancel-reason-hint {
+      margin-top: 6px;
+      font-family: var(--sans-font);
+      font-size: 10.5px;
+      color: var(--cream-dim);
+      text-align: center;
+      opacity: 0.85;
+    }
+
     .btn-cancel-confirm {
       display: block;
       width: 100%;
@@ -6283,6 +6345,23 @@
           <p class="ticket-cancel-warning">
             ⚠️ რეგისტრაციის გაუქმება <strong>შეუქცევადია</strong> — ბილეთი გაუქმდება, ადგილი გათავისუფლდება.
           </p>
+
+          <!-- Cancellation reason — optional, helps the team understand why people drop out -->
+          <div class="ticket-cancel-reason-wrap">
+            <label for="ticketCancelReason" class="ticket-cancel-reason-label">
+              რატომ აუქმებ? <span class="ticket-cancel-reason-optional">(არჩევითი)</span>
+            </label>
+            <textarea
+              id="ticketCancelReason"
+              class="ticket-cancel-reason-input"
+              rows="3"
+              maxlength="500"
+              placeholder="მაგ: ჯანმრთელობის პრობლემა, სამუშაო, ან რამე სხვა..."></textarea>
+            <div class="ticket-cancel-reason-hint">
+              შენი პასუხი დაგვეხმარება მომავალში უკეთ დაგეგმოთ ღონისძიებები 💛
+            </div>
+          </div>
+
           <button class="btn-cancel-confirm" id="ticketCancelConfirm" type="button">
             ✕ დადასტურება — გავაუქმოთ ბილეთი
           </button>
@@ -8485,6 +8564,13 @@
           payload.ticket_id = currentTicketContext.ticket_id || "";
         } else {
           payload.phone = phoneStr;
+        }
+
+        // Optional cancellation reason — feedback for the team
+        const reasonInput = document.getElementById("ticketCancelReason");
+        if (reasonInput && reasonInput.value) {
+          const reason = String(reasonInput.value).trim().slice(0, 500);
+          if (reason) payload.reason = reason;
         }
 
         const response = await postActionWithResponse(payload);
